@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.commons.view;
+package org.codinjutsu.tools.nosql.commons.view
 
-import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
+import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 
-import javax.swing.*;
+import javax.swing.*
 
-public interface AuthenticationView {
+interface AuthenticationView {
 
+    val component: JPanel
 
-    JPanel getComponent();
+    fun create(): AuthenticationSettings
 
-    AuthenticationSettings create();
-
-    void load(AuthenticationSettings settings);
+    fun load(settings: AuthenticationSettings)
 }

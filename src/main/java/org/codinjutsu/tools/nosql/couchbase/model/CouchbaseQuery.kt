@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.couchbase.model;
+package org.codinjutsu.tools.nosql.couchbase.model
 
-public class CouchbaseQuery {
+import org.codinjutsu.tools.nosql.commons.model.Query
 
-    private final int limit;
-
-    public CouchbaseQuery(int limit) {
-        this.limit = limit;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-}
+internal class CouchbaseQuery(override val limit: Int) : Query

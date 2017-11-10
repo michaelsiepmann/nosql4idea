@@ -18,7 +18,6 @@ package org.codinjutsu.tools.nosql.couchbase.logic;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
-import com.couchbase.client.java.ConnectionString;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.cluster.BucketSettings;
 import com.couchbase.client.java.cluster.ClusterManager;
@@ -30,19 +29,17 @@ import com.couchbase.client.java.query.N1qlQueryRow;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
-import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
+import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.model.Query;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseQuery;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 import static com.couchbase.client.java.query.Select.select;
 import static com.couchbase.client.java.query.dsl.Expression.i;
 
-public class CouchbaseClient implements DatabaseClient {
+public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseResult> {
 
     public static CouchbaseClient getInstance(Project project) {
         return ServiceManager.getService(project, CouchbaseClient.class);
@@ -116,18 +113,15 @@ public class CouchbaseClient implements DatabaseClient {
 
     @Override
     public ServerConfiguration defaultConfiguration() {
-        ServerConfiguration configuration = new ServerConfiguration();
-        configuration.setDatabaseVendor(DatabaseVendor.COUCHBASE);
-        configuration.setServerUrl("localhost");
-        configuration.setAuthenticationSettings(new AuthenticationSettings());
-        return configuration;
+        return ServerConfiguration.Companion.create(DatabaseVendor.COUCHBASE, "localhost");
     }
 
-    public CouchbaseResult loadRecords(ServerConfiguration configuration, CouchbaseDatabase database, CouchbaseQuery couchbaseQuery) {
+    @Override
+    public CouchbaseResult loadRecords(ServerConfiguration configuration, Database database, Query couchbaseQuery) {
         Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment
-                .builder()
-                .queryEnabled(true)
-                .build(),
+                        .builder()
+                        .queryEnabled(true)
+                        .build(),
                 configuration.getServerUrl());
 //        AuthenticationSettings authenticationSettings = configuration.getAuthenticationSettings();
 //        ClusterManager clusterManager = cluster.clusterManager(authenticationSettings.getUsername(), authenticationSettings.getPassword());

@@ -53,6 +53,11 @@
         <projectService serviceInterface="org.codinjutsu.tools.nosql.couchbase.CouchbaseUI"
                         serviceImplementation="org.codinjutsu.tools.nosql.couchbase.CouchbaseUI"/>
 
+        <projectService serviceInterface="org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient"
+                        serviceImplementation="org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient"/>
+        <projectService serviceInterface="org.codinjutsu.tools.nosql.elasticsearch.ElasticSearchUI"
+                        serviceImplementation="org.codinjutsu.tools.nosql.elasticsearch.ElasticSearchUI"/>
+
         <projectConfigurable instance="org.codinjutsu.tools.nosql.NoSqlConfigurable"
                              id="preferences.mongoOptions"/>
         <configurationType implementation="org.codinjutsu.tools.nosql.mongo.runner.MongoRunConfigurationType"/>

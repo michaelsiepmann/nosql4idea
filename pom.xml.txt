@@ -9,14 +9,15 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
         <intellij.sdk.name>141.2735.5</intellij.sdk.name>
         <intellij.sdk.version>14.1</intellij.sdk.version>
         <!--<intellij.sdk.name>143.381.42</intellij.sdk.name>-->
         <!--<intellij.sdk.version>15.0</intellij.sdk.version>-->
-        <intellij.lib.path>${env.IDEA_HOME}/lib</intellij.lib.path>
+        <intellij.lib.path>C:\Users\Michael\.gradle\caches\modules-2\files-2.1\com.jetbrains.intellij.idea\ideaIC\143.2370.31\de299a619a278380cd9d2ce007835ec1bcca597b\ideaIC-143.2370.31\lib</intellij.lib.path>
+        <kotlin.version>1.1.51</kotlin.version>
     </properties>
 
     <packaging>jar</packaging>
@@ -75,9 +76,9 @@
             <version>${intellij.sdk.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>openapi</artifactId>
-            <version>${intellij.sdk.version}</version>
+            <groupId>com.jetbrains</groupId>
+            <artifactId>idea</artifactId>
+            <version>143.2370.31</version>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
@@ -188,6 +189,17 @@
             <systemPath>${intellij.lib.path}/resources_en.jar</systemPath>
             <version>${intellij.sdk.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jre8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -228,6 +240,50 @@
                         <descriptor>src/main/resources/assemblies/plugin-assembly.xml</descriptor>
                     </descriptors>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>

@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.codinjutsu.tools.nosql.commons.DatabaseUI;
 import org.codinjutsu.tools.nosql.couchbase.CouchbaseUI;
 import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile;
+import org.codinjutsu.tools.nosql.elasticsearch.ElasticSearchUI;
 import org.codinjutsu.tools.nosql.mongo.MongoUI;
 import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile;
 import org.codinjutsu.tools.nosql.redis.RedisUI;
@@ -38,6 +39,7 @@ public class DatabaseVendorUIManager {
         databaseUIByVendor.put(DatabaseVendor.MONGO, MongoUI.class);
         databaseUIByVendor.put(DatabaseVendor.REDIS, RedisUI.class);
         databaseUIByVendor.put(DatabaseVendor.COUCHBASE, CouchbaseUI.class);
+        databaseUIByVendor.put(DatabaseVendor.ELASTICSEARCH, ElasticSearchUI.class);
     }
 
     private final Project project;

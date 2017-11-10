@@ -16,34 +16,14 @@
 
 package org.codinjutsu.tools.nosql.couchbase.view;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.ide.CommonActionsManager;
-import com.intellij.ide.TreeExpander;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.LoadingDecorator;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.NumberDocument;
-import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
-import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.ErrorPanel;
-import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
+import org.codinjutsu.tools.nosql.commons.view.AbstractSearchPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
-import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseQuery;
@@ -52,45 +32,55 @@ import org.codinjutsu.tools.nosql.mongo.view.JsonTreeTableView;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class CouchbasePanel extends NoSqlResultView<CouchbaseDatabase> {
+import static org.codinjutsu.tools.nosql.commons.view.nodedescriptor.TreeModelFactoryKt.buildTree;
+
+public class CouchbasePanel extends AbstractSearchPanel<CouchbaseDatabase> {
     private JPanel mainPanel;
     private JPanel toolBarPanel;
     private JPanel containerPanel;
     private JPanel errorPanel;
-    private JPanel resultPanel;
-    private final LoadingDecorator loadingDecorator;
-    private final JTextField rowLimitField = new JTextField("");
-
-    private final Project project;
 
     private final CouchbaseClient couchbaseClient;
     private final ServerConfiguration configuration;
     private final CouchbaseDatabase database;
-    private CouchbaseResult couchbaseResult;
     private JsonTreeTableView resultTableView;
 
 
     public CouchbasePanel(Project project, CouchbaseClient couchbaseClient, ServerConfiguration configuration, CouchbaseDatabase database) {
-        this.project = project;
+        super(project);
         this.couchbaseClient = couchbaseClient;
         this.configuration = configuration;
         this.database = database;
-        this.resultPanel = new JPanel(new BorderLayout());
-
-        loadingDecorator = new LoadingDecorator(resultPanel, this, 0);
-
-        containerPanel.add(loadingDecorator.getComponent());
-
-        initToolbar();
-
-        setLayout(new BorderLayout());
-        add(mainPanel);
     }
 
-    private void loadAndDisplayResults(final int limit) throws Exception {
-        couchbaseResult = couchbaseClient.loadRecords(configuration, database, new CouchbaseQuery(limit));
+    @NotNull
+    @Override
+    protected JPanel getToolBarPanel() {
+        return toolBarPanel;
+    }
+
+    @NotNull
+    @Override
+    protected JPanel getErrorPanel() {
+        return errorPanel;
+    }
+
+    @NotNull
+    @Override
+    protected JPanel getMainPanel() {
+        return mainPanel;
+    }
+
+    @NotNull
+    @Override
+    protected JPanel getContainerPanel() {
+        return containerPanel;
+    }
+
+    @Override
+    protected void loadAndDisplayResults(final int limit) throws Exception {
+        CouchbaseResult couchbaseResult = couchbaseClient.loadRecords(configuration, database, new CouchbaseQuery(limit));
         if (couchbaseResult.hasErrors()) {
             throw new Exception(StringUtils.join(couchbaseResult.getErrors(), " ")); //TODO need to improve it
         }
@@ -98,93 +88,24 @@ public class CouchbasePanel extends NoSqlResultView<CouchbaseDatabase> {
     }
 
     void updateResultTableTree(CouchbaseResult couchbaseResult) {
-        NoSqlTreeNode rootNode = CouchbaseTreeModel.buildTree(couchbaseResult);
+        NoSqlTreeNode rootNode = buildTree(couchbaseResult, new CouchbaseTreeModelFactory());
         resultTableView = new JsonTreeTableView(rootNode, JsonTreeTableView.COLUMNS_FOR_READING);
         resultTableView.setName("resultTreeTable");
 
+        JPanel resultPanel = getResultPanel();
         resultPanel.invalidate();
         resultPanel.removeAll();
         resultPanel.add(new JBScrollPane(resultTableView));
         resultPanel.validate();
     }
 
-    private void initToolbar() {
-        toolBarPanel.setLayout(new BorderLayout());
-
-        rowLimitField.setColumns(5);
-        rowLimitField.setDocument(new NumberDocument());
-        rowLimitField.setText("100");
-
-        JPanel rowLimitPanel = new NonOpaquePanel();
-        rowLimitPanel.add(new JLabel("Row limit:"), BorderLayout.WEST);
-        rowLimitPanel.add(rowLimitField, BorderLayout.CENTER);
-        rowLimitPanel.add(Box.createHorizontalStrut(5), BorderLayout.EAST);
-        toolBarPanel.add(rowLimitPanel, BorderLayout.WEST);
-
-        addCommonsActions();
-    }
-
-    protected void addCommonsActions() {
-        final TreeExpander treeExpander = new TreeExpander() {
-            @Override
-            public void expandAll() {
-                CouchbasePanel.this.expandAll();
-            }
-
-            @Override
-            public boolean canExpand() {
-                return true;
-            }
-
-            @Override
-            public void collapseAll() {
-                CouchbasePanel.this.collapseAll();
-            }
-
-            @Override
-            public boolean canCollapse() {
-                return true;
-            }
-        };
-
-        CommonActionsManager actionsManager = CommonActionsManager.getInstance();
-
-        final AnAction expandAllAction = actionsManager.createExpandAllAction(treeExpander, resultPanel);
-        final AnAction collapseAllAction = actionsManager.createCollapseAllAction(treeExpander, resultPanel);
-
-        Disposer.register(this, new Disposable() {
-            @Override
-            public void dispose() {
-                collapseAllAction.unregisterCustomShortcutSet(resultPanel);
-                expandAllAction.unregisterCustomShortcutSet(resultPanel);
-            }
-        });
-
-        DefaultActionGroup actionResultGroup = new DefaultActionGroup("CouchbaseResultGroup", true);
-        actionResultGroup.add(new ExecuteQuery<>(this));
-        actionResultGroup.addSeparator();
-        actionResultGroup.add(expandAllAction);
-        actionResultGroup.add(collapseAllAction);
-
-        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("CouchbaseResultGroupActions", actionResultGroup, true);
-        actionToolBar.setLayoutPolicy(ActionToolbar.AUTO_LAYOUT_POLICY);
-        JComponent actionToolBarComponent = actionToolBar.getComponent();
-        actionToolBarComponent.setBorder(null);
-        actionToolBarComponent.setOpaque(false);
-
-        toolBarPanel.add(actionToolBarComponent, BorderLayout.CENTER);
-    }
-
-
-    private int getLimit() {
-        return Integer.parseInt(rowLimitField.getText());
-    }
-
-    void expandAll() {
+    @Override
+    public void expandAll() {
         TreeUtil.expandAll(resultTableView.getTree());
     }
 
-    void collapseAll() {
+    @Override
+    public void collapseAll() {
         TreeTableTree tree = resultTableView.getTree();
         TreeUtil.collapseAll(tree, 1);
     }
@@ -195,44 +116,8 @@ public class CouchbasePanel extends NoSqlResultView<CouchbaseDatabase> {
     }
 
     @Override
-    public JPanel getResultPanel() {
-        return resultPanel;
-    }
-
-    @Override
     public CouchbaseDatabase getRecords() {
         return database;
-    }
-
-    @Override
-    public void executeQuery() {
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Executing query", true)  { //TODO need to abstract this method
-            @Override
-            public void run(@NotNull final ProgressIndicator indicator) {
-                try {
-                    loadAndDisplayResults(getLimit());
-                }  catch (final Exception ex) {
-                    GuiUtils.runInSwingThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            errorPanel.invalidate();
-                            errorPanel.removeAll();
-                            errorPanel.add(new ErrorPanel(ex), BorderLayout.CENTER);
-                            errorPanel.validate();
-                            errorPanel.setVisible(true);
-                        }
-                    });
-                } finally {
-                    GuiUtils.runInSwingThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadingDecorator.stopLoading();
-                        }
-                    });
-                }
-            }
-        });
-
     }
 
     @Override

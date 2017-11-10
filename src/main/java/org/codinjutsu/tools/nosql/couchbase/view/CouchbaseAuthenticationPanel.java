@@ -19,6 +19,7 @@ package org.codinjutsu.tools.nosql.couchbase.view;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.view.AuthenticationView;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -33,11 +34,13 @@ public class CouchbaseAuthenticationPanel implements AuthenticationView {
         passwordField.setName("passwordField");
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @NotNull
     @Override
     public AuthenticationSettings create() {
         AuthenticationSettings authenticationSettings = new AuthenticationSettings();
@@ -47,7 +50,7 @@ public class CouchbaseAuthenticationPanel implements AuthenticationView {
     }
 
     @Override
-    public void load(AuthenticationSettings settings) {
+    public void load(@NotNull AuthenticationSettings settings) {
         usernameField.setText(settings.getUsername());
         passwordField.setText(settings.getPassword());
     }

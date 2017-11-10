@@ -97,35 +97,28 @@ public class ServerConfigurationPanel extends JPanel {
     }
 
     private void initListeners() {
-        testConnectionButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+        testConnectionButton.addActionListener(actionEvent -> {
 
-                final Ref<Exception> excRef = new Ref<>();
-                final ProgressManager progressManager = ProgressManager.getInstance();
-                progressManager.runProcessWithProgressSynchronously(new Runnable() {
-                    @Override
-                    public void run() {
-                        ServerConfiguration configuration = createServerConfigurationForTesting();
+            final Ref<Exception> excRef = new Ref<>();
+            final ProgressManager progressManager = ProgressManager.getInstance();
+            progressManager.runProcessWithProgressSynchronously(() -> {
+                ServerConfiguration configuration = createServerConfigurationForTesting();
 
-                        final ProgressIndicator progressIndicator = progressManager.getProgressIndicator();
-                        if (progressIndicator != null) {
-                            progressIndicator.setText("Connecting to " + configuration.getServerUrl());
-                        }
-                        try {
-                            databaseClient.connect(configuration);
-                        } catch (Exception ex) {
-                            excRef.set(ex);
-                        }
-                    }
-
-                }, "Testing connection for " + databaseVendor.name, true, ServerConfigurationPanel.this.project);
-
-                if (!excRef.isNull()) {
-                    Messages.showErrorDialog(rootPanel, excRef.get().getMessage(), "Connection test failed");
-                } else {
-                    Messages.showInfoMessage(rootPanel, "Connection test successful for " + databaseVendor.name, "Connection test successful");
+                final ProgressIndicator progressIndicator = progressManager.getProgressIndicator();
+                if (progressIndicator != null) {
+                    progressIndicator.setText("Connecting to " + configuration.getServerUrl());
                 }
+                try {
+                    databaseClient.connect(configuration);
+                } catch (Exception ex) {
+                    excRef.set(ex);
+                }
+            }, "Testing connection for " + databaseVendor.name, true, ServerConfigurationPanel.this.project);
+
+            if (!excRef.isNull()) {
+                Messages.showErrorDialog(rootPanel, excRef.get().getMessage(), "Connection test failed");
+            } else {
+                Messages.showInfoMessage(rootPanel, "Connection test successful for " + databaseVendor.name, "Connection test successful");
             }
         });
     }
@@ -143,12 +136,7 @@ public class ServerConfigurationPanel extends JPanel {
 
     @NotNull
     private ServerConfiguration createServerConfigurationForTesting() {
-        ServerConfiguration configuration = new ServerConfiguration();
-        configuration.setDatabaseVendor(databaseVendor);
-        configuration.setServerUrl(getServerUrls());
-        configuration.setAuthenticationSettings(authenticationView.create());
-        configuration.setUserDatabase(getUserDatabase());
-        return configuration;
+        return ServerConfiguration.Companion.create(databaseVendor, getServerUrls(), authenticationView.create(), getUserDatabase());
     }
 
     public void applyConfigurationData(ServerConfiguration configuration) {

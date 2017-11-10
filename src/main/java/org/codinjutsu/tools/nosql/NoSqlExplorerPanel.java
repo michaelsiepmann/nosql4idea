@@ -32,7 +32,6 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
-import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
@@ -44,6 +43,8 @@ import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseFileSystem;
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile;
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase;
+import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchObjectFile;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
@@ -384,6 +385,17 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         return (CouchbaseDatabase) database;
     }
 
+    public ElasticsearchDatabase getElasticsearchDatabase() {
+        DefaultMutableTreeNode databaseNode = getSelectedDatabaseNode();
+        if (databaseNode != null) {
+            Object database = databaseNode.getUserObject();
+            if ((database instanceof ElasticsearchDatabase)) {
+                return (ElasticsearchDatabase) database;
+            }
+        }
+        return null;
+    }
+
     public MongoDatabase getSelectedMongoDatabase() {
         DefaultMutableTreeNode databaseNode = getSelectedDatabaseNode();
         if (databaseNode == null) {
@@ -417,8 +429,12 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         ServerConfiguration selectedConfiguration = getConfiguration();
         if (DatabaseVendor.MONGO.equals(selectedConfiguration.getDatabaseVendor())) {
             return new MongoObjectFile(project, selectedConfiguration, getSelectedCollection());
-        } else if (DatabaseVendor.COUCHBASE.equals(selectedConfiguration.getDatabaseVendor())) {
+        }
+        if (DatabaseVendor.COUCHBASE.equals(selectedConfiguration.getDatabaseVendor())) {
             return new CouchbaseObjectFile(project, selectedConfiguration, getSelectedCouchaseDatabase());
+        }
+        if (DatabaseVendor.ELASTICSEARCH.equals(selectedConfiguration.getDatabaseVendor())) {
+            return new ElasticsearchObjectFile(project, selectedConfiguration, getElasticsearchDatabase());
         }
         return new RedisObjectFile(project, selectedConfiguration, getSelectedRedisDatabase());
     }

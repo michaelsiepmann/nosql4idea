@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
+import org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 
@@ -35,6 +36,7 @@ public class DatabaseVendorClientManager {
         dataClientByVendor.put(DatabaseVendor.MONGO, MongoClient.class);
         dataClientByVendor.put(DatabaseVendor.REDIS, RedisClient.class);
         dataClientByVendor.put(DatabaseVendor.COUCHBASE, CouchbaseClient.class);
+        dataClientByVendor.put(DatabaseVendor.ELASTICSEARCH, ElasticsearchClient.class);
     }
 
     private final Project project;

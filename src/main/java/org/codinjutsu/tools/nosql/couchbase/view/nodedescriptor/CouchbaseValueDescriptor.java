@@ -20,10 +20,9 @@ import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider;
-import org.codinjutsu.tools.nosql.commons.utils.StringUtils;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecriptor;
 
-public class CouchbaseValueDescriptor implements NodeDescriptor {
+public class CouchbaseValueDescriptor extends AbstractNodeDecriptor {
 
     private final int index;
     protected Object value;
@@ -59,14 +58,6 @@ public class CouchbaseValueDescriptor implements NodeDescriptor {
 
     public String getFormattedValue() {
         return String.format("%s", getValueAndAbbreviateIfNecessary());
-    }
-
-    protected String getValueAndAbbreviateIfNecessary() {
-        String stringifiedValue = value.toString();
-        if (stringifiedValue.length() > MAX_LENGTH) {
-            return StringUtils.abbreviateInCenter(stringifiedValue, MAX_LENGTH);
-        }
-        return stringifiedValue;
     }
 
     public Object getValue() {

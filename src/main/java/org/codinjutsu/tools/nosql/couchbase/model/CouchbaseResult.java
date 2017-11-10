@@ -17,11 +17,13 @@
 package org.codinjutsu.tools.nosql.couchbase.model;
 
 import com.couchbase.client.java.document.json.JsonObject;
+import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class CouchbaseResult {
+public class CouchbaseResult implements SearchResult {
     private final List<JsonObject> jsonObjects = new LinkedList<>();
     private final List<JsonObject> errors = new LinkedList<>();
     private final String name;
@@ -38,10 +40,14 @@ public class CouchbaseResult {
         this.errors.addAll(errors);
     }
 
+    @NotNull
+    @Override
     public String getName() {
-        return null;
+        return name;
     }
 
+    @NotNull
+    @Override
     public List<JsonObject> getRecords() {
         return jsonObjects;
     }
