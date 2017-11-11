@@ -201,27 +201,19 @@ public class MongoEditionPanel extends JPanel implements Disposable {
 
     public boolean canAddKey() {
         NoSqlTreeNode selectedNode = getSelectedNode();
-        if (selectedNode == null) {
-            return false;
-        }
-        return selectedNode.getDescriptor() instanceof MongoKeyValueDescriptor;
+        return selectedNode != null && selectedNode.getDescriptor() instanceof MongoKeyValueDescriptor;
     }
 
     public boolean canAddValue() {
         NoSqlTreeNode selectedNode = getSelectedNode();
-        if (selectedNode == null) {
-            return false;
-        }
-        return selectedNode.getDescriptor() instanceof MongoValueDescriptor;
+        return selectedNode != null && selectedNode.getDescriptor() instanceof MongoValueDescriptor;
     }
 
     public void removeSelectedKey() {
         NoSqlTreeNode selectedNode = getSelectedNode();
-        if (selectedNode == null) {
-            return;
+        if (selectedNode != null) {
+            TreeUtil.removeSelected(editTableView.getTree());
         }
-        TreeUtil.removeSelected(editTableView.getTree());
-
     }
 
     private DBObject buildMongoDocument() {

@@ -18,13 +18,14 @@ package org.codinjutsu.tools.nosql.couchbase.model;
 
 import com.couchbase.client.java.document.json.JsonObject;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class CouchbaseResult implements SearchResult {
-    private final List<JsonObject> jsonObjects = new LinkedList<>();
+    private final List<ObjectWrapper> jsonObjects = new LinkedList<>();
     private final List<JsonObject> errors = new LinkedList<>();
     private final String name;
 
@@ -33,7 +34,7 @@ public class CouchbaseResult implements SearchResult {
     }
 
     public void add(JsonObject jsonObject) {
-        this.jsonObjects.add(jsonObject);
+        this.jsonObjects.add(new CouchbaseObjectWrapper(jsonObject));
     }
 
     public void addErrors(List<JsonObject> errors) {
@@ -48,7 +49,7 @@ public class CouchbaseResult implements SearchResult {
 
     @NotNull
     @Override
-    public List<JsonObject> getRecords() {
+    public List<ObjectWrapper> getRecords() {
         return jsonObjects;
     }
 

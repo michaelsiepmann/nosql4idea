@@ -20,8 +20,10 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.StringUtils;
+import org.codinjutsu.tools.nosql.commons.model.CollectableDatabase;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.jetbrains.annotations.NotNull;
@@ -41,14 +43,14 @@ public class NoSqlTreeRenderer extends ColoredTreeCellRenderer {
 
         Object userObject = node.getUserObject();
         if (userObject instanceof DatabaseServer) {
-            DatabaseServer mongoServer = (DatabaseServer) userObject;
-            String label = mongoServer.getLabel();
-            String host = mongoServer.getServerUrl();
+            DatabaseServer databaseServer = (DatabaseServer) userObject;
+            String label = databaseServer.getLabel();
+            String host = databaseServer.getServerUrl();
             append(StringUtils.isBlank(label) ? host : label);
 
-            if (DatabaseServer.Status.OK.equals(mongoServer.getStatus())) {
+            if (DatabaseServer.Status.OK.equals(databaseServer.getStatus())) {
                 setToolTipText(host);
-                setIcon(mongoServer.getConfiguration().getDatabaseVendor().icon);
+                setIcon(databaseServer.getConfiguration().getDatabaseVendor().icon);
             } else {
                 setForeground(JBColor.RED);
                 setToolTipText("Unable to connect");
@@ -57,8 +59,8 @@ public class NoSqlTreeRenderer extends ColoredTreeCellRenderer {
             Database noSqlDatabase = (Database) userObject;
             append(noSqlDatabase.getName());
             setIcon(DATABASE);
-        } else if (userObject instanceof MongoCollection) {
-            MongoCollection mongoCollection = (MongoCollection) userObject;
+        } else if (userObject instanceof NoSQLCollection) {
+            NoSQLCollection mongoCollection = (NoSQLCollection) userObject;
             append(mongoCollection.getName());
             setIcon(MONGO_COLLECTION);
         }

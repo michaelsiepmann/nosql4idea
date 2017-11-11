@@ -41,8 +41,10 @@ public class ViewCollectionValuesAction extends AnAction implements DumbAware {
     }
 
     public void update(AnActionEvent event) {
-        event.getPresentation().setVisible(noSqlExplorerPanel.getSelectedCollection() != null
-                || noSqlExplorerPanel.getSelectedRedisDatabase() != null
-                || noSqlExplorerPanel.getSelectedCouchaseDatabase() != null);
+        event.getPresentation().setVisible(noSqlExplorerPanel.getSelectedCollection() != null ||
+                noSqlExplorerPanel.getSelectedRedisDatabase() != null ||
+                noSqlExplorerPanel.getSelectedCouchbaseDatabase() != null ||
+                noSqlExplorerPanel.getSelectedElasticsearchDatabase() != null
+        );
     }
 }

@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.commons.model;
+package org.codinjutsu.tools.nosql.commons.model
 
-public class Database {
-    protected final String name;
-
-    public Database(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-}
+open class Database(open val name: String)

@@ -9,6 +9,7 @@ import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.AbstractSearchPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient;
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchCollection;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchQuery;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult;
@@ -29,13 +30,15 @@ public class ElasticsearchPanel extends AbstractSearchPanel<ElasticsearchDatabas
     private final ElasticsearchClient client;
     private final ServerConfiguration serverConfiguration;
     private final ElasticsearchDatabase database;
+    private final ElasticsearchCollection collection;
     private JsonTreeTableView resultTableView;
 
-    public ElasticsearchPanel(Project project, ElasticsearchClient client, ServerConfiguration serverConfiguration, ElasticsearchDatabase database) {
+    public ElasticsearchPanel(Project project, ElasticsearchClient client, ServerConfiguration serverConfiguration, ElasticsearchDatabase database, ElasticsearchCollection collection) {
         super(project);
         this.client = client;
         this.serverConfiguration = serverConfiguration;
         this.database = database;
+        this.collection = collection;
     }
 
     @Override
@@ -80,9 +83,9 @@ public class ElasticsearchPanel extends AbstractSearchPanel<ElasticsearchDatabas
 
     @Override
     protected void loadAndDisplayResults(int limit) throws Exception {
-        ElasticsearchResult elasticsearchResult = client.loadRecords(serverConfiguration, database, new ElasticsearchQuery(limit));
+        ElasticsearchResult elasticsearchResult = client.loadRecords(serverConfiguration, database, new ElasticsearchQuery(limit, collection));
         if (elasticsearchResult.hasErrors()) {
-            throw new Exception(StringUtils.join(elasticsearchResult.getErrors(), " ")); //TODO need to improve it
+            throw new Exception(StringUtils.join(elasticsearchResult.getErrors(), " "));
         }
         updateResultTableTree(elasticsearchResult);
     }

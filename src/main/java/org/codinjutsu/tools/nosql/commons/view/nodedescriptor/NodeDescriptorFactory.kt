@@ -1,7 +1,6 @@
 package org.codinjutsu.tools.nosql.commons.view.nodedescriptor
 
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor
 
 internal interface NodeDescriptorFactory {
 

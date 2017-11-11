@@ -15,6 +15,6 @@ internal class ElasticSearchUI : DatabaseUI {
 
     override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView<*> {
         val elasticSearchObjectFile = objectFile as ElasticsearchObjectFile
-        return ElasticsearchPanel(project, ElasticsearchClient.getInstance(project), elasticSearchObjectFile.configuration, elasticSearchObjectFile.database)
+        return ElasticsearchPanel(project, ElasticsearchClient.getInstance(project), elasticSearchObjectFile.configuration, elasticSearchObjectFile.database, elasticSearchObjectFile.collection)
     }
 }

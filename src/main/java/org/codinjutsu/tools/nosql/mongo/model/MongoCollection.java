@@ -16,9 +16,10 @@
 
 package org.codinjutsu.tools.nosql.mongo.model;
 
+import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.jetbrains.annotations.NotNull;
 
-public class MongoCollection implements Comparable<MongoCollection> {
+public class MongoCollection implements Comparable<MongoCollection>, NoSQLCollection {
 
     private final String name;
     private final String databaseName;
@@ -28,6 +29,8 @@ public class MongoCollection implements Comparable<MongoCollection> {
         this.databaseName = databaseName;
     }
 
+    @Override
+    @NotNull
     public String getName() {
         return name;
     }

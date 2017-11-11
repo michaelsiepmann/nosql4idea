@@ -38,6 +38,7 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.Query;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseQuery;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
 
 import java.util.LinkedList;
@@ -47,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 import static com.couchbase.client.java.query.Select.select;
 import static com.couchbase.client.java.query.dsl.Expression.i;
 
-public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseResult> {
+public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseResult, CouchbaseQuery> {
 
     public static CouchbaseClient getInstance(Project project) {
         return ServiceManager.getService(project, CouchbaseClient.class);
@@ -117,7 +118,7 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseResult> 
     }
 
     @Override
-    public CouchbaseResult loadRecords(ServerConfiguration configuration, Database database, Query couchbaseQuery) {
+    public CouchbaseResult loadRecords(ServerConfiguration configuration, Database database, CouchbaseQuery couchbaseQuery) {
         Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment
                         .builder()
                         .queryEnabled(true)

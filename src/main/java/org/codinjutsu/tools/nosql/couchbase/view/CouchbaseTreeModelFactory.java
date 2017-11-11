@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.couchbase.view;
 
+import com.couchbase.client.java.document.json.JsonObject;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory;

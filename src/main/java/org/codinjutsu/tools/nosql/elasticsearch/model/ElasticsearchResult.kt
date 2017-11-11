@@ -1,19 +1,20 @@
 package org.codinjutsu.tools.nosql.elasticsearch.model
 
-import com.couchbase.client.java.document.json.JsonObject
+import com.google.gson.JsonObject
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 
 import java.util.LinkedList
 
-class ElasticsearchResult(override val name: String) : SearchResult {
-    private val jsonObjects = LinkedList<JsonObject>()
+internal class ElasticsearchResult(override val name: String) : SearchResult {
+    private val jsonObjects = LinkedList<ObjectWrapper>()
     private val errors = LinkedList<JsonObject>()
 
-    override val records: List<JsonObject>
+    override val records: List<ObjectWrapper>
         get() = jsonObjects
 
     fun add(jsonObject: JsonObject) {
-        this.jsonObjects.add(jsonObject)
+        this.jsonObjects.add(ElasticsearchObjectWrapper(jsonObject))
     }
 
     fun addErrors(errors: List<JsonObject>) {

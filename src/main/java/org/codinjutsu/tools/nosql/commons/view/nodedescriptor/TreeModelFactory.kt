@@ -1,9 +1,9 @@
 package org.codinjutsu.tools.nosql.commons.view.nodedescriptor
 
 import com.couchbase.client.java.document.json.JsonArray
-import com.couchbase.client.java.document.json.JsonObject
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 
 internal fun buildTree(searchResult: SearchResult, nodeDescriptorFactory: NodeDescriptorFactory): NoSqlTreeNode {
     val resultTreeNode = NoSqlTreeNode(nodeDescriptorFactory.createResultDescriptor(searchResult))
@@ -11,7 +11,7 @@ internal fun buildTree(searchResult: SearchResult, nodeDescriptorFactory: NodeDe
     return resultTreeNode
 }
 
-private fun processRecord(parentNode: NoSqlTreeNode, record: JsonObject, nodeDescriptorFactory: NodeDescriptorFactory) {
+private fun processRecord(parentNode: NoSqlTreeNode, record: ObjectWrapper, nodeDescriptorFactory: NodeDescriptorFactory) {
     record.names.forEach {
         val value = record.get(it)
         val currentNode = NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(it, value))
@@ -31,7 +31,7 @@ private fun processRecordListValues(parentNode: NoSqlTreeNode, values: JsonArray
 private fun process(value: Any?, currentValueNode: NoSqlTreeNode, nodeDescriptorFactory: NodeDescriptorFactory) {
     if (value is JsonArray) {
         processRecordListValues(currentValueNode, value, nodeDescriptorFactory)
-    } else if (value is JsonObject) {
+    } else if (value is ObjectWrapper) {
         processRecord(currentValueNode, value, nodeDescriptorFactory)
     }
 }

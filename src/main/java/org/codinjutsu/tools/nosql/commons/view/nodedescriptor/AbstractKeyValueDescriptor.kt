@@ -4,7 +4,6 @@ import com.intellij.ui.ColoredTableCellRenderer
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.SimpleTextAttributes
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
-import org.codinjutsu.tools.nosql.commons.utils.StringUtils
 import java.lang.String.format
 
 internal abstract class AbstractKeyValueDescriptor(val key: String, private var _value: Any?, protected val valueTextAttributes: SimpleTextAttributes) : AbstractNodeDecriptor() {
