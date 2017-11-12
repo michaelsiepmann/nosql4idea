@@ -16,15 +16,15 @@
 
 package org.codinjutsu.tools.nosql.mongo.model;
 
-import org.codinjutsu.tools.nosql.commons.model.CollectableDatabase;
 import org.codinjutsu.tools.nosql.commons.model.Database;
+import org.codinjutsu.tools.nosql.commons.model.Folder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class MongoDatabase extends Database implements CollectableDatabase<MongoCollection> {
+public class MongoDatabase extends Database implements Folder<MongoCollection> {
 
     private final SortedSet<MongoCollection> collections = new TreeSet<MongoCollection>();
 
@@ -39,7 +39,7 @@ public class MongoDatabase extends Database implements CollectableDatabase<Mongo
 
     @Override
     @NotNull
-    public Set<MongoCollection> getCollections() {
+    public Collection<MongoCollection> getChildFolders() {
         return collections;
     }
 

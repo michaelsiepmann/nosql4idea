@@ -33,7 +33,7 @@ public class NoSqlWindowManager {
 
     private static final Icon NOSQL_ICON = GuiUtils.loadIcon("nosql_13x13.png");
 
-    public static final String NOSQL_RUNNER = "NoSql Runner";
+    private static final String NOSQL_RUNNER = "NoSql Runner";
     private static final String NOSQL_EXPLORER = "NoSql Explorer";
 
     private final Project project;
@@ -62,11 +62,6 @@ public class NoSqlWindowManager {
     }
 
     public void apply() {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                noSqlExplorerPanel.reloadAllServerConfigurations();
-            }
-        });
+        ApplicationManager.getApplication().invokeLater(noSqlExplorerPanel::reloadAllServerConfigurations);
     }
 }

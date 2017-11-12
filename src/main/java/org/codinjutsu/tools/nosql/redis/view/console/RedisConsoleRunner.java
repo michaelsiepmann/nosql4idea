@@ -18,90 +18,59 @@ package org.codinjutsu.tools.nosql.redis.view.console;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.console.ConsoleHistoryController;
-import com.intellij.execution.console.ConsoleRootType;
-import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.psi.PsiFile;
-import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
-import org.codinjutsu.tools.nosql.NoSqlConfiguration;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.view.console.NoSqlConsoleView;
+import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 
-public class RedisConsoleRunner extends AbstractConsoleRunnerWithHistory<NoSqlConsoleView> {
+public class RedisConsoleRunner extends AbstractNoSQLConsoleRunner {
 
     private static final Key<Boolean> SHELL_FILE = Key.create("REDIS_SHELL_FILE");
-    private final ServerConfiguration serverConfiguration;
+    private static final String CONSOLE_TYPE_ID = "Redis Shell";
     private final RedisDatabase database;
 
-
     public RedisConsoleRunner(@NotNull Project project, ServerConfiguration serverConfiguration, RedisDatabase database) {
-        super(project, "Redis Shell", "/tmp");
-
-        this.serverConfiguration = serverConfiguration;
+        super(project, CONSOLE_TYPE_ID, "/tmp", serverConfiguration);
         this.database = database;
     }
 
     @Override
-    protected NoSqlConsoleView createConsoleView() {
-        NoSqlConsoleView res = new NoSqlConsoleView(getProject(), "Redis Console", serverConfiguration);
-
-        PsiFile file = res.getFile();
-        assert file.getContext() == null;
-        file.putUserData(SHELL_FILE, Boolean.TRUE);
-
-        return res;
-    }
-
-    @Nullable
-    @Override
-    protected Process createProcess() throws ExecutionException {
-
-        NoSqlConfiguration noSqlConfiguration = NoSqlConfiguration.getInstance(getProject());
-        String shellPath = noSqlConfiguration.getShellPath(DatabaseVendor.REDIS);
-        final GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setExePath(shellPath);
-
-        commandLine.addParameter("-n");
-        commandLine.addParameter(database.getName());
-
-        String shellWorkingDir = serverConfiguration.getShellWorkingDir();
-        if (StringUtils.isNotBlank(shellWorkingDir)) {
-            commandLine.setWorkDirectory(shellWorkingDir);
-        }
-
-        String shellArgumentsLine = serverConfiguration.getShellArgumentsLine();
-        if (StringUtils.isNotBlank(shellArgumentsLine)) {
-            commandLine.addParameters(shellArgumentsLine.split(" "));
-        }
-
-        return commandLine.createProcess();
+    @NotNull
+    protected String getShellConsoleTitle() {
+        return "Redis Console";
     }
 
     @Override
-    protected OSProcessHandler createProcessHandler(Process process) {
-        return new OSProcessHandler(process, null);
+    @NotNull
+    protected Key<Boolean> getShellFile() {
+        return SHELL_FILE;
     }
 
     @NotNull
     @Override
-    protected ProcessBackedConsoleExecuteActionHandler createExecuteActionHandler() {
-        ProcessBackedConsoleExecuteActionHandler handler = new ProcessBackedConsoleExecuteActionHandler(getProcessHandler(), false) {
-            @Override
-            public String getEmptyExecuteAction() {
-                return "NoSql.Shell.Execute";
-            }
-        };
-        new ConsoleHistoryController(new ConsoleRootType("Redis Shell", null) {
-        }, null, getConsoleView()).install();
-        return handler;
+    protected Process createProcess(@NotNull GeneralCommandLine commandLine, @NotNull ServerConfiguration serverConfiguration) throws ExecutionException {
+        commandLine.addParameters("-n", database.getName());
+
+        setWorkingDirectory(commandLine, serverConfiguration);
+
+        addShellArguments(commandLine, serverConfiguration);
+
+        return commandLine.createProcess();
+    }
+
+    @NotNull
+    @Override
+    protected DatabaseVendor getDatabaseVendor() {
+        return DatabaseVendor.REDIS;
+    }
+
+    @Override
+    @NotNull
+    protected String getConsoleTypeId() {
+        return CONSOLE_TYPE_ID;
     }
 }

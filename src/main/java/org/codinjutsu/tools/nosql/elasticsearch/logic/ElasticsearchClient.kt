@@ -4,6 +4,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.DatabaseVendor
 import org.codinjutsu.tools.nosql.ServerConfiguration
+import org.codinjutsu.tools.nosql.commons.logic.FolderDatabaseClient
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
@@ -16,7 +17,7 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchQuery
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult
 import java.net.URL
 
-internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchResult, ElasticsearchQuery> {
+internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchResult, ElasticsearchQuery>, FolderDatabaseClient<ElasticsearchDatabase, ElasticsearchCollection> {
 
     override fun connect(serverConfiguration: ServerConfiguration) {
         URL(serverConfiguration.serverUrl).openConnection().connect()
@@ -43,8 +44,16 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchResult,
 
     override fun loadRecords(configuration: ServerConfiguration, database: Database, query: ElasticsearchQuery): ElasticsearchResult {
         val elasticsearchResult = ElasticsearchResult(database.name)
-        elasticsearchResult.add(Search(configuration.serverUrl!!, query).execute())
+        elasticsearchResult.addAll(Search(configuration.serverUrl!!, database.name, query).execute().getAsJsonObject("hits").getAsJsonArray("hits"))
         return elasticsearchResult
+    }
+
+    override fun dropFolder(serverConfiguration: ServerConfiguration, collection: ElasticsearchCollection) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun dropDatabase(serverConfiguration: ServerConfiguration, database: ElasticsearchDatabase) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun getTypes(configuration: ServerConfiguration, index: String): Collection<ElasticsearchCollection> {

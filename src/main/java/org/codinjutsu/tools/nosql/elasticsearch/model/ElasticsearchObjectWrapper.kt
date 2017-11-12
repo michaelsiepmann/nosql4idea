@@ -8,7 +8,9 @@ internal class ElasticsearchObjectWrapper(private val jsonObject: JsonObject) : 
     override val names: Collection<String>
         get() = jsonObject.entrySet().map { it.key }
 
-    override fun get(name: String) = jsonObject.get(name)
+    override fun get(name: String): Any? = jsonObject.get(name)
+
+    override fun getData(name: String) = (get(name) as JsonObject?)?.getAsJsonObject("_source")
 
     override fun isArray(value: Any?) = value is JsonArray
 

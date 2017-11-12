@@ -20,12 +20,10 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.commons.model.CollectableDatabase;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

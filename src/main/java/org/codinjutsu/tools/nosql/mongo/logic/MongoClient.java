@@ -18,7 +18,14 @@ package org.codinjutsu.tools.nosql.mongo.logic;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.mongodb.*;
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoIterable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -26,6 +33,7 @@ import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
+import org.codinjutsu.tools.nosql.commons.logic.FolderDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
@@ -33,12 +41,17 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
-public class MongoClient implements DatabaseClient {
+public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDatabase, MongoCollection> {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
@@ -179,7 +192,8 @@ public class MongoClient implements DatabaseClient {
         }
     }
 
-    public void dropCollection(ServerConfiguration configuration, MongoCollection mongoCollection) {
+    @Override
+    public void dropFolder(@NotNull ServerConfiguration configuration, @NotNull MongoCollection mongoCollection) {
         com.mongodb.MongoClient mongo = null;
         try {
             String databaseName = mongoCollection.getDatabaseName();
@@ -198,11 +212,12 @@ public class MongoClient implements DatabaseClient {
         }
     }
 
-    public void dropDatabase(ServerConfiguration configuration, MongoDatabase selectedDatabase) {
+    @Override
+    public void dropDatabase(@NotNull ServerConfiguration configuration, @NotNull MongoDatabase database) {
         com.mongodb.MongoClient mongo = null;
         try {
             mongo = createMongoClient(configuration);
-            mongo.dropDatabase(selectedDatabase.getName());
+            mongo.dropDatabase(database.getName());
         } catch (UnknownHostException ex) {
             throw new ConfigurationException(ex);
         } finally {

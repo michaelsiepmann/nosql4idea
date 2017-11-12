@@ -20,13 +20,11 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.codinjutsu.tools.nosql.commons.DatabaseUI;
+import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
 import org.codinjutsu.tools.nosql.couchbase.CouchbaseUI;
-import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile;
 import org.codinjutsu.tools.nosql.elasticsearch.ElasticSearchUI;
 import org.codinjutsu.tools.nosql.mongo.MongoUI;
-import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile;
 import org.codinjutsu.tools.nosql.redis.RedisUI;
-import org.codinjutsu.tools.nosql.redis.view.editor.RedisObjectFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +55,6 @@ public class DatabaseVendorUIManager {
     }
 
     public boolean accept(VirtualFile file) {
-        return file instanceof MongoObjectFile || file instanceof RedisObjectFile || file instanceof CouchbaseObjectFile;
-
+        return file instanceof NoSqlDatabaseObjectFile;
     }
 }

@@ -38,6 +38,7 @@ import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanelFactory;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -115,7 +116,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                 initPanel();
             }
 
-            @Nullable
+            @NotNull
             @Override
             protected String getLabelText() {
                 return "Servers";

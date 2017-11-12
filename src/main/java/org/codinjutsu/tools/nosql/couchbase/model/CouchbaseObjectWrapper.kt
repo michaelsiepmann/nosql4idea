@@ -9,7 +9,7 @@ class CouchbaseObjectWrapper(private val jsonObject: JsonObject) : ObjectWrapper
     override val names: Collection<String>
         get() = jsonObject.names
 
-    override fun get(name: String) = jsonObject.get(name)
+    override fun get(name: String): Any? = jsonObject.get(name)
 
     override fun isArray(value: Any?) = value is JsonArray
 

@@ -56,9 +56,6 @@ public class CouchbasePanelTest {
                         couchbaseClientMock,
                         new ServerConfiguration(),
                         new CouchbaseDatabase("default")) {
-                    @Override
-                    protected void addCommonsActions() {
-                    }
                 };
             }
         });
