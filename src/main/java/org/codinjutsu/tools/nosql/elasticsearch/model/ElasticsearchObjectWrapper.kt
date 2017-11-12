@@ -6,14 +6,13 @@ import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 
 internal class ElasticsearchObjectWrapper(private val jsonObject: JsonObject) : ObjectWrapper {
     override val names: Collection<String>
-        get() = jsonObject.entrySet().map { it.key }
+        get() = getSource()?.entrySet()?.map { it.key } ?: emptyList()
 
-    override fun get(name: String): Any? = jsonObject.get(name)
-
-    override fun getData(name: String) = (get(name) as JsonObject?)?.getAsJsonObject("_source")
+    override fun get(name: String): Any? = getSource()?.get(name)
 
     override fun isArray(value: Any?) = value is JsonArray
 
     override fun isObject(value: Any?) = value is JsonObject
 
+    private fun getSource() = jsonObject.get("_source") as JsonObject?
 }

@@ -14,40 +14,40 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view.action.edition;
+package org.codinjutsu.tools.nosql.commons.view.action.edition;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.codinjutsu.tools.nosql.mongo.view.AddKeyDialog;
-import org.codinjutsu.tools.nosql.mongo.view.MongoEditionPanel;
+import org.codinjutsu.tools.nosql.commons.view.AbstractEditionPanel;
+import org.codinjutsu.tools.nosql.commons.view.AddKeyDialog;
 
 import java.awt.event.KeyEvent;
 
 public class AddKeyAction extends AnAction {
 
-    private final MongoEditionPanel mongoEditionPanel;
+    private final AbstractEditionPanel editionPanel;
 
-    public AddKeyAction(MongoEditionPanel mongoEditionPanel) {
+    public AddKeyAction(AbstractEditionPanel editionPanel) {
         super("Add a key", "Add a key", AllIcons.General.Add);
-        registerCustomShortcutSet(KeyEvent.VK_INSERT, KeyEvent.ALT_MASK, mongoEditionPanel);
-        this.mongoEditionPanel = mongoEditionPanel;
+        registerCustomShortcutSet(KeyEvent.VK_INSERT, KeyEvent.ALT_MASK, editionPanel);
+        this.editionPanel = editionPanel;
     }
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        AddKeyDialog dialog = AddKeyDialog.createDialog(mongoEditionPanel);
+        AddKeyDialog dialog = AddKeyDialog.createDialog(editionPanel);
         dialog.show();
 
         if (!dialog.isOK()) {
             return;
         }
 
-        mongoEditionPanel.addKey(dialog.getKey(), dialog.getValue());
+        editionPanel.addKey(dialog.getKey(), dialog.getValue());
     }
 
     @Override
     public void update(AnActionEvent event) {
-//        event.getPresentation().setVisible(mongoEditionPanel.canAddKey());
+//        event.getPresentation().setVisible(editionPanel.canAddKey());
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view;
+package org.codinjutsu.tools.nosql.commons.view;
 
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -27,13 +27,12 @@ import java.awt.*;
 
 public class AddKeyDialog extends AbstractAddDialog {
 
-
     private JTextField nameTextfield;
     private ComboBox typeCombobox;
     private JPanel valuePanel;
     private JPanel mainPanel;
 
-    private AddKeyDialog(MongoEditionPanel mongoEditionPanel) {
+    private AddKeyDialog(AbstractEditionPanel mongoEditionPanel) {
         super(mongoEditionPanel);
         mainPanel.setPreferredSize(GuiUtils.enlargeWidth(mainPanel.getPreferredSize(), 1.5d));
         valuePanel.setLayout(new BorderLayout());
@@ -47,11 +46,10 @@ public class AddKeyDialog extends AbstractAddDialog {
         return mainPanel;
     }
 
-    public static AddKeyDialog createDialog(MongoEditionPanel parentPanel) {
+    public static AddKeyDialog createDialog(AbstractEditionPanel parentPanel) {
         AddKeyDialog dialog = new AddKeyDialog(parentPanel);
         dialog.init();
         dialog.setTitle("Add A Key");
-
         return dialog;
     }
 
@@ -69,7 +67,7 @@ public class AddKeyDialog extends AbstractAddDialog {
             return new ValidationInfo("Key name is not set");
         }
 
-        if (mongoEditionPanel.containsKey(keyName)) {
+        if (editionPanel.containsKey(keyName)) {
             return new ValidationInfo(String.format("Key '%s' is already used", keyName));
         }
 

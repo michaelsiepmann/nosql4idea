@@ -5,8 +5,6 @@ internal interface ObjectWrapper {
 
     fun get(name: String): Any?
 
-    fun getData(name: String) = get(name)
-
     fun isArray(value: Any?): Boolean
 
     fun isObject(value: Any?): Boolean

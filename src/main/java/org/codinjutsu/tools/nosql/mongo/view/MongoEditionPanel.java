@@ -16,35 +16,29 @@
 
 package org.codinjutsu.tools.nosql.mongo.view;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ui.tree.TreeUtil;
 import com.mongodb.DBObject;
-import org.apache.commons.lang.StringUtils;
+import org.codinjutsu.tools.nosql.commons.view.AbstractEditionPanel;
+import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
+import org.codinjutsu.tools.nosql.commons.view.action.edition.AddKeyAction;
+import org.codinjutsu.tools.nosql.commons.view.action.edition.AddValueAction;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
-import org.codinjutsu.tools.nosql.mongo.view.action.edition.AddKeyAction;
-import org.codinjutsu.tools.nosql.mongo.view.action.edition.AddValueAction;
-import org.codinjutsu.tools.nosql.mongo.view.action.edition.DeleteKeyAction;
+import org.codinjutsu.tools.nosql.commons.view.action.edition.DeleteKeyAction;
 import org.codinjutsu.tools.nosql.mongo.view.model.JsonTreeModel;
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoValueDescriptor;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
 
-public class MongoEditionPanel extends JPanel implements Disposable {
+public class MongoEditionPanel extends AbstractEditionPanel {
     private JButton saveButton;
     private JButton cancelButton;
     private JPanel editionTreePanel;
@@ -52,7 +46,6 @@ public class MongoEditionPanel extends JPanel implements Disposable {
     private JButton deleteButton;
 
     private JsonTreeTableView editTableView;
-
 
     public MongoEditionPanel() {
         super(new BorderLayout());
@@ -65,7 +58,7 @@ public class MongoEditionPanel extends JPanel implements Disposable {
         deleteButton.setName("deleteButton");
     }
 
-    public MongoEditionPanel init(final MongoPanel.MongoDocumentOperations mongoDocumentOperations, final MongoResultPanel.ActionCallback actionCallback) {
+    public MongoEditionPanel init(final MongoPanel.MongoDocumentOperations mongoDocumentOperations, final ActionCallback actionCallback) {
 
         cancelButton.addActionListener(new AbstractAction() {
             @Override
@@ -119,101 +112,14 @@ public class MongoEditionPanel extends JPanel implements Disposable {
         buildPopupMenu();
     }
 
-    void buildPopupMenu() {
-        DefaultActionGroup actionPopupGroup = new DefaultActionGroup("MongoEditorPopupGroup", true);
-        if (ApplicationManager.getApplication() != null) {
-            actionPopupGroup.add(new AddKeyAction(this));
-            actionPopupGroup.add(new AddValueAction(this));
-            actionPopupGroup.add(new DeleteKeyAction(this));
-        }
-
-        PopupHandler.installPopupHandler(editTableView, actionPopupGroup, "POPUP", ActionManager.getInstance());
+    @Override
+    protected NodeDescriptor createKeyValueDescriptor(String key, Object value) {
+        return MongoKeyValueDescriptor.createDescriptor(key, value);
     }
 
-    public boolean containsKey(String key) {
-        NoSqlTreeNode parentNode = getParentNode();
-        if (parentNode == null) {
-            return false;
-        }
-
-        Enumeration children = parentNode.children();
-        while (children.hasMoreElements()) {
-            NoSqlTreeNode childNode = (NoSqlTreeNode) children.nextElement();
-            NodeDescriptor descriptor = childNode.getDescriptor();
-            if (descriptor instanceof MongoKeyValueDescriptor) {
-                MongoKeyValueDescriptor keyValueDescriptor = (MongoKeyValueDescriptor) descriptor;
-                if (StringUtils.equals(key, keyValueDescriptor.getKey())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void addKey(String key, Object value) {
-
-        List<TreeNode> node = new LinkedList<TreeNode>();
-        NoSqlTreeNode treeNode = new NoSqlTreeNode(MongoKeyValueDescriptor.createDescriptor(key, value));
-
-        if (value instanceof DBObject) {
-            JsonTreeModel.processDbObject(treeNode, (DBObject) value);
-        }
-
-        node.add(treeNode);
-
-        DefaultTreeModel treeModel = (DefaultTreeModel) editTableView.getTree().getModel();
-        NoSqlTreeNode parentNode = getParentNode();
-        if (parentNode == null) {
-            parentNode = (NoSqlTreeNode) treeModel.getRoot();
-        }
-        TreeUtil.addChildrenTo(parentNode, node);
-        treeModel.reload(parentNode);
-    }
-
-    public void addValue(Object value) {
-        List<TreeNode> node = new LinkedList<TreeNode>();
-
-        NoSqlTreeNode parentNode = getParentNode();
-
-        NoSqlTreeNode treeNode = new NoSqlTreeNode(MongoValueDescriptor.createDescriptor(parentNode.getChildCount(), value));
-        if (value instanceof DBObject) {
-            JsonTreeModel.processDbObject(treeNode, (DBObject) value);
-        }
-
-        node.add(treeNode);
-
-        DefaultTreeModel treeModel = (DefaultTreeModel) editTableView.getTree().getModel();
-        TreeUtil.addChildrenTo(parentNode, node);
-        treeModel.reload(parentNode);
-    }
-
-    private NoSqlTreeNode getParentNode() {
-        NoSqlTreeNode lastPathComponent = getSelectedNode();
-        if (lastPathComponent == null) {
-            return null;
-        }
-        return (NoSqlTreeNode) lastPathComponent.getParent();
-    }
-
-    public NoSqlTreeNode getSelectedNode() {
-        return (NoSqlTreeNode) editTableView.getTree().getLastSelectedPathComponent();
-    }
-
-    public boolean canAddKey() {
-        NoSqlTreeNode selectedNode = getSelectedNode();
-        return selectedNode != null && selectedNode.getDescriptor() instanceof MongoKeyValueDescriptor;
-    }
-
-    public boolean canAddValue() {
-        NoSqlTreeNode selectedNode = getSelectedNode();
-        return selectedNode != null && selectedNode.getDescriptor() instanceof MongoValueDescriptor;
-    }
-
-    public void removeSelectedKey() {
-        NoSqlTreeNode selectedNode = getSelectedNode();
-        if (selectedNode != null) {
-            TreeUtil.removeSelected(editTableView.getTree());
-        }
+    @Override
+    protected NodeDescriptor createValueDescriptor(int index, Object value) {
+        return MongoValueDescriptor.createDescriptor(index, value);
     }
 
     private DBObject buildMongoDocument() {
@@ -234,5 +140,10 @@ public class MongoEditionPanel extends JPanel implements Disposable {
 
     private NoSqlTreeNode findObjectIdNodeDescriptor(NoSqlTreeNode rootNode) {
         return ((NoSqlTreeNode) rootNode.getChildAt(0));//TODO crappy
+    }
+
+    @Override
+    protected JsonTreeTableView getEditTableView() {
+        return editTableView;
     }
 }

@@ -13,7 +13,7 @@ internal fun buildTree(searchResult: SearchResult, nodeDescriptorFactory: NodeDe
 
 private fun processRecord(parentNode: NoSqlTreeNode, record: ObjectWrapper, nodeDescriptorFactory: NodeDescriptorFactory) {
     record.names.forEach {
-        val value = record.getData(it)
+        val value = record.get(it)
         val currentNode = NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(it, value))
         process(value, currentNode, nodeDescriptorFactory)
         parentNode.add(currentNode)

@@ -22,14 +22,15 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.mongodb.DBObject;
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider;
 import org.codinjutsu.tools.nosql.commons.utils.DateUtils;
-import org.codinjutsu.tools.nosql.commons.utils.StringUtils;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ValueDescriptor;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class MongoValueDescriptor implements NodeDescriptor {
+public class MongoValueDescriptor extends AbstractNodeDecriptor implements ValueDescriptor {
 
     private final int index;
     protected Object value;
@@ -71,36 +72,34 @@ public class MongoValueDescriptor implements NodeDescriptor {
         this.valueTextAttributes = valueTextAttributes;
     }
 
+    @Override
     public void renderValue(ColoredTableCellRenderer cellRenderer, boolean isNodeExpanded) {
         if (!isNodeExpanded) {
             cellRenderer.append(getFormattedValue(), valueTextAttributes);
         }
     }
 
+    @Override
     public void renderNode(ColoredTreeCellRenderer cellRenderer) {
         cellRenderer.append(getFormattedKey(), StyleAttributesProvider.getIndexAttribute());
     }
 
+    @Override
     public String getFormattedKey() {
         return String.format("[%s]", index);
     }
 
+    @Override
     public String getFormattedValue() {
         return String.format("%s", getValueAndAbbreviateIfNecessary());
     }
 
-    protected String getValueAndAbbreviateIfNecessary() {
-        String stringifiedValue = value.toString();
-        if (stringifiedValue.length() > MAX_LENGTH) {
-            return StringUtils.abbreviateInCenter(stringifiedValue, MAX_LENGTH);
-        }
-        return stringifiedValue;
-    }
-
+    @Override
     public Object getValue() {
         return value;
     }
 
+    @Override
     public void setValue(Object value) {
         this.value = value;
     }
@@ -149,6 +148,7 @@ public class MongoValueDescriptor implements NodeDescriptor {
             super(index, value, StyleAttributesProvider.getStringAttribute());
         }
 
+        @NotNull
         @Override
         protected String getValueAndAbbreviateIfNecessary() {
             return getFormattedDate();

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view;
+package org.codinjutsu.tools.nosql.commons.view;
 
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
@@ -27,19 +26,17 @@ import org.codinjutsu.tools.nosql.mongo.model.JsonDataType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractAddDialog extends DialogWrapper {
-    private static final Map<JsonDataType, TextFieldWrapper> UI_COMPONENT_BY_JSON_DATATYPE = new HashMap<JsonDataType, TextFieldWrapper>();
+import static org.codinjutsu.tools.nosql.commons.utils.StringUtils.parseNumber;
 
+public abstract class AbstractAddDialog extends DialogWrapper {
+    private static final Map<JsonDataType, TextFieldWrapper> UI_COMPONENT_BY_JSON_DATATYPE = new HashMap<>();
 
     static {
-
         UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.STRING, new StringFieldWrapper());
         UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.BOOLEAN, new BooleanFieldWrapper());
         UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.NUMBER, new NumberFieldWrapper());
@@ -49,39 +46,34 @@ public abstract class AbstractAddDialog extends DialogWrapper {
         UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.ARRAY, new JsonFieldWrapper());
     }
 
-    final MongoEditionPanel mongoEditionPanel;
-    protected TextFieldWrapper currentEditor = null;
+    final AbstractEditionPanel editionPanel;
+    TextFieldWrapper currentEditor = null;
 
-
-    AbstractAddDialog(MongoEditionPanel mongoEditionPanel) {
-        super(mongoEditionPanel, true);
-        this.mongoEditionPanel = mongoEditionPanel;
+    AbstractAddDialog(AbstractEditionPanel editionPanel) {
+        super(editionPanel, true);
+        this.editionPanel = editionPanel;
     }
 
-    void initCombo(final ComboBox combobox, final JPanel parentPanel) {
-        combobox.setModel(new DefaultComboBoxModel(JsonDataType.values()));
-        combobox.setRenderer(new ColoredListCellRenderer() {
+    void initCombo(final JComboBox<JsonDataType> combobox, final JPanel parentPanel) {
+        combobox.setModel(new DefaultComboBoxModel<>(JsonDataType.values()));
+        combobox.setRenderer(new ColoredListCellRenderer<JsonDataType>() {
 
             @Override
-            protected void customizeCellRenderer(JList jList, Object o, int i, boolean b, boolean b2) {
-                append(((JsonDataType) o).type);
+            protected void customizeCellRenderer(JList jList, JsonDataType o, int i, boolean b, boolean b2) {
+                append(o.type);
             }
         });
 
         combobox.setSelectedItem(null);
-        combobox.addItemListener(new ItemListener() {
+        combobox.addItemListener(itemEvent -> {
+            JsonDataType selectedType = (JsonDataType) combobox.getSelectedItem();
+            currentEditor = UI_COMPONENT_BY_JSON_DATATYPE.get(selectedType);
+            currentEditor.reset();
 
-            @Override
-            public void itemStateChanged(ItemEvent itemEvent) {
-                JsonDataType selectedType = (JsonDataType) combobox.getSelectedItem();
-                currentEditor = UI_COMPONENT_BY_JSON_DATATYPE.get(selectedType);
-                currentEditor.reset();
-
-                parentPanel.invalidate();
-                parentPanel.removeAll();
-                parentPanel.add(currentEditor.getComponent(), BorderLayout.CENTER);
-                parentPanel.validate();
-            }
+            parentPanel.invalidate();
+            parentPanel.removeAll();
+            parentPanel.add(currentEditor.getComponent(), BorderLayout.CENTER);
+            parentPanel.validate();
         });
 
         combobox.setSelectedItem(JsonDataType.STRING);
@@ -168,7 +160,7 @@ public abstract class AbstractAddDialog extends DialogWrapper {
 
         @Override
         public Number getValue() {
-            return org.codinjutsu.tools.nosql.commons.utils.StringUtils.parseNumber(component.getText());
+            return parseNumber(component.getText());
         }
 
         @Override

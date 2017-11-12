@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view;
+package org.codinjutsu.tools.nosql.commons.view;
 
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -25,12 +25,11 @@ import java.awt.*;
 
 public class AddValueDialog extends AbstractAddDialog {
 
-
     private ComboBox typeCombobox;
     private JPanel valuePanel;
     private JPanel mainPanel;
 
-    private AddValueDialog(MongoEditionPanel mongoEditionPanel) {
+    private AddValueDialog(AbstractEditionPanel mongoEditionPanel) {
         super(mongoEditionPanel);
         valuePanel.setLayout(new BorderLayout());
         typeCombobox.setName("valueType");
@@ -43,7 +42,7 @@ public class AddValueDialog extends AbstractAddDialog {
         return mainPanel;
     }
 
-    public static AddValueDialog createDialog(MongoEditionPanel parentPanel) {
+    public static AddValueDialog createDialog(AbstractEditionPanel parentPanel) {
         AddValueDialog dialog = new AddValueDialog(parentPanel);
         dialog.init();
         dialog.setTitle("Add A Value");

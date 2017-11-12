@@ -159,7 +159,6 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    @Ignore
     public void validateFormWithBadMongoUrlShouldReturnAValidationInfo() {
         frameFixture.textBox("labelField").setText("Localhost");
 
