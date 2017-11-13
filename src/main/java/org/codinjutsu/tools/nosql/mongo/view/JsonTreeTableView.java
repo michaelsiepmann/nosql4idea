@@ -31,7 +31,7 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.renderer.KeyCellRenderer;
 import org.codinjutsu.tools.nosql.commons.view.renderer.ValueCellRenderer;
 import org.codinjutsu.tools.nosql.commons.view.table.CellEditor;
-import org.codinjutsu.tools.nosql.mongo.view.table.MongoDatePickerCellEditor;
+import org.codinjutsu.tools.nosql.commons.view.table.NoSQLDatePickerCellEditor;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.table.TableCellEditor;
@@ -61,7 +61,6 @@ public class JsonTreeTableView extends TreeTable {
     };
 
     private static final ColumnInfo READONLY_VALUE = new ReadOnlyValueColumnInfo();
-
     private static final ColumnInfo WRITABLE_VALUE = new WritableColumnInfo();
 
     public static final ColumnInfo[] COLUMNS_FOR_READING = new ColumnInfo[]{KEY, READONLY_VALUE};
@@ -164,8 +163,8 @@ public class JsonTreeTableView extends TreeTable {
             return defaultEditor;
         }
 
-        private static MongoDatePickerCellEditor buildDateCellEditor(final NoSqlTreeNode treeNode) {
-            final MongoDatePickerCellEditor dateEditor = new MongoDatePickerCellEditor();
+        private static NoSQLDatePickerCellEditor buildDateCellEditor(final NoSqlTreeNode treeNode) {
+            final NoSQLDatePickerCellEditor dateEditor = new NoSQLDatePickerCellEditor();
 
 //  Note from dev: Quite ugly because when clicking on the button to open popup calendar, stopCellEdition is invoked.
 //                 From that point, impossible to set the selected data in the node description

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view.table;
+package org.codinjutsu.tools.nosql.commons.view.table;
 
 import org.codinjutsu.tools.nosql.commons.utils.DateUtils;
 import org.codinjutsu.tools.nosql.commons.view.table.DateTimePicker;
@@ -24,9 +24,9 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.Locale;
 
-public class MongoDatePickerCellEditor extends DatePickerCellEditor {
+public class NoSQLDatePickerCellEditor extends DatePickerCellEditor {
 
-    public MongoDatePickerCellEditor() {
+    public NoSQLDatePickerCellEditor() {
         this.dateFormat = DateUtils.utcDateTime(Locale.getDefault());
         datePicker = DateTimePicker.create();
         datePicker.getEditor().setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));

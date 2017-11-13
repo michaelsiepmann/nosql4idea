@@ -5,13 +5,13 @@ import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 
-internal fun buildTree(searchResult: SearchResult, nodeDescriptorFactory: NodeDescriptorFactory): NoSqlTreeNode {
+internal fun <DOCUMENT> buildTree(searchResult: SearchResult, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>): NoSqlTreeNode {
     val resultTreeNode = NoSqlTreeNode(nodeDescriptorFactory.createResultDescriptor(searchResult))
     searchResult.records.forEach { processRecord(resultTreeNode, it, nodeDescriptorFactory) }
     return resultTreeNode
 }
 
-private fun processRecord(parentNode: NoSqlTreeNode, record: ObjectWrapper, nodeDescriptorFactory: NodeDescriptorFactory) {
+private fun <DOCUMENT> processRecord(parentNode: NoSqlTreeNode, record: ObjectWrapper, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
     record.names.forEach {
         val value = record.get(it)
         val currentNode = NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(it, value))
@@ -20,7 +20,7 @@ private fun processRecord(parentNode: NoSqlTreeNode, record: ObjectWrapper, node
     }
 }
 
-private fun processRecordListValues(parentNode: NoSqlTreeNode, values: JsonArray, nodeDescriptorFactory: NodeDescriptorFactory) {
+private fun <DOCUMENT> processRecordListValues(parentNode: NoSqlTreeNode, values: JsonArray, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
     for ((index, value) in values.withIndex()) {
         val currentValueNode = NoSqlTreeNode(nodeDescriptorFactory.createValueDescriptor(index, value))
         process(value, currentValueNode, nodeDescriptorFactory)
@@ -28,7 +28,7 @@ private fun processRecordListValues(parentNode: NoSqlTreeNode, values: JsonArray
     }
 }
 
-private fun process(value: Any?, currentValueNode: NoSqlTreeNode, nodeDescriptorFactory: NodeDescriptorFactory) {
+private fun <DOCUMENT> process(value: Any?, currentValueNode: NoSqlTreeNode, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
     if (value is JsonArray) {
         processRecordListValues(currentValueNode, value, nodeDescriptorFactory)
     } else if (value is ObjectWrapper) {

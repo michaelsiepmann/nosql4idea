@@ -3,8 +3,9 @@ package org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor
 import com.intellij.ui.ColoredTableCellRenderer
 import com.intellij.ui.ColoredTreeCellRenderer
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ResultDescriptor
 
-internal class ElasticsearchResultDescriptor(collectionName : String) : NodeDescriptor {
+internal class ElasticsearchResultDescriptor(collectionName : String) : NodeDescriptor, ResultDescriptor {
 
     private val formattedText = String.format("results of '%s'", collectionName)
 

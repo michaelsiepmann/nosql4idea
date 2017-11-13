@@ -1,6 +1,6 @@
 package org.codinjutsu.tools.nosql.commons.view
 
-internal interface ActionCallback {
+interface ActionCallback {
 
     fun onOperationSuccess(message: String)
 

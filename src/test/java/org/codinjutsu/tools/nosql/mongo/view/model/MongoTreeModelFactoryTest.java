@@ -22,12 +22,14 @@ import com.mongodb.util.JSON;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
+import org.codinjutsu.tools.nosql.commons.view.model.TreeModelUtilityKt;
+import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoResultDescriptor;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class JsonTreeModelTest {
+public class MongoTreeModelFactoryTest {
 
     @Test
     public void buildDBObjectFromSimpleTree() throws Exception {
@@ -36,12 +38,12 @@ public class JsonTreeModelTest {
 //        Hack to convert _id fron string to ObjectId
         jsonObject.put("_id", new ObjectId(String.valueOf(jsonObject.get("_id"))));
 
-        NoSqlTreeNode treeNode = (NoSqlTreeNode) JsonTreeModel.buildJsonTree(jsonObject);
+        NoSqlTreeNode treeNode = buildJsonTree(jsonObject);
         NoSqlTreeNode labelNode = (NoSqlTreeNode) treeNode.getChildAt(1);
         labelNode.getDescriptor().setValue("tata");
 
 
-        DBObject dbObject = JsonTreeModel.buildDBObject(treeNode);
+        DBObject dbObject = new MongoTreeModelFactory().buildDBObject(treeNode);
 
         assertEquals("{ \"_id\" : { \"$oid\" : \"50b8d63414f85401b9268b99\"} , \"label\" : \"tata\" , \"visible\" : false , \"image\" :  null }",
                 dbObject.toString());
@@ -54,14 +56,14 @@ public class JsonTreeModelTest {
 //        Hack to convert _id fron string to ObjectId
         jsonObject.put("_id", new ObjectId(String.valueOf(jsonObject.get("_id"))));
 
-        NoSqlTreeNode treeNode = (NoSqlTreeNode) JsonTreeModel.buildJsonTree(jsonObject);
+        NoSqlTreeNode treeNode = buildJsonTree(jsonObject);
 
 //      Simulate updating from the treeNode
         NoSqlTreeNode innerDocNode = (NoSqlTreeNode) treeNode.getChildAt(4);
         NoSqlTreeNode soldOutNode = (NoSqlTreeNode) innerDocNode.getChildAt(2);
         soldOutNode.getDescriptor().setValue("false");
 
-        DBObject dbObject = JsonTreeModel.buildDBObject(treeNode);
+        DBObject dbObject = new MongoTreeModelFactory().buildDBObject(treeNode);
 
         assertEquals("{ \"_id\" : { \"$oid\" : \"50b8d63414f85401b9268b99\"} , \"label\" : \"toto\" , \"visible\" : false , \"image\" :  null  , \"innerdoc\" : { \"title\" : \"What?\" , \"numberOfPages\" : 52 , \"soldOut\" : false}}",
                 dbObject.toString());
@@ -74,12 +76,12 @@ public class JsonTreeModelTest {
 //        Hack to convert _id fron string to ObjectId
         jsonObject.put("_id", new ObjectId(String.valueOf(jsonObject.get("_id"))));
 
-        NoSqlTreeNode treeNode = (NoSqlTreeNode) JsonTreeModel.buildJsonTree(jsonObject);
+        NoSqlTreeNode treeNode = buildJsonTree(jsonObject);
         NoSqlTreeNode tagsNode = (NoSqlTreeNode) treeNode.getChildAt(2);
         NoSqlTreeNode agileTagNode = (NoSqlTreeNode) tagsNode.getChildAt(2);
         agileTagNode.getDescriptor().setValue("a gilles");
 
-        DBObject dbObject = JsonTreeModel.buildDBObject(treeNode);
+        DBObject dbObject = new MongoTreeModelFactory().buildDBObject(treeNode);
 
         assertEquals("{ \"_id\" : { \"$oid\" : \"50b8d63414f85401b9268b99\"} , \"title\" : \"XP by example\" , \"tags\" : [ \"pair programming\" , \"tdd\" , \"a gilles\"] , \"innerList\" : [ [ 1 , 2 , 3 , 4] , [ false , true] , [ { \"tagName\" : \"pouet\"} , { \"tagName\" : \"paf\"}]]}",
                 dbObject.toString());
@@ -90,12 +92,12 @@ public class JsonTreeModelTest {
         DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("simpleDocumentWithInnerNodes.json")));
         jsonObject.put("_id", new ObjectId(String.valueOf(jsonObject.get("_id"))));
 
-        NoSqlTreeNode treeNode = (NoSqlTreeNode) JsonTreeModel.buildJsonTree(jsonObject);
+        NoSqlTreeNode treeNode = buildJsonTree(jsonObject);
         NoSqlTreeNode objectIdNode = (NoSqlTreeNode) treeNode.getChildAt(0);
         assertEquals("_id", objectIdNode.getDescriptor().getFormattedKey());
 
-        assertNull(JsonTreeModel.findObjectIdNode(treeNode));
-        assertEquals(objectIdNode, JsonTreeModel.findObjectIdNode((NoSqlTreeNode) treeNode.getChildAt(0)));
+        assertNull(TreeModelUtilityKt.findObjectIdNode(treeNode));
+        assertEquals(objectIdNode, TreeModelUtilityKt.findObjectIdNode((NoSqlTreeNode) treeNode.getChildAt(0)));
 
     }
 
@@ -109,8 +111,15 @@ public class JsonTreeModelTest {
         DBObject second = (DBObject) dbList.get(1);
         second.put("_id", new ObjectId(String.valueOf(second.get("_id"))));
 
-        NoSqlTreeNode treeNode = (NoSqlTreeNode) JsonTreeModel.buildJsonTree(dbList);
+        NoSqlTreeNode treeNode = buildJsonTree(dbList);
 
-        assertEquals(first, JsonTreeModel.findDocument((NoSqlTreeNode) treeNode.getChildAt(0)));
+        assertEquals(first, TreeModelUtilityKt.findDocument((NoSqlTreeNode) treeNode.getChildAt(0)));
     }
+
+    private NoSqlTreeNode buildJsonTree(DBObject mongoObject) {
+        NoSqlTreeNode rootNode = new NoSqlTreeNode(new MongoResultDescriptor());//TODO crappy
+        new MongoTreeModelFactory().processDbObject(rootNode, mongoObject);
+        return rootNode;
+    }
+
 }

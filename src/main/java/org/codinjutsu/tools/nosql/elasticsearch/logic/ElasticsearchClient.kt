@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.elasticsearch.logic
 
+import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.DatabaseVendor
@@ -54,6 +55,18 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchResult,
 
     override fun dropDatabase(serverConfiguration: ServerConfiguration, database: ElasticsearchDatabase) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun findDocument(serverConfiguration: ServerConfiguration, database: ElasticsearchDatabase, collection: ElasticsearchCollection, id: Any): JsonObject? {
+        return null // todo
+    }
+
+    fun delete(serverConfiguration: ServerConfiguration, database: ElasticsearchDatabase, collection: ElasticsearchCollection, obj: Any) {
+
+    }
+
+    fun update(serverConfiguration: ServerConfiguration, database: ElasticsearchDatabase, collection: ElasticsearchCollection, obj : JsonObject) {
+
     }
 
     private fun getTypes(configuration: ServerConfiguration, index: String): Collection<ElasticsearchCollection> {

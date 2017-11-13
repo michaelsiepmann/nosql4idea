@@ -21,6 +21,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.commons.io.IOUtils;
+import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 import org.fest.swing.edt.GuiActionRunner;
@@ -44,7 +45,7 @@ public class MongoResultPanelTest {
     private FrameFixture frameFixture;
 
     @Mock
-    private MongoPanel.MongoDocumentOperations mongoDocumentOperations;
+    private NoSQLResultPanelDocumentOperations<DBObject> noSQLResultPanelDocumentOperations;
 
     @After
     public void tearDown() {
@@ -57,9 +58,9 @@ public class MongoResultPanelTest {
 
         mongoResultPanel = GuiActionRunner.execute(new GuiQuery<MongoResultPanel>() {
             protected MongoResultPanel executeInEDT() {
-                return new MongoResultPanel(DummyProject.getInstance(), mongoDocumentOperations) {
+                return new MongoResultPanel(DummyProject.getInstance(), noSQLResultPanelDocumentOperations) {
                     @Override
-                    void buildPopupMenu() {
+                    protected void buildPopupMenu() {
                     }
                 };
             }
@@ -101,7 +102,7 @@ public class MongoResultPanelTest {
     @Test
     public void testDisplayTreeWithAStructuredDocument() throws Exception {
         mongoResultPanel.updateResultTableTree(createCollectionResults("structuredDocument.json", "mycollec"));
-        TreeUtil.expandAll(mongoResultPanel.resultTableView.getTree());
+        TreeUtil.expandAll(mongoResultPanel.getResultTableView().getTree());
         frameFixture.table("resultTreeTable").cellReader(new TableCellReader())
                 .requireColumnCount(2)
                 .requireContents(new String[][]{
@@ -124,7 +125,7 @@ public class MongoResultPanelTest {
     public void testDisplayTreeWithAnArrayOfStructuredDocument() throws Exception {
         mongoResultPanel.updateResultTableTree(createCollectionResults("arrayOfDocuments.json", "mycollec"));
 
-        TreeUtil.expandAll(mongoResultPanel.resultTableView.getTree());
+        TreeUtil.expandAll(mongoResultPanel.getResultTableView().getTree());
         frameFixture.table("resultTreeTable").cellReader(new TableCellReader())
                 .requireContents(new String[][]{
 
@@ -156,15 +157,15 @@ public class MongoResultPanelTest {
     @Test
     public void testCopyMongoObjectNodeValue() throws Exception {
         mongoResultPanel.updateResultTableTree(createCollectionResults("structuredDocument.json", "mycollec"));
-        TreeUtil.expandAll(mongoResultPanel.resultTableView.getTree());
+        TreeUtil.expandAll(mongoResultPanel.getResultTableView().getTree());
 
-        mongoResultPanel.resultTableView.setRowSelectionInterval(0, 0);
+        mongoResultPanel.getResultTableView().setRowSelectionInterval(0, 0);
         assertEquals("{ \"id\" : 0 , \"label\" : \"toto\" , \"visible\" : false , \"doc\" : { \"title\" : \"hello\" , \"nbPages\" : 10 , \"keyWord\" : [ \"toto\" , true , 10]}}", mongoResultPanel.getSelectedNodeStringifiedValue());
 
-        mongoResultPanel.resultTableView.setRowSelectionInterval(2, 2);
+        mongoResultPanel.getResultTableView().setRowSelectionInterval(2, 2);
         assertEquals("\"label\" : \"toto\"", mongoResultPanel.getSelectedNodeStringifiedValue());
 
-        mongoResultPanel.resultTableView.setRowSelectionInterval(4, 4);
+        mongoResultPanel.getResultTableView().setRowSelectionInterval(4, 4);
         assertEquals("\"doc\" : { \"title\" : \"hello\" , \"nbPages\" : 10 , \"keyWord\" : [ \"toto\" , true , 10]}", mongoResultPanel.getSelectedNodeStringifiedValue());
     }
 
@@ -172,7 +173,7 @@ public class MongoResultPanelTest {
     public void copyMongoResults() throws Exception {
         mongoResultPanel.updateResultTableTree(createCollectionResults("arrayOfDocuments.json", "mycollec"));
 
-        TreeUtil.expandAll(mongoResultPanel.resultTableView.getTree());
+        TreeUtil.expandAll(mongoResultPanel.getResultTableView().getTree());
 
         frameFixture.table("resultTreeTable").cellReader(new TableCellReader())
                 .requireContents(new String[][]{
@@ -201,9 +202,9 @@ public class MongoResultPanelTest {
                 });
 
         assertEquals("[ " +
-                "{ \"id\" : 0 , \"label\" : \"toto\" , \"visible\" : false , \"doc\" : { \"title\" : \"hello\" , \"nbPages\" : 10 , \"keyWord\" : [ \"toto\" , true , 10]}} , " +
-                "{ \"id\" : 1 , \"label\" : \"tata\" , \"visible\" : true , \"doc\" : { \"title\" : \"ola\" , \"nbPages\" : 1 , \"keyWord\" : [ \"tutu\" , false , 10]}}" +
-                " ]",
+                        "{ \"id\" : 0 , \"label\" : \"toto\" , \"visible\" : false , \"doc\" : { \"title\" : \"hello\" , \"nbPages\" : 10 , \"keyWord\" : [ \"toto\" , true , 10]}} , " +
+                        "{ \"id\" : 1 , \"label\" : \"tata\" , \"visible\" : true , \"doc\" : { \"title\" : \"ola\" , \"nbPages\" : 1 , \"keyWord\" : [ \"tutu\" , false , 10]}}" +
+                        " ]",
                 mongoResultPanel.getSelectedNodeStringifiedValue());
     }
 

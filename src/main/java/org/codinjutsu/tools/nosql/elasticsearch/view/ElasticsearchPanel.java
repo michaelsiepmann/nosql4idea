@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.elasticsearch.view;
 
+import com.google.gson.JsonObject;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.TreeExpander;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -13,29 +14,23 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.NumberDocument;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.panels.NonOpaquePanel;
-import com.intellij.ui.treeStructure.treetable.TreeTableTree;
-import com.intellij.util.ui.tree.TreeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.ErrorPanel;
+import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
-import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
 import org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchCollection;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchQuery;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult;
-import org.codinjutsu.tools.nosql.mongo.view.JsonTreeTableView;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-
-import static org.codinjutsu.tools.nosql.commons.view.nodedescriptor.TreeModelFactoryKt.buildTree;
 
 public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection> {
 
@@ -44,7 +39,7 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
     private JPanel toolBarPanel;
     private JPanel errorPanel;
 
-    private JPanel resultPanel;
+    private ElasticsearchResultPanel resultPanel;
     private final LoadingDecorator loadingDecorator;
     private final JTextField rowLimitField = new JTextField("");
 
@@ -54,7 +49,6 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
     private final ServerConfiguration serverConfiguration;
     private final ElasticsearchDatabase database;
     private final ElasticsearchCollection collection;
-    private JsonTreeTableView resultTableView;
 
     public ElasticsearchPanel(Project project, ElasticsearchClient client, ServerConfiguration serverConfiguration, ElasticsearchDatabase database, ElasticsearchCollection collection) {
         this.project = project;
@@ -62,7 +56,24 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
         this.serverConfiguration = serverConfiguration;
         this.database = database;
         this.collection = collection;
-        this.resultPanel = new JPanel(new BorderLayout());
+        this.resultPanel = new ElasticsearchResultPanel(project, new NoSQLResultPanelDocumentOperations<JsonObject>() {
+            @Override
+            public JsonObject getDocument(@NotNull Object _id) {
+                return client.findDocument(serverConfiguration, database, collection, _id);
+            }
+
+            @Override
+            public void deleteDocument(@NotNull Object document) {
+                client.delete(serverConfiguration, database, collection, document);
+                executeQuery();
+            }
+
+            @Override
+            public void updateDocument(JsonObject document) {
+                client.update(serverConfiguration, database, collection, document);
+                executeQuery();
+            }
+        });
 
         loadingDecorator = new LoadingDecorator(resultPanel, this, 0);
 
@@ -143,16 +154,15 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
         if (elasticsearchResult.hasErrors()) {
             throw new Exception(StringUtils.join(elasticsearchResult.getErrors(), " "));
         }
-        updateResultTableTree(elasticsearchResult);
+        GuiUtils.runInSwingThread(() -> updateResultTableTree(elasticsearchResult));
     }
 
     private void expandAll() {
-        TreeUtil.expandAll(resultTableView.getTree());
+        resultPanel.expandAll();
     }
 
     private void collapseAll() {
-        TreeTableTree tree = resultTableView.getTree();
-        TreeUtil.collapseAll(tree, 1);
+        resultPanel.collapseAll();
     }
 
     @Override
@@ -161,15 +171,7 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
     }
 
     private void updateResultTableTree(ElasticsearchResult elasticsearchResult) {
-        NoSqlTreeNode rootNode = buildTree(elasticsearchResult, new ElasticsearchTreeModelFactory());
-        resultTableView = new JsonTreeTableView(rootNode, JsonTreeTableView.COLUMNS_FOR_READING);
-        resultTableView.setName("resultTreeTable");
-
-        JPanel resultPanel = getResultPanel();
-        resultPanel.invalidate();
-        resultPanel.removeAll();
-        resultPanel.add(new JBScrollPane(resultTableView));
-        resultPanel.validate();
+        resultPanel.updateResultTableTree(elasticsearchResult);
     }
 
     @Override
@@ -183,10 +185,13 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
 
     @Override
     public void executeQuery() {
+        errorPanel.setVisible(false);
+        // // TODO: 13.11.2017  validateQuery();
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Executing query", true) { //TODO need to abstract this method
             @Override
             public void run(@NotNull final ProgressIndicator indicator) {
                 try {
+                    GuiUtils.runInSwingThread(() -> loadingDecorator.startLoading(false));
                     loadAndDisplayResults(getLimit());
                 } catch (final Exception ex) {
                     GuiUtils.runInSwingThread(() -> {
@@ -201,7 +206,6 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
                 }
             }
         });
-
     }
 
     @Override

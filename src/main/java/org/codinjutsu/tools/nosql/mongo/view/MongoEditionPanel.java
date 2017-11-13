@@ -21,17 +21,20 @@ import com.intellij.ui.components.JBScrollPane;
 import com.mongodb.DBObject;
 import org.codinjutsu.tools.nosql.commons.view.AbstractEditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
+import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
-import org.codinjutsu.tools.nosql.mongo.view.model.JsonTreeModel;
+import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
+import org.codinjutsu.tools.nosql.mongo.view.model.MongoTreeModelFactory;
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoKeyValueDescriptor;
+import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoResultDescriptor;
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoValueDescriptor;
 
 import javax.swing.*;
+import javax.swing.tree.TreeNode;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
-public class MongoEditionPanel extends AbstractEditionPanel {
+public class MongoEditionPanel extends AbstractEditionPanel<MongoResult, DBObject> {
     private JButton saveButton;
     private JButton cancelButton;
     private JPanel editionTreePanel;
@@ -41,7 +44,7 @@ public class MongoEditionPanel extends AbstractEditionPanel {
     private JsonTreeTableView editTableView;
 
     public MongoEditionPanel() {
-        super(new BorderLayout());
+        super(new BorderLayout(), new MongoTreeModelFactory());
 
         add(mainPanel);
         editionTreePanel.setLayout(new BorderLayout());
@@ -51,40 +54,8 @@ public class MongoEditionPanel extends AbstractEditionPanel {
         deleteButton.setName("deleteButton");
     }
 
-    public MongoEditionPanel init(final MongoPanel.MongoDocumentOperations mongoDocumentOperations, final ActionCallback actionCallback) {
-
-        cancelButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                actionCallback.onOperationCancelled("Modification canceled...");
-            }
-        });
-
-        saveButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    mongoDocumentOperations.updateMongoDocument(buildMongoDocument());
-                    actionCallback.onOperationSuccess("Document saved...");
-                } catch (Exception exception) {
-                    actionCallback.onOperationFailure(exception);
-                }
-            }
-        });
-
-        deleteButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    mongoDocumentOperations.deleteMongoDocument(getDocumentId());
-                    actionCallback.onOperationSuccess("Document deleted...");
-                } catch (Exception exception) {
-                    actionCallback.onOperationFailure(exception);
-                }
-            }
-        });
-
-        return this;
+    public void init(NoSQLResultPanelDocumentOperations<DBObject> documentOperations, ActionCallback actionCallback) {
+        init(documentOperations, actionCallback, cancelButton, saveButton, deleteButton);
     }
 
     public void updateEditionTree(DBObject mongoDocument) {
@@ -94,7 +65,7 @@ public class MongoEditionPanel extends AbstractEditionPanel {
         }
 
         mainPanel.setBorder(IdeBorderFactory.createTitledBorder(panelTitle, true));
-        editTableView = new JsonTreeTableView(JsonTreeModel.buildJsonTree(mongoDocument), JsonTreeTableView.COLUMNS_FOR_WRITING);
+        editTableView = new JsonTreeTableView(buildJsonTree(mongoDocument), JsonTreeTableView.COLUMNS_FOR_WRITING);
         editTableView.setName("editionTreeTable");
 
         editionTreePanel.invalidate();
@@ -103,6 +74,12 @@ public class MongoEditionPanel extends AbstractEditionPanel {
         editionTreePanel.validate();
 
         buildPopupMenu();
+    }
+
+    private TreeNode buildJsonTree(DBObject mongoObject) {
+        NoSqlTreeNode rootNode = new NoSqlTreeNode(new MongoResultDescriptor());//TODO crappy
+        new MongoTreeModelFactory().processObject(rootNode, mongoObject);
+        return rootNode;
     }
 
     @Override
@@ -115,9 +92,10 @@ public class MongoEditionPanel extends AbstractEditionPanel {
         return MongoValueDescriptor.createDescriptor(index, value);
     }
 
-    private DBObject buildMongoDocument() {
+    @Override
+    protected DBObject buildMongoDocument() {
         NoSqlTreeNode rootNode = (NoSqlTreeNode) editTableView.getTree().getModel().getRoot();
-        return JsonTreeModel.buildDBObject(rootNode);
+        return new MongoTreeModelFactory().buildDBObject(rootNode);
     }
 
     @Override
@@ -125,7 +103,8 @@ public class MongoEditionPanel extends AbstractEditionPanel {
         editTableView = null;
     }
 
-    private Object getDocumentId() {
+    @Override
+    protected Object getDocumentId() {
         NoSqlTreeNode rootNode = (NoSqlTreeNode) editTableView.getTree().getModel().getRoot();
 
         return findObjectIdNodeDescriptor(rootNode).getDescriptor().getValue();

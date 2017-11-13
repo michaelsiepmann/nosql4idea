@@ -19,8 +19,9 @@ package org.codinjutsu.tools.nosql.mongo.view.nodedescriptor;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ResultDescriptor;
 
-public class MongoResultDescriptor implements NodeDescriptor {
+public class MongoResultDescriptor implements NodeDescriptor, ResultDescriptor {
 
     private final String formattedText;
 

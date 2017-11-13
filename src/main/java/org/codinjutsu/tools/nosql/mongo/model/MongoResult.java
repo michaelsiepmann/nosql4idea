@@ -17,11 +17,14 @@
 package org.codinjutsu.tools.nosql.mongo.model;
 
 import com.mongodb.DBObject;
+import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class MongoResult {
+public class MongoResult implements SearchResult {
 
     private final String collectionName;
     private final List<DBObject> mongoObjects = new LinkedList<DBObject>();
@@ -38,7 +41,15 @@ public class MongoResult {
         return mongoObjects;
     }
 
-    public String getCollectionName() {
+    @NotNull
+    @Override
+    public String getName() {
         return collectionName;
+    }
+
+    @NotNull
+    @Override
+    public List<ObjectWrapper> getRecords() {
+        return null;
     }
 }

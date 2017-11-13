@@ -21,6 +21,7 @@ import com.mongodb.util.JSON;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
+import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.fest.swing.data.TableCell;
 import org.fest.swing.driver.BasicJTableCellReader;
@@ -39,14 +40,16 @@ import javax.swing.*;
 import java.io.IOException;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class MongoEditionPanelTest {
 
     private MongoEditionPanel mongoEditionPanel;
 
     private FrameFixture frameFixture;
-    private MongoPanel.MongoDocumentOperations mockMongoOperations = mock(MongoPanel.MongoDocumentOperations.class);
+    private NoSQLResultPanelDocumentOperations mockMongoOperations = mock(NoSQLResultPanelDocumentOperations.class);
     private ActionCallback mockActionCallback = mock(ActionCallback.class);
 
     @After
@@ -61,7 +64,7 @@ public class MongoEditionPanelTest {
             protected MongoEditionPanel executeInEDT() {
                 MongoEditionPanel panel = new MongoEditionPanel() {
                     @Override
-                    void buildPopupMenu() {
+                    protected void buildPopupMenu() {
                     }
                 };
                 return panel.init(mockMongoOperations, mockActionCallback);
@@ -95,7 +98,7 @@ public class MongoEditionPanelTest {
         frameFixture.button("saveButton").click();
 
         ArgumentCaptor<DBObject> argument = ArgumentCaptor.forClass(DBObject.class);
-        verify(mockMongoOperations).updateMongoDocument(argument.capture());
+        verify(mockMongoOperations).updateDocument(argument.capture());
 
         Assert.assertEquals("{ \"_id\" : { \"$oid\" : \"50b8d63414f85401b9268b99\"} , \"label\" : \"Hello\" , \"visible\" : false , \"image\" :  null }",
                 argument.getValue().toString());
@@ -111,7 +114,7 @@ public class MongoEditionPanelTest {
         editionTreeTable.enterValue(TableCell.row(1).column(1), "Hello");
 
         frameFixture.button("cancelButton").click();
-        verify(mockMongoOperations, times(0)).updateMongoDocument(any(DBObject.class));
+        verify(mockMongoOperations, times(0)).updateDocument(any(DBObject.class));
 
         verify(mockActionCallback, times(1)).onOperationCancelled(any(String.class));
     }
