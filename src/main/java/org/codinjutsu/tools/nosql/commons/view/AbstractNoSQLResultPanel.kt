@@ -107,18 +107,14 @@ internal abstract class AbstractNoSQLResultPanel<RESULT : SearchResult, DOCUMENT
         return null
     }
 
-    fun isSelectedNodeId(): Boolean {
-        if (resultTableView != null) {
-            val tree = resultTableView!!.tree
-            val treeNode = tree.lastSelectedPathComponent as NoSqlTreeNode
-
-            val descriptor = treeNode.descriptor
-            if (descriptor is AbstractKeyValueDescriptor) {
-                return StringUtils.equals(descriptor.key, "_id")
+    fun isSelectedNodeId() =
+            if (resultTableView != null) {
+                isSelectedNodeId(resultTableView!!.tree.lastSelectedPathComponent as NoSqlTreeNode)
+            } else {
+                false
             }
-        }
-        return false
-    }
+
+    protected open fun isSelectedNodeId(treeNode: NoSqlTreeNode): Boolean = false
 
     fun expandAll() {
         TreeUtil.expandAll(resultTableView!!.tree)

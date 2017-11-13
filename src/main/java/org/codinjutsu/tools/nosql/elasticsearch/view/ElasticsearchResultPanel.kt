@@ -9,6 +9,7 @@ import org.codinjutsu.tools.nosql.commons.view.AbstractEditionPanel
 import org.codinjutsu.tools.nosql.commons.view.AbstractNoSQLResultPanel
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations
+import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult
 
 internal class ElasticsearchResultPanel(project: Project, documentOPerations: NoSQLResultPanelDocumentOperations<JsonObject>) : AbstractNoSQLResultPanel<ElasticsearchResult, JsonObject>(project, documentOPerations, ElasticsearchTreeModelFactory()) {
@@ -30,5 +31,10 @@ internal class ElasticsearchResultPanel(project: Project, documentOPerations: No
             }
         })
         return elasticsearchEditionPanel
+    }
+
+    override fun isSelectedNodeId(treeNode: NoSqlTreeNode): Boolean {
+        val obj = treeNode.userObject as JsonObject
+        return super.isSelectedNodeId(treeNode)
     }
 }

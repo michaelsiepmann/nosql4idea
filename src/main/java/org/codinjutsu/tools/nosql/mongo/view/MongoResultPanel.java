@@ -20,10 +20,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.mongodb.DBObject;
+import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.AbstractNoSQLResultPanel;
+import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
+import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 import org.codinjutsu.tools.nosql.mongo.view.model.MongoTreeModelFactory;
 import org.jetbrains.annotations.NotNull;
@@ -55,5 +59,11 @@ public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoResult, DBOb
             }
         });
         return mongoEditionPanel;
+    }
+
+    @Override
+    protected boolean isSelectedNodeId(@NotNull NoSqlTreeNode treeNode) {
+        NodeDescriptor descriptor = treeNode.getDescriptor();
+        return descriptor instanceof AbstractKeyValueDescriptor && StringUtils.equals(((AbstractKeyValueDescriptor) descriptor).getKey(), "_id");
     }
 }
