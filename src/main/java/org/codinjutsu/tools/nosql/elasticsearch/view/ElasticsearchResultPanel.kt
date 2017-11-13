@@ -34,7 +34,7 @@ internal class ElasticsearchResultPanel(project: Project, documentOPerations: No
     }
 
     override fun isSelectedNodeId(treeNode: NoSqlTreeNode): Boolean {
-        val obj = treeNode.userObject as JsonObject
+        val obj = treeNode.descriptor
         return super.isSelectedNodeId(treeNode)
     }
 }
