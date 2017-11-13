@@ -32,6 +32,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 import com.mongodb.DBObject;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
+import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
@@ -40,6 +41,7 @@ import org.codinjutsu.tools.nosql.mongo.view.action.EditMongoDocumentAction;
 import org.codinjutsu.tools.nosql.mongo.view.model.JsonTreeModel;
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoResultDescriptor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -82,18 +84,18 @@ public class MongoResultPanel extends JPanel implements Disposable {
 
     private MongoEditionPanel createMongoEditionPanel() {
         return new MongoEditionPanel().init(mongoDocumentOperations, new ActionCallback() {
-            public void onOperationSuccess(String message) {
+            public void onOperationSuccess(@NotNull String message) {
                 hideEditionPanel();
-                GuiUtils.showNotification(MongoResultPanel.this.resultTreePanel, MessageType.INFO, message, Balloon.Position.above);
+                GuiUtils.showNotification(resultTreePanel, MessageType.INFO, message, Balloon.Position.above);
             }
 
             @Override
-            public void onOperationFailure(Exception exception) {
-                GuiUtils.showNotification(MongoResultPanel.this.resultTreePanel, MessageType.ERROR, exception.getMessage(), Balloon.Position.above);
+            public void onOperationFailure(@NotNull Exception exception) {
+                GuiUtils.showNotification(resultTreePanel, MessageType.ERROR, exception.getMessage(), Balloon.Position.above);
             }
 
             @Override
-            public void onOperationCancelled(String message) {
+            public void onOperationCancelled(@NotNull String message) {
                 hideEditionPanel();
             }
         });
@@ -229,14 +231,5 @@ public class MongoResultPanel extends JPanel implements Disposable {
     public void dispose() {
         resultTableView = null;
         mongoEditionPanel.dispose();
-    }
-
-    public interface ActionCallback {
-
-        void onOperationSuccess(String message);
-
-        void onOperationFailure(Exception exception);
-
-        void onOperationCancelled(String message);
     }
 }

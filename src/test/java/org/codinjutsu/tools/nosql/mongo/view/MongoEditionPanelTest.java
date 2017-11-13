@@ -20,6 +20,7 @@ import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
+import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.fest.swing.data.TableCell;
 import org.fest.swing.driver.BasicJTableCellReader;
@@ -46,7 +47,7 @@ public class MongoEditionPanelTest {
 
     private FrameFixture frameFixture;
     private MongoPanel.MongoDocumentOperations mockMongoOperations = mock(MongoPanel.MongoDocumentOperations.class);
-    private MongoResultPanel.ActionCallback mockActionCallback = mock(MongoResultPanel.ActionCallback.class);
+    private ActionCallback mockActionCallback = mock(ActionCallback.class);
 
     @After
     public void tearDown() {

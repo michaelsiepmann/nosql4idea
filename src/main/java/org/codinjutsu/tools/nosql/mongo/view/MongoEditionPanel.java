@@ -16,20 +16,13 @@
 
 package org.codinjutsu.tools.nosql.mongo.view;
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.PopupHandler;
 import com.intellij.ui.components.JBScrollPane;
 import com.mongodb.DBObject;
 import org.codinjutsu.tools.nosql.commons.view.AbstractEditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
-import org.codinjutsu.tools.nosql.commons.view.action.edition.AddKeyAction;
-import org.codinjutsu.tools.nosql.commons.view.action.edition.AddValueAction;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
-import org.codinjutsu.tools.nosql.commons.view.action.edition.DeleteKeyAction;
 import org.codinjutsu.tools.nosql.mongo.view.model.JsonTreeModel;
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoValueDescriptor;

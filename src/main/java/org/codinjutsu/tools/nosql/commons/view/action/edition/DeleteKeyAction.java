@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view.action.edition;
+package org.codinjutsu.tools.nosql.commons.view.action.edition;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.codinjutsu.tools.nosql.mongo.view.MongoEditionPanel;
+import org.codinjutsu.tools.nosql.commons.view.AbstractEditionPanel;
 
 import java.awt.event.KeyEvent;
 
 public class DeleteKeyAction extends AnAction {
 
-    private final MongoEditionPanel mongoEditionPanel;
+    private final AbstractEditionPanel editionPanel;
 
-    public DeleteKeyAction(MongoEditionPanel mongoEditionPanel) {
+    public DeleteKeyAction(AbstractEditionPanel editionPanel) {
         super("Delete this", "Delete the selected node", AllIcons.Actions.Delete);
-        registerCustomShortcutSet(KeyEvent.VK_DELETE, KeyEvent.ALT_MASK, mongoEditionPanel);
-        this.mongoEditionPanel = mongoEditionPanel;
+        registerCustomShortcutSet(KeyEvent.VK_DELETE, KeyEvent.ALT_MASK, editionPanel);
+        this.editionPanel = editionPanel;
     }
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        mongoEditionPanel.removeSelectedKey();
+        editionPanel.removeSelectedKey();
     }
 
     @Override
     public void update(AnActionEvent event) {
-        event.getPresentation().setVisible(mongoEditionPanel.getSelectedNode() != null);
+        event.getPresentation().setVisible(editionPanel.getSelectedNode() != null);
     }
 }
