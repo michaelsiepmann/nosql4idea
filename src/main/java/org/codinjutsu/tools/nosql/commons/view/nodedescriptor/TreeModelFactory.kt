@@ -1,6 +1,5 @@
 package org.codinjutsu.tools.nosql.commons.view.nodedescriptor
 
-import com.couchbase.client.java.document.json.JsonArray
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
@@ -20,8 +19,8 @@ private fun <DOCUMENT> processRecord(parentNode: NoSqlTreeNode, record: ObjectWr
     }
 }
 
-private fun <DOCUMENT> processRecordListValues(parentNode: NoSqlTreeNode, values: JsonArray, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
-    for ((index, value) in values.withIndex()) {
+private fun <DOCUMENT> processRecordListValues(parentNode: NoSqlTreeNode, values: Any, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
+    for ((index, value) in nodeDescriptorFactory.toArray(values).withIndex()) {
         val currentValueNode = NoSqlTreeNode(nodeDescriptorFactory.createValueDescriptor(index, value))
         process(value, currentValueNode, nodeDescriptorFactory)
         parentNode.add(currentValueNode)
@@ -29,9 +28,11 @@ private fun <DOCUMENT> processRecordListValues(parentNode: NoSqlTreeNode, values
 }
 
 private fun <DOCUMENT> process(value: Any?, currentValueNode: NoSqlTreeNode, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
-    if (value is JsonArray) {
-        processRecordListValues(currentValueNode, value, nodeDescriptorFactory)
-    } else if (value is ObjectWrapper) {
-        processRecord(currentValueNode, value, nodeDescriptorFactory)
+    if (value != null) {
+        if (nodeDescriptorFactory.isArray(value)) {
+            processRecordListValues(currentValueNode, value, nodeDescriptorFactory)
+        } else if (value is ObjectWrapper) {
+            processRecord(currentValueNode, value, nodeDescriptorFactory)
+        }
     }
 }

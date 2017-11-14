@@ -1,6 +1,5 @@
 package org.codinjutsu.tools.nosql.commons.view.nodedescriptor
 
-import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 
 internal interface NodeDescriptorFactory<out DOCUMENT> {
@@ -14,4 +13,8 @@ internal interface NodeDescriptorFactory<out DOCUMENT> {
     fun processObject(parentNode: NoSqlTreeNode, value: Any?)
 
     fun buildDBObject(rootNode: NoSqlTreeNode): DOCUMENT
+
+    fun isArray(value: Any?): Boolean
+
+    fun toArray(value: Any): Iterator<Any>
 }

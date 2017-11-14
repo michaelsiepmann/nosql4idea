@@ -1,7 +1,7 @@
 package org.codinjutsu.tools.nosql.couchbase.view;
 
+import com.couchbase.client.java.document.json.JsonArray;
 import com.couchbase.client.java.document.json.JsonObject;
-import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory;
@@ -10,6 +10,8 @@ import org.codinjutsu.tools.nosql.couchbase.view.nodedescriptor.CouchbaseResultD
 import org.codinjutsu.tools.nosql.couchbase.view.nodedescriptor.CouchbaseValueDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
 
 public class CouchbaseTreeModelFactory implements NodeDescriptorFactory<JsonObject> {
 
@@ -39,5 +41,16 @@ public class CouchbaseTreeModelFactory implements NodeDescriptorFactory<JsonObje
     @Override
     public JsonObject buildDBObject(@NotNull NoSqlTreeNode rootNode) {
         return null;
+    }
+
+    @Override
+    public boolean isArray(@Nullable Object value) {
+        return value instanceof JsonArray;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<Object> toArray(@NotNull Object value) {
+        return ((JsonArray) value).iterator();
     }
 }

@@ -107,4 +107,8 @@ class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
         }
         return basicDBList
     }
+
+    override fun isArray(value: Any?) = value is BasicDBList
+
+    override fun toArray(value: Any) = (value as BasicDBList).iterator()
 }
