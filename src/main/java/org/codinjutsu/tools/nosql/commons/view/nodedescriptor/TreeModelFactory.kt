@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 
 internal fun <DOCUMENT> buildTree(searchResult: SearchResult, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>): NoSqlTreeNode {
-    val resultTreeNode = NoSqlTreeNode(nodeDescriptorFactory.createResultDescriptor(searchResult))
+    val resultTreeNode = NoSqlTreeNode(nodeDescriptorFactory.createResultDescriptor(searchResult.name))
     searchResult.records.forEach { processRecord(resultTreeNode, it, nodeDescriptorFactory) }
     return resultTreeNode
 }
