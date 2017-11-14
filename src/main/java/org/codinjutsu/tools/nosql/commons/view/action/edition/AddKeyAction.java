@@ -19,16 +19,16 @@ package org.codinjutsu.tools.nosql.commons.view.action.edition;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.codinjutsu.tools.nosql.commons.view.AbstractEditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.AddKeyDialog;
+import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 
 import java.awt.event.KeyEvent;
 
-public class AddKeyAction extends AnAction {
+public class AddKeyAction<DOCUMENT> extends AnAction {
 
-    private final AbstractEditionPanel editionPanel;
+    private final EditionPanel<DOCUMENT> editionPanel;
 
-    public AddKeyAction(AbstractEditionPanel editionPanel) {
+    public AddKeyAction(EditionPanel<DOCUMENT> editionPanel) {
         super("Add a key", "Add a key", AllIcons.General.Add);
         registerCustomShortcutSet(KeyEvent.VK_INSERT, KeyEvent.ALT_MASK, editionPanel);
         this.editionPanel = editionPanel;

@@ -19,7 +19,6 @@ package org.codinjutsu.tools.nosql.commons.view.nodedescriptor;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 
-
 public interface NodeDescriptor {
 
     int MAX_LENGTH = 150;
@@ -35,4 +34,8 @@ public interface NodeDescriptor {
     Object getValue();
 
     void setValue(Object value);
+
+    default boolean isSameKey(String key) {
+        return false;
+    }
 }

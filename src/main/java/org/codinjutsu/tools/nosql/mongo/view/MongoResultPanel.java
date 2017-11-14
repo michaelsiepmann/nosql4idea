@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
+import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor;
@@ -40,8 +41,8 @@ public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoResult, DBOb
 
     @NotNull
     @Override
-    protected MongoEditionPanel createEditionPanel() {
-        MongoEditionPanel mongoEditionPanel = new MongoEditionPanel();
+    protected EditionPanel<DBObject> createEditionPanel() {
+        EditionPanel<DBObject> mongoEditionPanel = new EditionPanel<DBObject>(new MongoTreeModelFactory());
         mongoEditionPanel.init(getDocumentOperations(), new ActionCallback() {
             public void onOperationSuccess(@NotNull String message) {
                 hideEditionPanel();

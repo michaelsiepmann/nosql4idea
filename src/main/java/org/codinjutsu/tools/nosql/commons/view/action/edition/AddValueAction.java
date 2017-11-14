@@ -19,14 +19,14 @@ package org.codinjutsu.tools.nosql.commons.view.action.edition;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.codinjutsu.tools.nosql.commons.view.AbstractEditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.AddValueDialog;
+import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 
-public class AddValueAction extends AnAction {
+public class AddValueAction<DOCUMENT> extends AnAction {
 
-    private final AbstractEditionPanel editionPanel;
+    private final EditionPanel<DOCUMENT> editionPanel;
 
-    public AddValueAction(AbstractEditionPanel editionPanel) {
+    public AddValueAction(EditionPanel<DOCUMENT> editionPanel) {
         super("Add a value", "Add a value", AllIcons.General.Add);
         this.editionPanel = editionPanel;
     }

@@ -29,8 +29,8 @@ public class AddValueDialog extends AbstractAddDialog {
     private JPanel valuePanel;
     private JPanel mainPanel;
 
-    private AddValueDialog(AbstractEditionPanel mongoEditionPanel) {
-        super(mongoEditionPanel);
+    private AddValueDialog(EditionPanel editionPanel) {
+        super(editionPanel);
         valuePanel.setLayout(new BorderLayout());
         typeCombobox.setName("valueType");
         typeCombobox.requestFocus();
@@ -42,7 +42,7 @@ public class AddValueDialog extends AbstractAddDialog {
         return mainPanel;
     }
 
-    public static AddValueDialog createDialog(AbstractEditionPanel parentPanel) {
+    public static AddValueDialog createDialog(EditionPanel parentPanel) {
         AddValueDialog dialog = new AddValueDialog(parentPanel);
         dialog.init();
         dialog.setTitle("Add A Value");

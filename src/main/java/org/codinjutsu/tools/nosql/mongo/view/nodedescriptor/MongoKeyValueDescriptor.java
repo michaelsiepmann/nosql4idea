@@ -30,6 +30,7 @@ import java.util.Locale;
 
 public class MongoKeyValueDescriptor extends AbstractKeyValueDescriptor {
 
+    @NotNull
     public static MongoKeyValueDescriptor createDescriptor(String key, Object value) {
         if (value == null) {
             return new MongoKeyNullValueDescriptor(key);

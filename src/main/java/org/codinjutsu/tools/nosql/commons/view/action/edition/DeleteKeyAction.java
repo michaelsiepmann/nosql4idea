@@ -19,15 +19,15 @@ package org.codinjutsu.tools.nosql.commons.view.action.edition;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.codinjutsu.tools.nosql.commons.view.AbstractEditionPanel;
+import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 
 import java.awt.event.KeyEvent;
 
 public class DeleteKeyAction extends AnAction {
 
-    private final AbstractEditionPanel editionPanel;
+    private final EditionPanel editionPanel;
 
-    public DeleteKeyAction(AbstractEditionPanel editionPanel) {
+    public DeleteKeyAction(EditionPanel editionPanel) {
         super("Delete this", "Delete the selected node", AllIcons.Actions.Delete);
         registerCustomShortcutSet(KeyEvent.VK_DELETE, KeyEvent.ALT_MASK, editionPanel);
         this.editionPanel = editionPanel;

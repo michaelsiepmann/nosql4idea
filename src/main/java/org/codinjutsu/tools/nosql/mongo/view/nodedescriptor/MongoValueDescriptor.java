@@ -36,6 +36,7 @@ public class MongoValueDescriptor extends AbstractNodeDecriptor implements Value
     protected Object value;
     private final SimpleTextAttributes valueTextAttributes;
 
+    @NotNull
     public static MongoValueDescriptor createDescriptor(int index, Object value) {
         if (value == null) {
             return new MongoNullValueDescriptor(index);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchEditionPanel">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.codinjutsu.tools.nosql.commons.view.EditionPanel">
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="2e87f" binding="editionPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="534e6" binding="editionTreePanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -17,7 +17,7 @@
         <border type="none"/>
         <children/>
       </grid>
-      <grid id="79437" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="351e" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -25,7 +25,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="a9769" class="javax.swing.JButton" binding="saveButton">
+          <component id="deb3e" class="javax.swing.JButton" binding="saveButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -33,12 +33,12 @@
               <text resource-bundle="org/codinjutsu/tools/nosql/i18n/translations" key="edit.save.text"/>
             </properties>
           </component>
-          <hspacer id="947b8">
+          <hspacer id="e6399">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <component id="d7d00" class="javax.swing.JButton" binding="cancelButton">
+          <component id="1d907" class="javax.swing.JButton" binding="cancelButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -46,7 +46,7 @@
               <text resource-bundle="org/codinjutsu/tools/nosql/i18n/translations" key="edit.cancel.text"/>
             </properties>
           </component>
-          <component id="7de9a" class="javax.swing.JButton" binding="deleteButton">
+          <component id="52ff9" class="javax.swing.JButton" binding="deleteButton">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

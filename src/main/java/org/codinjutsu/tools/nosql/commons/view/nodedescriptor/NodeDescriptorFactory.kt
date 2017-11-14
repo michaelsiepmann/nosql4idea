@@ -5,7 +5,7 @@ import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 
 internal interface NodeDescriptorFactory<out DOCUMENT> {
 
-    fun createResultDescriptor(searchResult: SearchResult): NodeDescriptor
+    fun createResultDescriptor(name: String): NodeDescriptor
 
     fun createKeyValueDescriptor(key: String, value: Any?): NodeDescriptor
 

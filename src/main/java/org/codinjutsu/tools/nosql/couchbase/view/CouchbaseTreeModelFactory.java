@@ -12,10 +12,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CouchbaseTreeModelFactory implements NodeDescriptorFactory<JsonObject> {
+
     @NotNull
     @Override
-    public NodeDescriptor createResultDescriptor(@NotNull SearchResult searchResult) {
-        return new CouchbaseResultDescriptor(searchResult.getName());
+    public NodeDescriptor createResultDescriptor(@NotNull String name) {
+        return new CouchbaseResultDescriptor(name);
     }
 
     @NotNull

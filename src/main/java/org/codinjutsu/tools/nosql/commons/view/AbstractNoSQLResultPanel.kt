@@ -26,11 +26,11 @@ import java.util.*
 import javax.swing.JPanel
 import javax.swing.tree.DefaultMutableTreeNode
 
-internal abstract class AbstractNoSQLResultPanel<RESULT : SearchResult, DOCUMENT>(project: Project, protected val documentOperations: NoSQLResultPanelDocumentOperations<DOCUMENT>, val treeModelFactory: NodeDescriptorFactory<DOCUMENT>) : JPanel(), Disposable {
+internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUMENT>(project: Project, protected val documentOperations: NoSQLResultPanelDocumentOperations<DOCUMENT>, val treeModelFactory: NodeDescriptorFactory<DOCUMENT>) : JPanel(), Disposable {
 
     private val splitter: Splitter
     protected val resultTreePanel = JPanel(BorderLayout())
-    private val editionPanel: AbstractEditionPanel<RESULT, DOCUMENT>
+    private val editionPanel: EditionPanel<DOCUMENT>
 
     @Volatile
     var resultTableView: JsonTreeTableView? = null
@@ -48,7 +48,7 @@ internal abstract class AbstractNoSQLResultPanel<RESULT : SearchResult, DOCUMENT
         Disposer.register(project, this)
     }
 
-    protected abstract fun createEditionPanel(): AbstractEditionPanel<RESULT, DOCUMENT>
+    protected abstract fun createEditionPanel(): EditionPanel<DOCUMENT>
 
     fun updateResultTableTree(searchResult: RESULT) {
         resultTableView = JsonTreeTableView(buildTree(searchResult, treeModelFactory), JsonTreeTableView.COLUMNS_FOR_READING)

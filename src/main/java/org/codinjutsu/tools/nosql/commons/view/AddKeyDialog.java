@@ -25,14 +25,14 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class AddKeyDialog extends AbstractAddDialog {
+public class AddKeyDialog<DOCUMENT> extends AbstractAddDialog<DOCUMENT> {
 
     private JTextField nameTextfield;
     private ComboBox typeCombobox;
     private JPanel valuePanel;
     private JPanel mainPanel;
 
-    private AddKeyDialog(AbstractEditionPanel mongoEditionPanel) {
+    private AddKeyDialog(EditionPanel<DOCUMENT> mongoEditionPanel) {
         super(mongoEditionPanel);
         mainPanel.setPreferredSize(GuiUtils.enlargeWidth(mainPanel.getPreferredSize(), 1.5d));
         valuePanel.setLayout(new BorderLayout());
@@ -46,8 +46,8 @@ public class AddKeyDialog extends AbstractAddDialog {
         return mainPanel;
     }
 
-    public static AddKeyDialog createDialog(AbstractEditionPanel parentPanel) {
-        AddKeyDialog dialog = new AddKeyDialog(parentPanel);
+    public static <DOCUMENT> AddKeyDialog<DOCUMENT> createDialog(EditionPanel<DOCUMENT> parentPanel) {
+        AddKeyDialog<DOCUMENT> dialog = new AddKeyDialog<DOCUMENT>(parentPanel);
         dialog.init();
         dialog.setTitle("Add A Key");
         return dialog;

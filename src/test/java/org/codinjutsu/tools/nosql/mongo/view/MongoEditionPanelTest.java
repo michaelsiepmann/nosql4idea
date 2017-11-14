@@ -21,8 +21,10 @@ import com.mongodb.util.JSON;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
+import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
+import org.codinjutsu.tools.nosql.mongo.view.model.MongoTreeModelFactory;
 import org.fest.swing.data.TableCell;
 import org.fest.swing.driver.BasicJTableCellReader;
 import org.fest.swing.edt.GuiActionRunner;
@@ -46,10 +48,11 @@ import static org.mockito.Mockito.verify;
 
 public class MongoEditionPanelTest {
 
-    private MongoEditionPanel mongoEditionPanel;
+    private EditionPanel<DBObject> mongoEditionPanel;
 
     private FrameFixture frameFixture;
-    private NoSQLResultPanelDocumentOperations mockMongoOperations = mock(NoSQLResultPanelDocumentOperations.class);
+    private MongoTreeModelFactory nodeDescriptorFactory = new MongoTreeModelFactory();
+    private NoSQLResultPanelDocumentOperations<DBObject> mockMongoOperations = mock(NoSQLResultPanelDocumentOperations.class);
     private ActionCallback mockActionCallback = mock(ActionCallback.class);
 
     @After
@@ -60,14 +63,15 @@ public class MongoEditionPanelTest {
     @Before
     public void setUp() throws Exception {
 
-        mongoEditionPanel = GuiActionRunner.execute(new GuiQuery<MongoEditionPanel>() {
-            protected MongoEditionPanel executeInEDT() {
-                MongoEditionPanel panel = new MongoEditionPanel() {
+        mongoEditionPanel = GuiActionRunner.execute(new GuiQuery<EditionPanel<DBObject>>() {
+            protected EditionPanel<DBObject> executeInEDT() {
+                EditionPanel<DBObject> panel = new EditionPanel<DBObject>(nodeDescriptorFactory) {
                     @Override
                     protected void buildPopupMenu() {
                     }
                 };
-                return panel.init(mockMongoOperations, mockActionCallback);
+                panel.init(mockMongoOperations, mockActionCallback);
+                return panel;
             }
         });
 

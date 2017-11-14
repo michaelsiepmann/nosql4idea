@@ -1,7 +1,6 @@
 package org.codinjutsu.tools.nosql.elasticsearch.view
 
 import com.google.gson.JsonObject
-import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
 import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchKeyValueDescriptor
@@ -10,8 +9,8 @@ import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.Elasticsearc
 
 internal class ElasticsearchTreeModelFactory : NodeDescriptorFactory<JsonObject> {
 
-    override fun createResultDescriptor(searchResult: SearchResult) =
-            ElasticsearchResultDescriptor(searchResult.name)
+    override fun createResultDescriptor(name: String) =
+            ElasticsearchResultDescriptor(name)
 
     override fun createKeyValueDescriptor(key: String, value: Any?) =
             ElasticsearchKeyValueDescriptor.createDescriptor(key, value)

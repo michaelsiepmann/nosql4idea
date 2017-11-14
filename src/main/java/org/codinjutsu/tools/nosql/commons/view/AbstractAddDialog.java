@@ -33,7 +33,7 @@ import java.util.Map;
 
 import static org.codinjutsu.tools.nosql.commons.utils.StringUtils.parseNumber;
 
-public abstract class AbstractAddDialog extends DialogWrapper {
+public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
     private static final Map<JsonDataType, TextFieldWrapper> UI_COMPONENT_BY_JSON_DATATYPE = new HashMap<>();
 
     static {
@@ -46,10 +46,10 @@ public abstract class AbstractAddDialog extends DialogWrapper {
         UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.ARRAY, new JsonFieldWrapper());
     }
 
-    final AbstractEditionPanel editionPanel;
+    final EditionPanel<DOCUMENT> editionPanel;
     TextFieldWrapper currentEditor = null;
 
-    AbstractAddDialog(AbstractEditionPanel editionPanel) {
+    AbstractAddDialog(EditionPanel<DOCUMENT> editionPanel) {
         super(editionPanel, true);
         this.editionPanel = editionPanel;
     }
