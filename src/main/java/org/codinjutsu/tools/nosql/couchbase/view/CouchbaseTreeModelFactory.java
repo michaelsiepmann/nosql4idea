@@ -5,6 +5,8 @@ import com.couchbase.client.java.document.json.JsonObject;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory;
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseObjectWrapper;
 import org.codinjutsu.tools.nosql.couchbase.view.nodedescriptor.CouchbaseKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.couchbase.view.nodedescriptor.CouchbaseResultDescriptor;
 import org.codinjutsu.tools.nosql.couchbase.view.nodedescriptor.CouchbaseValueDescriptor;
@@ -52,5 +54,16 @@ public class CouchbaseTreeModelFactory implements NodeDescriptorFactory<JsonObje
     @Override
     public Iterator<Object> toArray(@NotNull Object value) {
         return ((JsonArray) value).iterator();
+    }
+
+    @Override
+    public boolean isObject(@Nullable Object value) {
+        return value instanceof JsonObject;
+    }
+
+    @NotNull
+    @Override
+    public ObjectWrapper createObjectWrapper(@Nullable Object value) {
+        return new CouchbaseObjectWrapper((JsonObject) value);
     }
 }

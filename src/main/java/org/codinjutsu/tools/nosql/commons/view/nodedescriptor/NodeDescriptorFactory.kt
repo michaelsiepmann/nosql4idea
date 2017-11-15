@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.view.nodedescriptor
 
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 
 internal interface NodeDescriptorFactory<out DOCUMENT> {
 
@@ -17,4 +18,8 @@ internal interface NodeDescriptorFactory<out DOCUMENT> {
     fun isArray(value: Any?): Boolean
 
     fun toArray(value: Any): Iterator<Any>
+
+    fun isObject(value: Any?): Boolean
+
+    fun createObjectWrapper(value: Any?): ObjectWrapper
 }

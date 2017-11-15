@@ -5,14 +5,14 @@ import com.mongodb.BasicDBObject
 import com.mongodb.DBObject
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoKeyValueDescriptor
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoResultDescriptor
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoValueDescriptor
 import javax.swing.tree.TreeNode
 
-class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
-
+internal class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
     override fun createResultDescriptor(name: String) = MongoResultDescriptor()
 
     override fun createKeyValueDescriptor(key: String, value: Any?) =
@@ -111,4 +111,10 @@ class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
     override fun isArray(value: Any?) = value is BasicDBList
 
     override fun toArray(value: Any) = (value as BasicDBList).iterator()
+
+    override fun isObject(value: Any?) = value is DBObject
+
+    override fun createObjectWrapper(value: Any?): ObjectWrapper {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

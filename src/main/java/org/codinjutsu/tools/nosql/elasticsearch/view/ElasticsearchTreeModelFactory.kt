@@ -4,6 +4,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchObjectWrapper
 import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchKeyValueDescriptor
 import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchResultDescriptor
 import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchValueDescriptor
@@ -35,4 +36,8 @@ internal class ElasticsearchTreeModelFactory : NodeDescriptorFactory<JsonObject>
     override fun isArray(value: Any?) = value is JsonArray
 
     override fun toArray(value: Any) = (value as JsonArray).iterator()
+
+    override fun isObject(value: Any?) = value is JsonObject
+
+    override fun createObjectWrapper(value: Any?) = ElasticsearchObjectWrapper(value as JsonObject)
 }

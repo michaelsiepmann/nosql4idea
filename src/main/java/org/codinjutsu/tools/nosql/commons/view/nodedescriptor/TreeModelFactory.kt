@@ -31,8 +31,8 @@ private fun <DOCUMENT> process(value: Any?, currentValueNode: NoSqlTreeNode, nod
     if (value != null) {
         if (nodeDescriptorFactory.isArray(value)) {
             processRecordListValues(currentValueNode, value, nodeDescriptorFactory)
-        } else if (value is ObjectWrapper) {
-            processRecord(currentValueNode, value, nodeDescriptorFactory)
+        } else if (nodeDescriptorFactory.isObject(value)) {
+            processRecord(currentValueNode, nodeDescriptorFactory.createObjectWrapper(value), nodeDescriptorFactory)
         }
     }
 }
