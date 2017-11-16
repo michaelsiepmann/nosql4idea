@@ -16,10 +16,13 @@
 
 package org.codinjutsu.tools.nosql.commons.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 public class StringUtils {
 
     private static final String ELLIPSIS = "...";
 
+    @NotNull
     public static String abbreviateInCenter(String stringToAbbreviate, int length) {
         int halfLength = length / 2;
         int firstPartLastIndex = halfLength - ELLIPSIS.length();

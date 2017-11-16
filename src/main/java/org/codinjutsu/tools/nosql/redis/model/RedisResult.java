@@ -16,6 +16,8 @@
 
 package org.codinjutsu.tools.nosql.redis.model;
 
+import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import redis.clients.jedis.Tuple;
 
 import java.util.LinkedList;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisResult {
+public class RedisResult implements SearchResult {
 
     private final List<RedisRecord> redisRecords = new LinkedList<RedisRecord>();
 
@@ -52,4 +54,13 @@ public class RedisResult {
         return redisRecords;
     }
 
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public List<ObjectWrapper> getRecords() {
+        return null;
+    }
 }

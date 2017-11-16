@@ -21,8 +21,9 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ValueDescriptor;
 
-public class CouchbaseValueDescriptor extends AbstractNodeDecriptor {
+public class CouchbaseValueDescriptor extends AbstractNodeDecriptor implements ValueDescriptor {
 
     private final int index;
     protected Object value;

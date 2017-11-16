@@ -21,7 +21,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
-import org.codinjutsu.tools.nosql.commons.view.AbstractNoSQLResultPanel
+import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel
 
 internal class EditDocumentAction<RESULT : SearchResult, DOCUMENT>(private val resultPanel: AbstractNoSQLResultPanel<RESULT, DOCUMENT>) : AnAction("Edit", "Edit mongo document", AllIcons.Actions.Edit), DumbAware {
 

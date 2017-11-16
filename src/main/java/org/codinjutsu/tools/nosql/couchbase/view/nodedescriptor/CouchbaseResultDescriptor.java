@@ -19,8 +19,9 @@ package org.codinjutsu.tools.nosql.couchbase.view.nodedescriptor;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ResultDescriptor;
 
-public class CouchbaseResultDescriptor implements NodeDescriptor {
+public class CouchbaseResultDescriptor implements NodeDescriptor, ResultDescriptor {
 
     private final String formattedText;
 
@@ -28,15 +29,10 @@ public class CouchbaseResultDescriptor implements NodeDescriptor {
         formattedText = String.format("results of '%s'", collectionName);
     }
 
-    public CouchbaseResultDescriptor() {
-        this("");
-    }
-
     public void renderValue(ColoredTableCellRenderer cellRenderer, boolean isNodeExpanded) {
     }
 
     public void renderNode(ColoredTreeCellRenderer cellRenderer) {
-
     }
 
     public String getFormattedKey() {

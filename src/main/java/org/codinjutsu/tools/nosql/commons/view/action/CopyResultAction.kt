@@ -22,7 +22,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.DumbAware
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
-import org.codinjutsu.tools.nosql.commons.view.AbstractNoSQLResultPanel
+import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent

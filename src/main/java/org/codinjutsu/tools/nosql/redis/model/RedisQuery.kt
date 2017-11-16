@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.redis.model;
+package org.codinjutsu.tools.nosql.redis.model
 
-import org.codinjutsu.tools.nosql.commons.model.Database;
+import org.codinjutsu.tools.nosql.commons.model.Query
 
-public class RedisDatabase extends Database {
-
-    public RedisDatabase(String name) {
-        super(name);
-    }
-}
+internal class RedisQuery(val filter: String, override val limit: Int) : Query

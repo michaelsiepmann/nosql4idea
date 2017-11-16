@@ -37,7 +37,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.ErrorPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;

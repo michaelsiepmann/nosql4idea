@@ -21,6 +21,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.commons.lang.StringUtils;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +38,16 @@ public class MongoQueryOptions {
     private DBObject sort;
 
     private int resultLimit = DEFAULT_RESULT_LIMIT;
+
+    public MongoQueryOptions(QueryOptions queryOptions) {
+        if (queryOptions.getOperations() != null) {
+            setOperations(queryOptions.getOperations());
+        }
+        setFilter(queryOptions.getFilter());
+        setProjection(queryOptions.getProjection());
+        setSort(queryOptions.getSort());
+        setResultLimit(queryOptions.getResultLimit());
+    }
 
     public boolean isAggregate() {
         return !operations.isEmpty();

@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
+import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
@@ -37,12 +37,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisClient implements DatabaseClient {
+public class RedisClient implements LoadableDatabaseClient<RedisResult, RedisQuery> {
 
     public static RedisClient getInstance(Project project) {
         return ServiceManager.getService(project, RedisClient.class);
     }
-
 
     @Override
     public void connect(ServerConfiguration serverConfiguration) {
@@ -92,8 +91,8 @@ public class RedisClient implements DatabaseClient {
         return configuration;
     }
 
-
-    public RedisResult loadRecords(ServerConfiguration serverConfiguration, RedisDatabase database, RedisQuery query) {
+    @Override
+    public RedisResult loadRecords(ServerConfiguration serverConfiguration, Database database, RedisQuery query) {
         Jedis jedis = createJedis(serverConfiguration);
         jedis.connect();
         RedisResult redisResult = new RedisResult();

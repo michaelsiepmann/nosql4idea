@@ -37,7 +37,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.ErrorPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
 import org.codinjutsu.tools.nosql.mongo.view.JsonTreeTableView;
@@ -93,7 +93,7 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
     }
 
     private void loadAndDisplayResults(final String filter, final boolean groupByPrefix, final String separator) {
-        redisResult = redisClient.loadRecords(configuration, database, new RedisQuery(filter));
+        redisResult = redisClient.loadRecords(configuration, database, new RedisQuery(filter, 100));
         updateResultTableTree(redisResult, groupByPrefix, separator);
     }
 

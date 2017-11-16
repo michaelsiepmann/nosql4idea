@@ -19,17 +19,15 @@ package org.codinjutsu.tools.nosql.redis.view.nodedescriptor;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ResultDescriptor;
 
-
-public class RedisResultDescriptor implements NodeDescriptor {
+public class RedisResultDescriptor implements NodeDescriptor, ResultDescriptor {
     @Override
     public void renderValue(ColoredTableCellRenderer cellRenderer, boolean isNodeExpanded) {
-
     }
 
     @Override
     public void renderNode(ColoredTreeCellRenderer cellRenderer) {
-
     }
 
     @Override
@@ -49,6 +47,5 @@ public class RedisResultDescriptor implements NodeDescriptor {
 
     @Override
     public void setValue(Object value) {
-
     }
 }

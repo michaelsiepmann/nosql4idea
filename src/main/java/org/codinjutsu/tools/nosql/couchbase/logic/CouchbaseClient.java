@@ -36,7 +36,6 @@ import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
-import org.codinjutsu.tools.nosql.commons.model.Query;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseQuery;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
@@ -65,7 +64,6 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseResult, 
             } else {
                 bucket = cluster.openBucket(userDatabase);
             }
-
         } catch (Exception ex) {
             throw new ConfigurationException(ex);
         } finally {
@@ -74,7 +72,6 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseResult, 
             }
             cluster.disconnect();
         }
-
     }
 
     @Override

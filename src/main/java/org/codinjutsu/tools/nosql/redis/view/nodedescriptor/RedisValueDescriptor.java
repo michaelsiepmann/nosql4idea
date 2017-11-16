@@ -20,10 +20,11 @@ import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ValueDescriptor;
 import redis.clients.jedis.Tuple;
 
-public class RedisValueDescriptor implements NodeDescriptor {
+public class RedisValueDescriptor extends AbstractNodeDecriptor implements ValueDescriptor {
 
     private final int index;
     protected Object value;

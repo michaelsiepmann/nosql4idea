@@ -22,7 +22,7 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.mongodb.DBObject;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.AbstractNoSQLResultPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;

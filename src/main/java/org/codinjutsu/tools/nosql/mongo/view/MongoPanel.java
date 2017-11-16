@@ -35,14 +35,16 @@ import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.mongodb.DBObject;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction;
 import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
+import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
+import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 import org.codinjutsu.tools.nosql.mongo.view.action.AddMongoDocumentAction;
 import org.codinjutsu.tools.nosql.mongo.view.action.CloseFindEditorAction;
@@ -199,8 +201,7 @@ public class MongoPanel extends NoSqlResultView<MongoCollection> {
             public void run(@NotNull final ProgressIndicator indicator) {
                 try {
                     GuiUtils.runInSwingThread(() -> loadingDecorator.startLoading(false));
-
-                    final MongoResult mongoResult = mongoClient.loadCollectionValues(configuration, mongoCollection, queryPanel.getQueryOptions(rowLimitField.getText()));
+                    final MongoResult mongoResult = mongoClient.loadCollectionValues(configuration, mongoCollection, new MongoQueryOptions(queryPanel.getQueryOptions(rowLimitField.getText())));
                     GuiUtils.runInSwingThread(() -> resultPanel.updateResultTableTree(mongoResult));
                 } catch (final Exception ex) {
                     GuiUtils.runInSwingThread(() -> {

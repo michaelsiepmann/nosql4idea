@@ -43,8 +43,6 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -61,10 +59,8 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
     }
 
     public void connect(ServerConfiguration configuration) {
-        com.mongodb.MongoClient mongo = null;
-        try {
+        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String userDatabase = configuration.getUserDatabase();
-            mongo = createMongoClient(configuration);
 
             MongoIterable<String> collectionNames;
             if (StringUtils.isNotEmpty(userDatabase)) {
@@ -73,16 +69,9 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
                 collectionNames = mongo.getDatabase("test").listCollectionNames();
             }
             collectionNames.first();
-
-        } catch (IOException ex) {
-            throw new MongoConnectionException(ex);
         } catch (MongoException ex) {
             LOG.error("Error when accessing Mongo server", ex);
             throw new MongoConnectionException(ex.getMessage());
-        } finally {
-            if (mongo != null) {
-                mongo.close();
-            }
         }
     }
 
@@ -114,12 +103,9 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
     }
 
     List<Database> loadDatabaseCollections(ServerConfiguration configuration) {
-        com.mongodb.MongoClient mongo = null;
         List<Database> mongoDatabases = new LinkedList<>();
-        try {
+        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String userDatabase = configuration.getUserDatabase();
-
-            mongo = createMongoClient(configuration);
 
             if (StringUtils.isNotEmpty(userDatabase)) {
                 DB database = mongo.getDB(userDatabase);
@@ -134,19 +120,13 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
             }
 
             return mongoDatabases;
-        } catch (MongoException | UnknownHostException mongoEx) {
+        } catch (MongoException mongoEx) {
             throw new ConfigurationException(mongoEx);
-        } finally {
-            if (mongo != null) {
-                mongo.close();
-            }
         }
     }
 
     private MongoDatabase createMongoDatabaseAndItsCollections(DB database) {
         MongoDatabase mongoDatabase = new MongoDatabase(database.getName());
-
-
         Set<String> collectionNames = database.getCollectionNames();
         for (String collectionName : collectionNames) {
             mongoDatabase.addCollection(new MongoCollection(collectionName, database.getName()));
@@ -155,83 +135,49 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
     }
 
     public void update(ServerConfiguration configuration, MongoCollection mongoCollection, DBObject mongoDocument) {
-        com.mongodb.MongoClient mongo = null;
-        try {
+        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String databaseName = mongoCollection.getDatabaseName();
-            mongo = createMongoClient(configuration);
 
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(mongoCollection.getName());
 
             collection.save(mongoDocument);
-        } catch (UnknownHostException ex) {
-            throw new ConfigurationException(ex);
-        } finally {
-            if (mongo != null) {
-                mongo.close();
-            }
         }
     }
 
     public void delete(ServerConfiguration configuration, MongoCollection mongoCollection, Object _id) {
-        com.mongodb.MongoClient mongo = null;
-        try {
+        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String databaseName = mongoCollection.getDatabaseName();
-            mongo = createMongoClient(configuration);
 
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(mongoCollection.getName());
 
             collection.remove(new BasicDBObject("_id", _id));
-        } catch (UnknownHostException ex) {
-            throw new ConfigurationException(ex);
-        } finally {
-            if (mongo != null) {
-                mongo.close();
-            }
         }
     }
 
     @Override
     public void dropFolder(@NotNull ServerConfiguration configuration, @NotNull MongoCollection mongoCollection) {
-        com.mongodb.MongoClient mongo = null;
-        try {
+        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String databaseName = mongoCollection.getDatabaseName();
-            mongo = createMongoClient(configuration);
 
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(mongoCollection.getName());
 
             collection.drop();
-        } catch (UnknownHostException ex) {
-            throw new ConfigurationException(ex);
-        } finally {
-            if (mongo != null) {
-                mongo.close();
-            }
         }
     }
 
     @Override
     public void dropDatabase(@NotNull ServerConfiguration configuration, @NotNull MongoDatabase database) {
-        com.mongodb.MongoClient mongo = null;
-        try {
-            mongo = createMongoClient(configuration);
+        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             mongo.dropDatabase(database.getName());
-        } catch (UnknownHostException ex) {
-            throw new ConfigurationException(ex);
-        } finally {
-            if (mongo != null) {
-                mongo.close();
-            }
         }
     }
 
     public MongoResult loadCollectionValues(ServerConfiguration configuration, MongoCollection mongoCollection, MongoQueryOptions mongoQueryOptions) {
-        com.mongodb.MongoClient mongo = null;
-        try {
+        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String databaseName = mongoCollection.getDatabaseName();
-            mongo = createMongoClient(configuration);
 
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(mongoCollection.getName());
@@ -242,32 +188,15 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
             }
 
             return find(mongoQueryOptions, mongoResult, collection);
-
-        } catch (UnknownHostException ex) {
-            throw new ConfigurationException(ex);
-        } finally {
-            if (mongo != null) {
-                mongo.close();
-            }
         }
     }
 
     public DBObject findMongoDocument(ServerConfiguration configuration, MongoCollection mongoCollection, Object _id) {
-        com.mongodb.MongoClient mongo = null;
-        try {
+        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String databaseName = mongoCollection.getDatabaseName();
-            mongo = createMongoClient(configuration);
-
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(mongoCollection.getName());
             return collection.findOne(new BasicDBObject("_id", _id));
-
-        } catch (UnknownHostException ex) {
-            throw new ConfigurationException(ex);
-        } finally {
-            if (mongo != null) {
-                mongo.close();
-            }
         }
     }
 
@@ -309,7 +238,7 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
         return mongoResult;
     }
 
-    private com.mongodb.MongoClient createMongoClient(ServerConfiguration configuration) throws UnknownHostException {
+    private com.mongodb.MongoClient createMongoClient(ServerConfiguration configuration) {
         String serverUrl = configuration.getServerUrl();
         if (StringUtils.isEmpty(serverUrl)) {
             throw new ConfigurationException("server host is not set");
@@ -334,5 +263,4 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
 
         return new com.mongodb.MongoClient(new MongoClientURI(uriBuilder.build()));
     }
-
 }

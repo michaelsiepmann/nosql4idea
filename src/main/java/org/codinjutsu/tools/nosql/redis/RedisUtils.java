@@ -24,28 +24,20 @@ import redis.clients.jedis.Tuple;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class RedisUtils {
 
     public static String stringifySortedSet(Set<Tuple> sortedSet) {
-        List<String> stringifiedTuples = new LinkedList<String>();
-        for (Tuple tuple : sortedSet) {
-            stringifiedTuples.add(stringifyTuple(tuple));
-        }
+        List<String> stringifiedTuples = sortedSet.stream().map(RedisUtils::stringifyTuple).collect(Collectors.toCollection(LinkedList::new));
         return String.format("{%s}", StringUtils.join(stringifiedTuples, ", "));
     }
-
 
     public static String stringifySet(Set set) {
         return String.format("{%s}", StringUtils.join(set, ", "));
     }
 
-
-    public static String stringifyTuple(Tuple tuple) {
+    private static String stringifyTuple(Tuple tuple) {
         return String.format("(%s, %s)", tuple.getElement(), tuple.getScore());
-    }
-
-    public static String buildUrl(ServerConfiguration serverConfiguration, RedisDatabase database) {
-        return String.format("-n %s", database.getName());
     }
 }

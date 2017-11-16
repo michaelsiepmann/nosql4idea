@@ -22,9 +22,11 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider;
 import org.codinjutsu.tools.nosql.commons.utils.StringUtils;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.redis.RedisUtils;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
+import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Tuple;
 
 import javax.swing.*;
@@ -32,95 +34,62 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisKeyValueDescriptor implements NodeDescriptor {
-
+public class RedisKeyValueDescriptor extends AbstractKeyValueDescriptor {
 
     private final RedisKeyType keyType;
-    private final String key;
-    private final Object value;
-
-    private final SimpleTextAttributes valueTextAttributes;
     private final Icon icon;
-
-    public static RedisKeyValueDescriptor createDescriptor(RedisKeyType keyType, String key, Object value) {
-        return new RedisKeyValueDescriptor(keyType, key, value, StyleAttributesProvider.getStringAttribute());
-    }
 
     public static NodeDescriptor createDescriptor(String key, String value) {
         return createDescriptor(null, key, value);
     }
 
-    public RedisKeyValueDescriptor(RedisKeyType keyType, String key, Object value, SimpleTextAttributes valueTextAttributes) {
+    public static RedisKeyValueDescriptor createDescriptor(RedisKeyType keyType, String key, Object value) {
+        return new RedisKeyValueDescriptor(keyType, key, value, StyleAttributesProvider.getStringAttribute());
+    }
+
+    private RedisKeyValueDescriptor(RedisKeyType keyType, String key, Object value, SimpleTextAttributes valueTextAttributes) {
+        super(key, value, valueTextAttributes);
         this.keyType = keyType;
-        this.key = key;
-        this.value = value;
         this.icon = findIcon(value);
-        this.valueTextAttributes = valueTextAttributes;
     }
 
     private Icon findIcon(Object object) {
         if (object instanceof List) {
             return AllIcons.Json.Property_brackets;
-        } else if (object instanceof Set || object instanceof Map) {
+        }
+        if (object instanceof Set || object instanceof Map) {
             return AllIcons.Json.Property_braces;
         }
         return null;
     }
 
-
     @Override
-    public void renderValue(ColoredTableCellRenderer cellRenderer, boolean isNodeExpanded) {
-        if (!isNodeExpanded) {
-            cellRenderer.append(getFormattedValue(), valueTextAttributes);
-        }
-    }
-
-    public void renderNode(ColoredTreeCellRenderer cellRenderer) {
-        cellRenderer.setIcon(this.icon);
-        if (this.keyType != null) {
-            cellRenderer.append(this.keyType.name(), StyleAttributesProvider.getIndexAttribute());
+    public void renderNode(@NotNull ColoredTreeCellRenderer cellRenderer) {
+        cellRenderer.setIcon(icon);
+        if (keyType != null) {
+            cellRenderer.append(keyType.name(), StyleAttributesProvider.getIndexAttribute());
             cellRenderer.append(" ");
         }
         cellRenderer.append(getFormattedKey(), StyleAttributesProvider.getKeyValueAttribute());
     }
 
-    @Override
-    public String getFormattedKey() {
-        return key;
-    }
-
+    @NotNull
     @Override
     public String getFormattedValue() {
         if (RedisKeyType.ZSET.equals(keyType)) {
             return getValueAndAbbreviateIfNecessary(RedisUtils.stringifySortedSet((Set<Tuple>) getValue()));
-        } else if (RedisKeyType.SET.equals(keyType)) {
+        }
+        if (RedisKeyType.SET.equals(keyType)) {
             return getValueAndAbbreviateIfNecessary(RedisUtils.stringifySet((Set) getValue()));
         }
         return getValueAndAbbreviateIfNecessary(getValue().toString());
     }
 
     @Override
-    public Object getValue() {
-        return value;
-    }
-
-    @Override
     public void setValue(Object value) {
-
-    }
-
-    public String getKey() {
-        return key;
     }
 
     public RedisKeyType getKeyType() {
         return keyType;
-    }
-
-    protected String getValueAndAbbreviateIfNecessary(String stringifiedValue) {
-        if (stringifiedValue.length() > MAX_LENGTH) {
-            return StringUtils.abbreviateInCenter(stringifiedValue, MAX_LENGTH);
-        }
-        return stringifiedValue;
     }
 }

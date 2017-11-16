@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.commons.view;
+package org.codinjutsu.tools.nosql.commons.view.panel;
 
 import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.HoverHyperlinkLabel;

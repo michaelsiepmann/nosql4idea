@@ -12,21 +12,24 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LoadingDecorator;
+import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.NumberDocument;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.ErrorPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel;
 import org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchCollection;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchQuery;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult;
+import org.codinjutsu.tools.nosql.mongo.view.action.EnableAggregateAction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -38,10 +41,12 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
     private JPanel containerPanel;
     private JPanel toolBarPanel;
     private JPanel errorPanel;
+    private Splitter splitter;
 
     private ElasticsearchResultPanel resultPanel;
     private final LoadingDecorator loadingDecorator;
     private final JTextField rowLimitField = new JTextField("");
+    private final QueryPanel queryPanel;
 
     private final Project project;
 
@@ -56,6 +61,8 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
         this.serverConfiguration = serverConfiguration;
         this.database = database;
         this.collection = collection;
+        queryPanel = new QueryPanel(project);
+        queryPanel.setVisible(false);
         this.resultPanel = new ElasticsearchResultPanel(project, new NoSQLResultPanelDocumentOperations<JsonObject>() {
             @Override
             public JsonObject getDocument(@NotNull Object _id) {
@@ -136,6 +143,7 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
 
         DefaultActionGroup actionResultGroup = new DefaultActionGroup("CouchbaseResultGroup", true);
         actionResultGroup.add(new ExecuteQuery<>(this));
+        actionResultGroup.add(new EnableAggregateAction(queryPanel));
         actionResultGroup.addSeparator();
         actionResultGroup.add(expandAllAction);
         actionResultGroup.add(collapseAllAction);
@@ -186,7 +194,7 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
     @Override
     public void executeQuery() {
         errorPanel.setVisible(false);
-        // // TODO: 13.11.2017  validateQuery();
+        validateQuery();
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Executing query", true) { //TODO need to abstract this method
             @Override
             public void run(@NotNull final ProgressIndicator indicator) {
@@ -208,6 +216,10 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
         });
     }
 
+    private void validateQuery() {
+        queryPanel.validateQuery();
+    }
+
     @Override
     public ElasticsearchCollection getRecords() {
         return collection;
@@ -215,6 +227,25 @@ public class ElasticsearchPanel extends NoSqlResultView<ElasticsearchCollection>
 
     @Override
     public void dispose() {
+        resultPanel.dispose();
+    }
 
+    public void openFindEditor() {
+        queryPanel.setVisible(true);
+        splitter.setFirstComponent(queryPanel);
+        GuiUtils.runInSwingThread(this::focusOnEditor);
+    }
+
+    public void closeFindEditor() {
+        splitter.setFirstComponent(null);
+        queryPanel.setVisible(false);
+    }
+
+    public void focusOnEditor() {
+        queryPanel.requestFocusOnEditor();
+    }
+
+    public boolean isFindEditorOpened() {
+        return splitter.getFirstComponent() == queryPanel;
     }
 }

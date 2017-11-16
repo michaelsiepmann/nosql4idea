@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
-import org.codinjutsu.tools.nosql.commons.view.AbstractNoSQLResultPanel
+import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations

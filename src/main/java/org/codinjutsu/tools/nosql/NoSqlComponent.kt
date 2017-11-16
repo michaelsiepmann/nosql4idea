@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.redis.model;
+package org.codinjutsu.tools.nosql
 
-public class RedisQuery {
+import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.project.Project
 
-    private String filter;
+class NoSqlComponent(project: Project) : AbstractProjectComponent(project) {
 
-    public RedisQuery(String filter) {
-        this.filter = filter;
+    override fun getComponentName() = COMPONENT_NAME
+
+    override fun projectOpened() {
+        NoSqlWindowManager.getInstance(myProject)
     }
 
-    public String getFilter() {
-        return filter;
+    override fun projectClosed() {
+        NoSqlWindowManager.getInstance(myProject).unregisterMyself()
+    }
+
+    companion object {
+        private val COMPONENT_NAME = "NoSql"
     }
 }

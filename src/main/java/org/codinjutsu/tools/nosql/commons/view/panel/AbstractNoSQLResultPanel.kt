@@ -1,4 +1,4 @@
-package org.codinjutsu.tools.nosql.commons.view
+package org.codinjutsu.tools.nosql.commons.view.panel
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
@@ -12,6 +12,9 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.tree.TreeUtil
 import org.apache.commons.lang.StringUtils
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
+import org.codinjutsu.tools.nosql.commons.view.EditionPanel
+import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations
+import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction
 import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor

@@ -19,7 +19,7 @@ package org.codinjutsu.tools.nosql.mongo.view.action;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.mongo.view.QueryPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel;
 
 import javax.swing.*;
 
