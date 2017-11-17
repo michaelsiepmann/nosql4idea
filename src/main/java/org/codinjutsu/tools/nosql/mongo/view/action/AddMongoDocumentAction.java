@@ -20,15 +20,15 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
-import org.codinjutsu.tools.nosql.mongo.view.MongoResultPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 
 import java.awt.event.KeyEvent;
 
 public class AddMongoDocumentAction extends AnAction implements DumbAware {
 
-    private final MongoResultPanel resultPanel;
+    private final AbstractNoSQLResultPanel resultPanel;
 
-    public AddMongoDocumentAction(MongoResultPanel resultPanel) {
+    public AddMongoDocumentAction(AbstractNoSQLResultPanel resultPanel) {
         super("Add", "Add mongo document", AllIcons.General.Add);
         registerCustomShortcutSet(KeyEvent.VK_INSERT, KeyEvent.ALT_MASK, resultPanel);
         this.resultPanel = resultPanel;
@@ -36,6 +36,6 @@ public class AddMongoDocumentAction extends AnAction implements DumbAware {
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        resultPanel.addMongoDocument();
+        resultPanel.addDocument();
     }
 }

@@ -20,14 +20,14 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
-import org.codinjutsu.tools.nosql.mongo.view.MongoPanel;
+import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 
 import java.awt.event.KeyEvent;
 
 public class OpenFindAction extends AnAction implements DumbAware {
-    private final MongoPanel mongoPanel;
+    private final NoSqlResultView mongoPanel;
 
-    public OpenFindAction(MongoPanel mongoPanel) {
+    public OpenFindAction(NoSqlResultView mongoPanel) {
         super("Find", "Open Find editor", AllIcons.Actions.Find);
         this.mongoPanel = mongoPanel;
         registerCustomShortcutSet(KeyEvent.VK_F, KeyEvent.CTRL_MASK, mongoPanel);

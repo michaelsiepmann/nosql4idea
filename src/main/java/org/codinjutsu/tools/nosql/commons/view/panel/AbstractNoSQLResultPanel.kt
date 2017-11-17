@@ -61,7 +61,7 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
             addMouseListener(object : MouseAdapter() {
                 override fun mouseClicked(mouseEvent: MouseEvent?) {
                     if (mouseEvent!!.clickCount == 2 && isSelectedNodeId()) {
-                        editSelectedMongoDocument()
+                        editSelectedDocument()
                     }
                 }
             })
@@ -85,18 +85,18 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
         PopupHandler.installPopupHandler(resultTableView, actionPopupGroup, "POPUP", ActionManager.getInstance())
     }
 
-    fun editSelectedMongoDocument() {
-        val mongoDocument = getSelectedMongoDocument() ?: return
-        editionPanel.updateEditionTree(mongoDocument)
+    fun editSelectedDocument() {
+        val document = getSelectedDocument() ?: return
+        editionPanel.updateEditionTree(document)
         splitter.secondComponent = editionPanel
     }
 
-    fun addMongoDocument() {
+    fun addDocument() {
         editionPanel.updateEditionTree(null)
         splitter.secondComponent = editionPanel
     }
 
-    private fun getSelectedMongoDocument(): DOCUMENT? {
+    private fun getSelectedDocument(): DOCUMENT? {
         val tree = resultTableView?.tree
         val treeNode = tree?.lastSelectedPathComponent as NoSqlTreeNode
 
@@ -111,7 +111,7 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
     }
 
     fun isSelectedNodeId() =
-            if (resultTableView != null) {
+            if (resultTableView != null && resultTableView!!.tree.lastSelectedPathComponent != null) {
                 isSelectedNodeId(resultTableView!!.tree.lastSelectedPathComponent as NoSqlTreeNode)
             } else {
                 false

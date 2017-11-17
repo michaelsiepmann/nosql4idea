@@ -279,4 +279,25 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
         this.groupSeparator = groupSeparator;
         updateResultTableTree(redisResult, this.groupData, this.groupSeparator);
     }
+
+    @Override
+    public void closeFindEditor() {
+
+    }
+
+    @Override
+    public boolean isFindEditorOpened() {
+        return false;
+    }
+
+    @Override
+    public void openFindEditor() {
+
+    }
+
+    @Override
+    public void focusOnEditor() {
+
+    }
+
 }

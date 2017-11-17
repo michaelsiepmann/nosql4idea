@@ -29,4 +29,12 @@ public abstract class NoSqlResultView<R> extends JPanel implements Disposable {
     public abstract R getRecords();
 
     public abstract void executeQuery();
+
+    public abstract void closeFindEditor();
+
+    public abstract boolean isFindEditorOpened();
+
+    public abstract void openFindEditor();
+
+    public abstract void focusOnEditor();
 }

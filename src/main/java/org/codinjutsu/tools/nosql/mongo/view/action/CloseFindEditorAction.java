@@ -19,14 +19,14 @@ package org.codinjutsu.tools.nosql.mongo.view.action;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.CloseTabToolbarAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.codinjutsu.tools.nosql.mongo.view.MongoPanel;
+import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 
 import java.awt.event.KeyEvent;
 
 public class CloseFindEditorAction extends CloseTabToolbarAction {
-    private final MongoPanel mongoPanel;
+    private final NoSqlResultView mongoPanel;
 
-    public CloseFindEditorAction(MongoPanel mongoPanel) {
+    public CloseFindEditorAction(NoSqlResultView mongoPanel) {
         getTemplatePresentation().setIcon(AllIcons.Actions.Close);
         registerCustomShortcutSet(KeyEvent.VK_ESCAPE, 0, mongoPanel);
         this.mongoPanel = mongoPanel;

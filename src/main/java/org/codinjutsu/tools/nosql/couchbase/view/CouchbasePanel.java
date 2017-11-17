@@ -238,4 +238,24 @@ public class CouchbasePanel extends NoSqlResultView<CouchbaseDatabase> {
     public void dispose() {
 
     }
+
+    @Override
+    public void closeFindEditor() {
+
+    }
+
+    @Override
+    public boolean isFindEditorOpened() {
+        return false;
+    }
+
+    @Override
+    public void openFindEditor() {
+
+    }
+
+    @Override
+    public void focusOnEditor() {
+
+    }
 }

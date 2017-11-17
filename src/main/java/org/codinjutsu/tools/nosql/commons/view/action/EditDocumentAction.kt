@@ -26,7 +26,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel
 internal class EditDocumentAction<RESULT : SearchResult, DOCUMENT>(private val resultPanel: AbstractNoSQLResultPanel<RESULT, DOCUMENT>) : AnAction("Edit", "Edit mongo document", AllIcons.Actions.Edit), DumbAware {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
-        resultPanel.editSelectedMongoDocument()
+        resultPanel.editSelectedDocument()
     }
 
     override fun update(event: AnActionEvent?) {
