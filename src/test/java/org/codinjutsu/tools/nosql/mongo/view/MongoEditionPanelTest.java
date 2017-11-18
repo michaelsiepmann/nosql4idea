@@ -24,6 +24,7 @@ import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
+import org.codinjutsu.tools.nosql.mongo.view.columninfo.MongoWriteableColumnInfoDecider;
 import org.codinjutsu.tools.nosql.mongo.view.model.MongoTreeModelFactory;
 import org.fest.swing.data.TableCell;
 import org.fest.swing.driver.BasicJTableCellReader;
@@ -65,7 +66,7 @@ public class MongoEditionPanelTest {
 
         mongoEditionPanel = GuiActionRunner.execute(new GuiQuery<EditionPanel<DBObject>>() {
             protected EditionPanel<DBObject> executeInEDT() {
-                EditionPanel<DBObject> panel = new EditionPanel<DBObject>(nodeDescriptorFactory) {
+                EditionPanel<DBObject> panel = new EditionPanel<DBObject>(nodeDescriptorFactory, new MongoWriteableColumnInfoDecider()) {
                     @Override
                     protected void buildPopupMenu() {
                     }

@@ -45,7 +45,7 @@ import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseQuery;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
-import org.codinjutsu.tools.nosql.mongo.view.JsonTreeTableView;
+import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view;
+package org.codinjutsu.tools.nosql.commons.view;
 
 import com.intellij.ui.TreeTableSpeedSearch;
 import com.intellij.ui.treeStructure.treetable.ListTreeTableModelOnColumns;
@@ -24,25 +24,18 @@ import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
-import com.mongodb.DBObject;
-import org.bson.types.ObjectId;
-import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.renderer.KeyCellRenderer;
 import org.codinjutsu.tools.nosql.commons.view.renderer.ValueCellRenderer;
-import org.codinjutsu.tools.nosql.commons.view.table.CellEditor;
-import org.codinjutsu.tools.nosql.commons.view.table.NoSQLDatePickerCellEditor;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.util.Date;
 
 public class JsonTreeTableView extends TreeTable {
 
-    private static final ColumnInfo KEY = new ColumnInfo("Key") {
+    public static final ColumnInfo KEY = new ColumnInfo("Key") {
 
         public Object valueOf(Object obj) {
             NoSqlTreeNode node = (NoSqlTreeNode) obj;
@@ -60,15 +53,13 @@ public class JsonTreeTableView extends TreeTable {
         }
     };
 
-    private static final ColumnInfo READONLY_VALUE = new ReadOnlyValueColumnInfo();
-    private static final ColumnInfo WRITABLE_VALUE = new WritableColumnInfo();
+    public static final ColumnInfo READONLY_VALUE = new ReadOnlyValueColumnInfo();
 
     public static final ColumnInfo[] COLUMNS_FOR_READING = new ColumnInfo[]{KEY, READONLY_VALUE};
-    public static final ColumnInfo[] COLUMNS_FOR_WRITING = new ColumnInfo[]{KEY, WRITABLE_VALUE};
 
     private final ColumnInfo[] columns;
 
-    public JsonTreeTableView(TreeNode rootNode, ColumnInfo[] columnInfos) {
+    public JsonTreeTableView(TreeNode rootNode, ColumnInfo... columnInfos) {
         super(new ListTreeTableModelOnColumns(rootNode, columnInfos));
         this.columns = columnInfos;
 
@@ -131,55 +122,4 @@ public class JsonTreeTableView extends TreeTable {
         }
     }
 
-    private static class WritableColumnInfo extends ColumnInfo<NoSqlTreeNode, Object> {
-
-        private final TableCellRenderer myRenderer = new ValueCellRenderer();
-        private final TableCellEditor defaultEditor = new CellEditor();
-
-
-        public WritableColumnInfo() {
-            super("Value");
-        }
-
-        @Override
-        public TableCellRenderer getRenderer(NoSqlTreeNode o) {
-            return myRenderer;
-        }
-
-
-        @Override
-        public boolean isCellEditable(NoSqlTreeNode treeNode) {
-            Object value = treeNode.getDescriptor().getValue();
-            return !(value instanceof DBObject) && !(value instanceof ObjectId);
-        }
-
-        @Nullable
-        @Override
-        public TableCellEditor getEditor(final NoSqlTreeNode treeNode) {
-            Object value = treeNode.getDescriptor().getValue();
-            if (value instanceof Date) {
-                return buildDateCellEditor(treeNode);
-            }
-            return defaultEditor;
-        }
-
-        private static NoSQLDatePickerCellEditor buildDateCellEditor(final NoSqlTreeNode treeNode) {
-            final NoSQLDatePickerCellEditor dateEditor = new NoSQLDatePickerCellEditor();
-
-//  Note from dev: Quite ugly because when clicking on the button to open popup calendar, stopCellEdition is invoked.
-//                 From that point, impossible to set the selected data in the node description
-            dateEditor.addActionListener(actionEvent -> treeNode.getDescriptor().setValue(dateEditor.getCellEditorValue()));
-            return dateEditor;
-        }
-
-        public Object valueOf(NoSqlTreeNode treeNode) {
-            return treeNode.getDescriptor().getValue();
-
-        }
-
-        @Override
-        public void setValue(NoSqlTreeNode treeNode, Object value) {
-            treeNode.getDescriptor().setValue(value);
-        }
-    }
 }

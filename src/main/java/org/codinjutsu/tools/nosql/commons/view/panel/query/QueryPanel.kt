@@ -25,7 +25,7 @@ import com.intellij.util.ui.UIUtil
 import com.mongodb.util.JSON
 import com.mongodb.util.JSONParseException
 import org.apache.commons.lang.StringUtils
-import org.codinjutsu.tools.nosql.mongo.view.action.OperatorCompletionAction
+import org.codinjutsu.tools.nosql.commons.view.action.OperatorCompletionAction
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.awt.Font

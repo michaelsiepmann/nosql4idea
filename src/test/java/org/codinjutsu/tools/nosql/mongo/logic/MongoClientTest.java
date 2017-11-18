@@ -24,13 +24,13 @@ import com.mongodb.util.JSON;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
-import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
+import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -40,11 +40,11 @@ public class MongoClientTest {
 
     private MongoClient mongoClient;
     private ServerConfiguration serverConfiguration;
-
+    private QueryOptions queryOptions = new QueryOptions();
 
     @Test
-    public void loadCollectionsWithEmptyFilter() throws Exception {
-        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions();
+    public void loadCollectionsWithEmptyFilter() {
+        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions(queryOptions);
         mongoQueryOptions.setResultLimit(3);
         MongoResult mongoResult = mongoClient.loadCollectionValues(serverConfiguration, new MongoCollection("dummyCollection", "test"), mongoQueryOptions);
         assertNotNull(mongoResult);
@@ -52,8 +52,8 @@ public class MongoClientTest {
     }
 
     @Test
-    public void loadCollectionsWithFilterAndProjection() throws Exception {
-        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions();
+    public void loadCollectionsWithFilterAndProjection() {
+        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions(queryOptions);
         mongoQueryOptions.setFilter("{\"label\":\"tata\"}");
         mongoQueryOptions.setProjection("{\"label\":1, \"_id\": 0}");
         mongoQueryOptions.setResultLimit(3);
@@ -64,8 +64,8 @@ public class MongoClientTest {
     }
 
     @Test
-    public void loadCollectionsWithFilterAndProjectionAndSortByPrice() throws Exception {
-        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions();
+    public void loadCollectionsWithFilterAndProjectionAndSortByPrice() {
+        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions(queryOptions);
         mongoQueryOptions.setFilter("{\"label\":\"tata\"}");
         mongoQueryOptions.setProjection("{\"label\": 1, \"_id\": 0, \"price\": 1}");
         mongoQueryOptions.setSort("{\"price\": 1}");
@@ -77,8 +77,8 @@ public class MongoClientTest {
     }
 
     @Test
-    public void updateMongoDocument() throws Exception {
-        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions();
+    public void updateMongoDocument() {
+        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions(queryOptions);
         mongoQueryOptions.setFilter("{'label': 'tete'}");
         MongoCollection mongoCollection = new MongoCollection("dummyCollection", "test");
         MongoResult initialData = mongoClient.loadCollectionValues(serverConfiguration, mongoCollection, mongoQueryOptions);
@@ -98,8 +98,8 @@ public class MongoClientTest {
 
 
     @Test
-    public void deleteMongoDocument() throws Exception {
-        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions();
+    public void deleteMongoDocument() {
+        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions(queryOptions);
         mongoQueryOptions.setFilter("{'label': 'tete'}");
         MongoCollection mongoCollection = new MongoCollection("dummyCollection", "test");
         MongoResult initialData = mongoClient.loadCollectionValues(serverConfiguration, mongoCollection, mongoQueryOptions);
@@ -115,8 +115,8 @@ public class MongoClientTest {
 
 
     @Test
-    public void loadCollectionsWithAggregateOperators() throws Exception {
-        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions();
+    public void loadCollectionsWithAggregateOperators() {
+        MongoQueryOptions mongoQueryOptions = new MongoQueryOptions(queryOptions);
         mongoQueryOptions.setOperations("[{'$match': {'price': 15}}, {'$project': {'label': 1, 'price': 1}}, {'$group': {'_id': '$label', 'total': {'$sum': '$price'}}}]");
         MongoResult mongoResult = mongoClient.loadCollectionValues(serverConfiguration, new MongoCollection("dummyCollection", "test"), mongoQueryOptions);
         assertNotNull(mongoResult);
@@ -142,7 +142,7 @@ public class MongoClientTest {
         serverConfiguration.setServerUrl("localhost:27017");
     }
 
-    private static void fillCollectionWithJsonData(com.mongodb.client.MongoCollection<Document> collection, String jsonResource) throws IOException {
+    private static void fillCollectionWithJsonData(com.mongodb.client.MongoCollection<Document> collection, String jsonResource) {
         Object jsonParsed = JSON.parse(jsonResource);
         if (jsonParsed instanceof BasicDBList) {
             BasicDBList jsonObject = (BasicDBList) jsonParsed;

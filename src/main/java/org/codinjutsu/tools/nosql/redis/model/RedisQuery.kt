@@ -18,4 +18,4 @@ package org.codinjutsu.tools.nosql.redis.model
 
 import org.codinjutsu.tools.nosql.commons.model.Query
 
-internal class RedisQuery(val filter: String, override val limit: Int) : Query
+class RedisQuery(val filter: String, override val limit: Int) : Query

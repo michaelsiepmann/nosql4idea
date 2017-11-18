@@ -40,7 +40,7 @@ import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
-import org.codinjutsu.tools.nosql.mongo.view.JsonTreeTableView;
+import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisQuery;

@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view.action;
+package org.codinjutsu.tools.nosql.commons.view.action;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.ide.actions.CloseTabToolbarAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAware;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 
 import java.awt.event.KeyEvent;
 
-public class OpenFindAction extends AnAction implements DumbAware {
-    private final NoSqlResultView mongoPanel;
+public class CloseFindEditorAction extends CloseTabToolbarAction {
+    private final NoSqlResultView noSqlResultView;
 
-    public OpenFindAction(NoSqlResultView mongoPanel) {
-        super("Find", "Open Find editor", AllIcons.Actions.Find);
-        this.mongoPanel = mongoPanel;
-        registerCustomShortcutSet(KeyEvent.VK_F, KeyEvent.CTRL_MASK, mongoPanel);
+    public CloseFindEditorAction(NoSqlResultView noSqlResultView) {
+        getTemplatePresentation().setIcon(AllIcons.Actions.Close);
+        registerCustomShortcutSet(KeyEvent.VK_ESCAPE, 0, noSqlResultView);
+        this.noSqlResultView = noSqlResultView;
     }
-
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        if (!mongoPanel.isFindEditorOpened()) {
-            mongoPanel.openFindEditor();
-        } else {
-            mongoPanel.focusOnEditor();
-        }
+        noSqlResultView.closeFindEditor();
+    }
+
+    @Override
+    public void update(AnActionEvent event) {
+        event.getPresentation().setVisible(false);
     }
 }

@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.view.panel.query
 
-internal data class QueryOptions(
+
+data class QueryOptions @JvmOverloads constructor(
         var operations: String? = null,
         var resultLimit: Int = 300,
         var filter: String? = null,

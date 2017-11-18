@@ -12,7 +12,7 @@ import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoResultDescripto
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoValueDescriptor
 import javax.swing.tree.TreeNode
 
-internal class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
+class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
     override fun createResultDescriptor(name: String) = MongoResultDescriptor()
 
     override fun createKeyValueDescriptor(key: String, value: Any?) =
@@ -45,7 +45,7 @@ internal class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
         }
     }
 
-    private fun processDbObject(parentNode: NoSqlTreeNode, mongoObject: DBObject) {
+    fun processDbObject(parentNode: NoSqlTreeNode, mongoObject: DBObject) {
         if (mongoObject is BasicDBList) {
             for (i in mongoObject.indices) {
                 val mongoObjectOfList = mongoObject[i]

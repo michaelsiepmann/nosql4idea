@@ -22,27 +22,28 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.mongodb.DBObject;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
+import org.codinjutsu.tools.nosql.mongo.view.columninfo.MongoWriteableColumnInfoDecider;
 import org.codinjutsu.tools.nosql.mongo.view.model.MongoTreeModelFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoResult, DBObject> {
 
-    public MongoResultPanel(Project project, NoSQLResultPanelDocumentOperations<DBObject> noSQLResultPanelDocumentOperations) {
+    MongoResultPanel(Project project, NoSQLResultPanelDocumentOperations<DBObject> noSQLResultPanelDocumentOperations) {
         super(project, noSQLResultPanelDocumentOperations, new MongoTreeModelFactory());
     }
 
     @NotNull
     @Override
     protected EditionPanel<DBObject> createEditionPanel() {
-        EditionPanel<DBObject> mongoEditionPanel = new EditionPanel<DBObject>(new MongoTreeModelFactory());
+        EditionPanel<DBObject> mongoEditionPanel = new EditionPanel<>(new MongoTreeModelFactory(), new MongoWriteableColumnInfoDecider());
         mongoEditionPanel.init(getDocumentOperations(), new ActionCallback() {
             public void onOperationSuccess(@NotNull String message) {
                 hideEditionPanel();

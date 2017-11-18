@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view.action;
+package org.codinjutsu.tools.nosql.commons.view.action;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -24,32 +24,29 @@ import org.codinjutsu.tools.nosql.NoSqlExplorerPanel;
 
 import javax.swing.*;
 
-/**
- * Created by piddubnyi on 06.11.14 .
- */
-public class DropDatabaseAction extends AnAction implements DumbAware {
+public class DropCollectionAction extends AnAction implements DumbAware {
 
     private static final Icon REMOVE_ICON = AllIcons.Actions.GC;
 
     private final NoSqlExplorerPanel noSqlExplorerPanel;
 
-    public DropDatabaseAction(NoSqlExplorerPanel noSqlExplorerPanel) {
-        super("Drop Database", "Drop the selected database", REMOVE_ICON);
+    public DropCollectionAction(NoSqlExplorerPanel noSqlExplorerPanel) {
+        super("Drop collection", "Drop the selected collection", REMOVE_ICON);
         this.noSqlExplorerPanel = noSqlExplorerPanel;
     }
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        int result = JOptionPane.showConfirmDialog(null, String.format("Do you REALLY want to drop the '%s' database?", noSqlExplorerPanel.getSelectedMongoDatabase().getName()), "Warning", JOptionPane.YES_NO_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, String.format("Do you REALLY want to drop the '%s' collection?", noSqlExplorerPanel.getSelectedCollection().getName()), "Warning", JOptionPane.YES_NO_OPTION);
 
         if (result == JOptionPane.YES_OPTION) {
-            noSqlExplorerPanel.dropDatabase();
+            noSqlExplorerPanel.dropCollection();
         }
     }
 
 
     @Override
     public void update(AnActionEvent event) {
-        event.getPresentation().setVisible(noSqlExplorerPanel.getSelectedMongoDatabase() != null);
+        event.getPresentation().setVisible(noSqlExplorerPanel.getSelectedCollection() != null);
     }
 }

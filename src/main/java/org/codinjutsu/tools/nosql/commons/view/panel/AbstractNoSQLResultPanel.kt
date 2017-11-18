@@ -21,7 +21,7 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDe
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ResultDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.buildTree
-import org.codinjutsu.tools.nosql.mongo.view.JsonTreeTableView
+import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView
 import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -54,7 +54,7 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
     protected abstract fun createEditionPanel(): EditionPanel<DOCUMENT>
 
     fun updateResultTableTree(searchResult: RESULT) {
-        resultTableView = JsonTreeTableView(buildTree(searchResult, treeModelFactory), JsonTreeTableView.COLUMNS_FOR_READING)
+        resultTableView = JsonTreeTableView(buildTree(searchResult, treeModelFactory), JsonTreeTableView.KEY, JsonTreeTableView.READONLY_VALUE)
         with(resultTableView) {
             name = "resultTreeTable"
 

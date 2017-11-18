@@ -21,16 +21,17 @@ import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
+import org.codinjutsu.tools.nosql.commons.view.action.AddMongoDocumentAction;
+import org.codinjutsu.tools.nosql.commons.view.action.CloseFindEditorAction;
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction;
 import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction;
+import org.codinjutsu.tools.nosql.commons.view.action.EnableAggregateAction;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
+import org.codinjutsu.tools.nosql.commons.view.action.OpenFindAction;
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel;
-import org.codinjutsu.tools.nosql.mongo.view.action.AddMongoDocumentAction;
-import org.codinjutsu.tools.nosql.mongo.view.action.EnableAggregateAction;
-import org.codinjutsu.tools.nosql.mongo.view.action.OpenFindAction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -140,7 +141,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, COLLECTION ex
         actionResultGroup.addSeparator();
         actionResultGroup.add(expandAllAction);
         actionResultGroup.add(collapseAllAction);
-        // // TODO: 17.11.2017  actionResultGroup.add(new CloseFindEditorAction(this));
+        actionResultGroup.add(new CloseFindEditorAction(this));
 
         ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("MongoResultGroupActions", actionResultGroup, true);
         actionToolBar.setLayoutPolicy(ActionToolbar.AUTO_LAYOUT_POLICY);

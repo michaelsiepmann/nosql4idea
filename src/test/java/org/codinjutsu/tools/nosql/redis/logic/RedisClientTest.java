@@ -45,7 +45,7 @@ public class RedisClientTest {
         serverConfiguration.setDatabaseVendor(DatabaseVendor.REDIS);
         serverConfiguration.setServerUrl("localhost:6379");
 
-        RedisQuery query = new RedisQuery("*");
+        RedisQuery query = new RedisQuery("*", 300);
         RedisResult result = redisClient.loadRecords(serverConfiguration, new RedisDatabase("1"), query);
 
         List<RedisRecord> redisRecords = result.getResults();
@@ -78,7 +78,7 @@ public class RedisClientTest {
         serverConfiguration.setDatabaseVendor(DatabaseVendor.REDIS);
         serverConfiguration.setServerUrl("localhost:6379");
 
-        RedisQuery query = new RedisQuery("reviews");
+        RedisQuery query = new RedisQuery("reviews", 300);
         RedisResult result = redisClient.loadRecords(serverConfiguration, new RedisDatabase("1"), query);
 
         List<RedisRecord> redisRecords = result.getResults();

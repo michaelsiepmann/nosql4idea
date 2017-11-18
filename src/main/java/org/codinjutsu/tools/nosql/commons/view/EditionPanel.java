@@ -11,11 +11,12 @@ import com.intellij.util.ui.tree.TreeUtil;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.AddKeyAction;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.AddValueAction;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.DeleteKeyAction;
+import org.codinjutsu.tools.nosql.commons.view.columninfo.WritableColumnInfo;
+import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ValueDescriptor;
-import org.codinjutsu.tools.nosql.mongo.view.JsonTreeTableView;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -37,11 +38,13 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
     private JsonTreeTableView editTableView;
 
     private final NodeDescriptorFactory<DOCUMENT> nodeDescriptorFactory;
+    private final WriteableColumnInfoDecider writeableColumnInfoDecider;
 
-    public EditionPanel(NodeDescriptorFactory<DOCUMENT> nodeDescriptorFactory) {
+    public EditionPanel(NodeDescriptorFactory<DOCUMENT> nodeDescriptorFactory, WriteableColumnInfoDecider writeableColumnInfoDecider) {
         super(new BorderLayout());
 
         this.nodeDescriptorFactory = nodeDescriptorFactory;
+        this.writeableColumnInfoDecider = writeableColumnInfoDecider;
 
         add(mainPanel);
         editionTreePanel.setLayout(new BorderLayout());
@@ -105,7 +108,7 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
         }
 
         mainPanel.setBorder(IdeBorderFactory.createTitledBorder(panelTitle, true));
-        editTableView = new JsonTreeTableView(buildJsonTree(document), JsonTreeTableView.COLUMNS_FOR_WRITING);
+        editTableView = new JsonTreeTableView(buildJsonTree(document), JsonTreeTableView.KEY, new WritableColumnInfo(writeableColumnInfoDecider));
         editTableView.setName("editionTreeTable");
 
         editionTreePanel.invalidate();
