@@ -39,6 +39,9 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseQuery;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
+import org.codinjutsu.tools.nosql.couchbase.view.CouchbaseContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -47,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 import static com.couchbase.client.java.query.Select.select;
 import static com.couchbase.client.java.query.dsl.Expression.i;
 
-public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseResult, CouchbaseQuery> {
+public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext, CouchbaseResult, CouchbaseQuery, JsonObject> {
 
     public static CouchbaseClient getInstance(Project project) {
         return ServiceManager.getService(project, CouchbaseClient.class);
@@ -141,5 +144,19 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseResult, 
         }
         cluster.disconnect();
         return result;
+    }
+
+    @Nullable
+    @Override
+    public JsonObject findDocument(CouchbaseContext context, @NotNull Object _id) {
+        return null;
+    }
+
+    @Override
+    public void update(@NotNull CouchbaseContext context, @NotNull JsonObject jsonObject) {
+    }
+
+    @Override
+    public void delete(@NotNull CouchbaseContext context, @NotNull Object _id) {
     }
 }

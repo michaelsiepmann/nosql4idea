@@ -23,6 +23,7 @@ import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
 import org.codinjutsu.tools.nosql.couchbase.view.CouchbaseAuthenticationPanel;
+import org.codinjutsu.tools.nosql.couchbase.view.CouchbaseContext;
 import org.codinjutsu.tools.nosql.couchbase.view.CouchbasePanel;
 import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile;
 
@@ -35,6 +36,6 @@ public class CouchbaseUI implements DatabaseUI {
     @Override
     public NoSqlResultView createResultPanel(Project project, NoSqlDatabaseObjectFile objectFile) {
         CouchbaseObjectFile couchbaseObjectFile = (CouchbaseObjectFile) objectFile;
-        return new CouchbasePanel(project, CouchbaseClient.getInstance(project), couchbaseObjectFile.getConfiguration(), couchbaseObjectFile.getDatabase());
+        return new CouchbasePanel(project, new CouchbaseContext(CouchbaseClient.getInstance(project), couchbaseObjectFile.getConfiguration(), couchbaseObjectFile.getDatabase()));
     }
 }

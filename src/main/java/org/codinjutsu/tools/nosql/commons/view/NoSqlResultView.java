@@ -17,16 +17,17 @@
 package org.codinjutsu.tools.nosql.commons.view;
 
 import com.intellij.openapi.Disposable;
+import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 
 import javax.swing.*;
 
-public abstract class NoSqlResultView<R> extends JPanel implements Disposable {
+public abstract class NoSqlResultView extends JPanel implements Disposable {
 
     public abstract void showResults();
 
     public abstract JPanel getResultPanel();
 
-    public abstract R getRecords();
+    public abstract Object getRecords();
 
     public abstract void executeQuery();
 

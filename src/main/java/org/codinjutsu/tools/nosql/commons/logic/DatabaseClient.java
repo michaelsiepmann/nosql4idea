@@ -18,8 +18,10 @@ package org.codinjutsu.tools.nosql.commons.logic;
 
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public interface DatabaseClient {
+public interface DatabaseClient<CONTEXT, DOCUMENT> {
 
     void connect(ServerConfiguration serverConfiguration);
 
@@ -30,4 +32,11 @@ public interface DatabaseClient {
     void registerServer(DatabaseServer databaseServer);
 
     ServerConfiguration defaultConfiguration();
+
+    @Nullable
+    DOCUMENT findDocument(CONTEXT context, @NotNull Object _id);
+
+    void update(@NotNull CONTEXT context, @NotNull DOCUMENT document);
+
+    void delete(@NotNull CONTEXT context, @NotNull Object _id);
 }

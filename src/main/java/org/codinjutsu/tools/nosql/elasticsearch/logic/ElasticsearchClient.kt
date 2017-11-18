@@ -16,9 +16,10 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchCollection
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchQuery
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult
+import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
 import java.net.URL
 
-internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchResult, ElasticsearchQuery>, FolderDatabaseClient<ElasticsearchDatabase, ElasticsearchCollection> {
+internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, ElasticsearchResult, ElasticsearchQuery, JsonObject>, FolderDatabaseClient<ElasticsearchDatabase, ElasticsearchCollection> {
 
     override fun connect(serverConfiguration: ServerConfiguration) {
         URL(serverConfiguration.serverUrl).openConnection().connect()
@@ -57,16 +58,14 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchResult,
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun findDocument(serverConfiguration: ServerConfiguration, database: ElasticsearchDatabase, collection: ElasticsearchCollection, id: Any): JsonObject? {
-        return null // todo
+    override fun findDocument(context: ElasticsearchContext, _id: Any): JsonObject? {
+        return null
     }
 
-    fun delete(serverConfiguration: ServerConfiguration, database: ElasticsearchDatabase, collection: ElasticsearchCollection, obj: Any) {
-
+    override fun update(context: ElasticsearchContext, document: JsonObject) {
     }
 
-    fun update(serverConfiguration: ServerConfiguration, database: ElasticsearchDatabase, collection: ElasticsearchCollection, obj : JsonObject) {
-
+    override fun delete(context: ElasticsearchContext, _id: Any) {
     }
 
     private fun getTypes(configuration: ServerConfiguration, index: String): Collection<ElasticsearchCollection> {

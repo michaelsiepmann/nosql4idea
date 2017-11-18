@@ -41,6 +41,7 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
+import org.codinjutsu.tools.nosql.mongo.view.MongoContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -49,7 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDatabase, MongoCollection> {
+public class MongoClient implements DatabaseClient<MongoContext, DBObject>, FolderDatabaseClient<MongoDatabase, MongoCollection> {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
@@ -134,23 +135,25 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
         return mongoDatabase;
     }
 
-    public void update(ServerConfiguration configuration, MongoCollection mongoCollection, DBObject mongoDocument) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
-            String databaseName = mongoCollection.getDatabaseName();
+    @Override
+    public void update(@NotNull MongoContext context, @NotNull DBObject document) {
+        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+            String databaseName = context.getMongoCollection().getDatabaseName();
 
             DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(mongoCollection.getName());
+            DBCollection collection = database.getCollection(context.getMongoCollection().getName());
 
-            collection.save(mongoDocument);
+            collection.save(document);
         }
     }
 
-    public void delete(ServerConfiguration configuration, MongoCollection mongoCollection, Object _id) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
-            String databaseName = mongoCollection.getDatabaseName();
+    @Override
+    public void delete(@NotNull MongoContext context, @NotNull Object _id) {
+        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+            String databaseName = context.getMongoCollection().getDatabaseName();
 
             DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(mongoCollection.getName());
+            DBCollection collection = database.getCollection(context.getMongoCollection().getName());
 
             collection.remove(new BasicDBObject("_id", _id));
         }
@@ -175,14 +178,14 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
         }
     }
 
-    public MongoResult loadCollectionValues(ServerConfiguration configuration, MongoCollection mongoCollection, MongoQueryOptions mongoQueryOptions) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
-            String databaseName = mongoCollection.getDatabaseName();
+    public MongoResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
+        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+            String databaseName = context.getMongoCollection().getDatabaseName();
 
             DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(mongoCollection.getName());
+            DBCollection collection = database.getCollection(context.getMongoCollection().getName());
 
-            MongoResult mongoResult = new MongoResult(mongoCollection.getName());
+            MongoResult mongoResult = new MongoResult(context.getMongoCollection().getName());
             if (mongoQueryOptions.isAggregate()) {
                 return aggregate(mongoQueryOptions, mongoResult, collection);
             }
@@ -191,11 +194,11 @@ public class MongoClient implements DatabaseClient, FolderDatabaseClient<MongoDa
         }
     }
 
-    public DBObject findMongoDocument(ServerConfiguration configuration, MongoCollection mongoCollection, Object _id) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
-            String databaseName = mongoCollection.getDatabaseName();
+    public DBObject findDocument(MongoContext context, Object _id) {
+        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+            String databaseName = context.getMongoCollection().getDatabaseName();
             DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(mongoCollection.getName());
+            DBCollection collection = database.getCollection(context.getMongoCollection().getName());
             return collection.findOne(new BasicDBObject("_id", _id));
         }
     }

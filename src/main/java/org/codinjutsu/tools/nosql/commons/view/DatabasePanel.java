@@ -16,7 +16,6 @@ import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.NumberDocument;
 import com.intellij.ui.components.panels.NonOpaquePanel;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
@@ -37,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class DatabasePanel<CLIENT extends DatabaseClient, COLLECTION extends NoSQLCollection, RESULT extends SearchResult, DOCUMENT> extends NoSqlResultView<COLLECTION> {
+public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT extends DatabaseContext<CLIENT>, RESULT extends SearchResult, DOCUMENT> extends NoSqlResultView {
 
     private final LoadingDecorator loadingDecorator;
     private JPanel rootPanel;
@@ -49,22 +48,18 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, COLLECTION ex
     private final QueryPanel queryPanel;
 
     private final Project project;
-    private final CLIENT client;
-    private final ServerConfiguration configuration;
-    private final COLLECTION collection;
+    private final CONTEXT context;
 
-    protected DatabasePanel(Project project, CLIENT client, ServerConfiguration configuration, COLLECTION collection) {
+    protected DatabasePanel(Project project, CONTEXT context) {
         this.project = project;
-        this.client = client;
-        this.configuration = configuration;
-        this.collection = collection;
+        this.context = context;
 
         errorPanel.setLayout(new BorderLayout());
 
         queryPanel = new QueryPanel(project);
         queryPanel.setVisible(false);
 
-        resultPanel = createResultPanel(project, client, configuration, collection);
+        resultPanel = createResultPanel(project, context);
 
         loadingDecorator = new LoadingDecorator(resultPanel, this, 0);
 
@@ -78,7 +73,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, COLLECTION ex
         initToolBar();
     }
 
-    protected abstract AbstractNoSQLResultPanel<RESULT, DOCUMENT> createResultPanel(Project project, CLIENT client, ServerConfiguration configuration, COLLECTION collection);
+    protected abstract AbstractNoSQLResultPanel<RESULT, DOCUMENT> createResultPanel(Project project, CONTEXT context);
 
     private void initToolBar() {
         toolBar.setLayout(new BorderLayout());
@@ -109,7 +104,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, COLLECTION ex
         final TreeExpander treeExpander = new TreeExpander() {
             @Override
             public void expandAll() {
-                resultPanel.expandAll();
+                DatabasePanel.this.expandAll();
             }
 
             @Override
@@ -152,9 +147,17 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, COLLECTION ex
         toolBar.add(actionToolBarComponent, BorderLayout.CENTER);
     }
 
+    public void expandAll() {
+        resultPanel.expandAll();
+    }
+
+    protected CONTEXT getContext() {
+        return context;
+    }
+
     @Override
-    public COLLECTION getRecords() {
-        return collection;
+    public Object getRecords() {
+        return null;
     }
 
     public void showResults() {
@@ -170,7 +173,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, COLLECTION ex
                 try {
                     GuiUtils.runInSwingThread(() -> loadingDecorator.startLoading(false));
                     GuiUtils.runInSwingThread(() -> {
-                        RESULT searchResult = getSearchResult(client, configuration, collection, queryPanel.getQueryOptions(rowLimitField.getText()));
+                        RESULT searchResult = getSearchResult(context, queryPanel.getQueryOptions(rowLimitField.getText()));
                         resultPanel.updateResultTableTree(searchResult);
                     });
                 } catch (final Exception ex) {
@@ -188,7 +191,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, COLLECTION ex
         });
     }
 
-    protected abstract RESULT getSearchResult(CLIENT client, ServerConfiguration configuration, COLLECTION collection, QueryOptions queryOptions);
+    protected abstract RESULT getSearchResult(CONTEXT context, QueryOptions queryOptions);
 
     private void validateQuery() {
         queryPanel.validateQuery();

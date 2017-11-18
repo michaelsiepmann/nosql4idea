@@ -18,4 +18,4 @@ package org.codinjutsu.tools.nosql.couchbase.model
 
 import org.codinjutsu.tools.nosql.commons.model.Query
 
-internal class CouchbaseQuery(override val limit: Int) : Query
+class CouchbaseQuery(override val limit: Int) : Query

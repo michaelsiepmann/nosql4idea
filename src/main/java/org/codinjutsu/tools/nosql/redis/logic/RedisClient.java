@@ -25,10 +25,13 @@ import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.redis.RedisContext;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisQuery;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Tuple;
 
@@ -37,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisClient implements LoadableDatabaseClient<RedisResult, RedisQuery> {
+public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisResult, RedisQuery, Object> {
 
     public static RedisClient getInstance(Project project) {
         return ServiceManager.getService(project, RedisClient.class);
@@ -130,5 +133,21 @@ public class RedisClient implements LoadableDatabaseClient<RedisResult, RedisQue
         }
         redisUri += serverConfiguration.getServerUrl();
         return new Jedis(redisUri);
+    }
+
+    @Nullable
+    @Override
+    public Object findDocument(RedisContext redisPanelContext, @NotNull Object _id) {
+        return null;
+    }
+
+    @Override
+    public void update(@NotNull RedisContext redisPanelContext, @NotNull Object o) {
+
+    }
+
+    @Override
+    public void delete(@NotNull RedisContext redisPanelContext, @NotNull Object _id) {
+
     }
 }

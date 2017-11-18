@@ -52,7 +52,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 
-public class RedisPanel extends NoSqlResultView<RedisResult> {
+public class RedisPanel extends NoSqlResultView {
 
     private JPanel toolBarPanel;
     private JPanel containerPanel;
@@ -213,7 +213,7 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
     }
 
     @Override
-    public RedisResult getRecords() {
+    public Object getRecords() {
         return redisResult;
     }
 
