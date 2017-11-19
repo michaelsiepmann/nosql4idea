@@ -25,10 +25,10 @@ import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.redis.RedisContext;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
-import org.codinjutsu.tools.nosql.redis.model.RedisQuery;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisResult, RedisQuery, Object> {
+public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisResult, Object> {
 
     public static RedisClient getInstance(Project project) {
         return ServiceManager.getService(project, RedisClient.class);
@@ -95,11 +95,11 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisRe
     }
 
     @Override
-    public RedisResult loadRecords(ServerConfiguration serverConfiguration, Database database, RedisQuery query) {
-        Jedis jedis = createJedis(serverConfiguration);
+    public RedisResult loadRecords(RedisContext context, QueryOptions query) {
+        Jedis jedis = createJedis(context.getServerConfiguration());
         jedis.connect();
         RedisResult redisResult = new RedisResult();
-        int index = Integer.parseInt(database.getName());
+        int index = Integer.parseInt(context.getDatabase().getName());
         jedis.select(index);
 
         Set<String> keys = jedis.keys(query.getFilter());

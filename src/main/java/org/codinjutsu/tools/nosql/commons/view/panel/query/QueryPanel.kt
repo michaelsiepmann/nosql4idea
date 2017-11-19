@@ -204,7 +204,7 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
         }
 
         override fun buildQueryOptions(rowLimit: String): QueryOptions {
-            val queryOptions = QueryOptions()
+            val queryOptions = QueryOptionsImpl()
             try {
                 queryOptions.operations = query
             } catch (ex: JSONParseException) {
@@ -256,7 +256,7 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
         }
 
         override fun buildQueryOptions(rowLimit: String): QueryOptions {
-            val mongoQueryOptions = QueryOptions()
+            val mongoQueryOptions = QueryOptionsImpl()
             try {
                 mongoQueryOptions.filter = getQueryFrom(selectEditor)
                 mongoQueryOptions.projection = getQueryFrom(projectionEditor)

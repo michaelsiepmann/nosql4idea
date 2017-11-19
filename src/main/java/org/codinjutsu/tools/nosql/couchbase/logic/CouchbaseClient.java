@@ -36,8 +36,8 @@ import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseQuery;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
 import org.codinjutsu.tools.nosql.couchbase.view.CouchbaseContext;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 import static com.couchbase.client.java.query.Select.select;
 import static com.couchbase.client.java.query.dsl.Expression.i;
 
-public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext, CouchbaseResult, CouchbaseQuery, JsonObject> {
+public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext, CouchbaseResult, JsonObject> {
 
     public static CouchbaseClient getInstance(Project project) {
         return ServiceManager.getService(project, CouchbaseClient.class);
@@ -118,7 +118,9 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
     }
 
     @Override
-    public CouchbaseResult loadRecords(ServerConfiguration configuration, Database database, CouchbaseQuery couchbaseQuery) {
+    public CouchbaseResult loadRecords(CouchbaseContext context, QueryOptions queryOptions) {
+        ServerConfiguration configuration = context.getServerConfiguration();
+        CouchbaseDatabase database = context.getDatabase();
         Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment
                         .builder()
                         .queryEnabled(true)
@@ -128,7 +130,7 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
 //        ClusterManager clusterManager = cluster.clusterManager(authenticationSettings.getUsername(), authenticationSettings.getPassword());
 
         Bucket beerBucket = cluster.openBucket(database.getName(), 10, TimeUnit.SECONDS);
-        N1qlQueryResult queryResult = beerBucket.query(N1qlQuery.simple(select("*").from(i(database.getName())).limit(couchbaseQuery.getLimit())));
+        N1qlQueryResult queryResult = beerBucket.query(N1qlQuery.simple(select("*").from(i(database.getName())).limit(queryOptions.getResultLimit())));
 
 //TODO dirty zone :(
         CouchbaseResult result = new CouchbaseResult(database.getName());

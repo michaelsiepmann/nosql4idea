@@ -16,11 +16,14 @@
 
 package org.codinjutsu.tools.nosql.redis.view;
 
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.command.impl.DummyProject;
 import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
-import org.codinjutsu.tools.nosql.redis.model.RedisQuery;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
+import org.codinjutsu.tools.nosql.redis.RedisContext;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
@@ -35,7 +38,13 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import redis.clients.jedis.Tuple;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -56,14 +65,15 @@ public class RedisPanelTest {
     }
 
     @Before
-    public void setUp() throws Exception {
-        when(redisClientMock.loadRecords(any(ServerConfiguration.class), any(RedisDatabase.class), any(RedisQuery.class))).thenReturn(new RedisResult());
+    public void setUp() {
+        when(redisClientMock.loadRecords(any(RedisContext.class), any(QueryOptions.class))).thenReturn(new RedisResult());
 
         redisPanelWrapper = GuiActionRunner.execute(new GuiQuery<RedisPanel>() {
             protected RedisPanel executeInEDT() {
-                return new RedisPanel(dummyProject, redisClientMock, new ServerConfiguration(), new RedisDatabase("0")) {
+                return new RedisPanel(dummyProject, new RedisContext(redisClientMock, new ServerConfiguration(), new RedisDatabase("0"))) {
                     @Override
-                    protected void addCommonsActions() { }
+                    protected void addActions(DefaultActionGroup actionResultGroup, AnAction expandAllAction, AnAction collapseAllAction) {
+                    }
                 };
             }
         });
@@ -72,7 +82,7 @@ public class RedisPanelTest {
     }
 
     @Test
-    public void displayTreeWithEachSupportedKeyType() throws Exception {
+    public void displayTreeWithEachSupportedKeyType() {
 
         redisPanelWrapper.updateResultTableTree(createRedisResults(), false, "");
 
@@ -100,8 +110,8 @@ public class RedisPanelTest {
     }
 
     @Test
-    public void testDisplayTreeWithFragmentedKey() throws Exception {
-        redisPanelWrapper.updateResultTableTree(createRedisResults(), true,  ":");
+    public void testDisplayTreeWithFragmentedKey() {
+        redisPanelWrapper.updateResultTableTree(createRedisResults(), true, ":");
         redisPanelWrapper.expandAll();
 
 
@@ -130,8 +140,6 @@ public class RedisPanelTest {
                         {"-", "(quake, 9.0)"},
                         {"-", "(half-life, 10.0)"},
                 });
-
-
     }
 
     private RedisResult createRedisResults() {

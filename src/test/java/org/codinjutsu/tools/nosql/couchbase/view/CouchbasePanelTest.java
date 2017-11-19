@@ -20,9 +20,9 @@ import com.couchbase.client.java.document.json.JsonObject;
 import com.intellij.openapi.command.impl.DummyProject;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseQuery;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
@@ -47,15 +47,15 @@ public class CouchbasePanelTest {
 
     @Before
     public void setUp() throws Exception {
-        when(couchbaseClientMock.loadRecords(any(ServerConfiguration.class), any(CouchbaseDatabase.class), any(CouchbaseQuery.class))).thenReturn(new CouchbaseResult("dummy"));
+        when(couchbaseClientMock.loadRecords(any(CouchbaseContext.class), any(QueryOptions.class))).thenReturn(new CouchbaseResult("dummy"));
 
 
         couchbasePanelWrapper = GuiActionRunner.execute(new GuiQuery<CouchbasePanel>() {
             protected CouchbasePanel executeInEDT() {
                 return new CouchbasePanel(DummyProject.getInstance(),
                         new CouchbaseContext(couchbaseClientMock,
-                        new ServerConfiguration(),
-                        new CouchbaseDatabase("default"))) {
+                                new ServerConfiguration(),
+                                new CouchbaseDatabase("default"))) {
                 };
             }
         });

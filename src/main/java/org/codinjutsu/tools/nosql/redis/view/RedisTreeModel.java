@@ -32,9 +32,11 @@ public class RedisTreeModel {
     public static NoSqlTreeNode buildTree(RedisResult redisResult) {
         NoSqlTreeNode rootNode = new NoSqlTreeNode(new RedisResultDescriptor());
 
-        List<RedisRecord> redisRecords = redisResult.getResults();
-        for (RedisRecord redisRecord : redisRecords) {
-            processRecord(rootNode, redisRecord);
+        if (redisResult != null) {
+            List<RedisRecord> redisRecords = redisResult.getResults();
+            for (RedisRecord redisRecord : redisRecords) {
+                processRecord(rootNode, redisRecord);
+            }
         }
 
         return rootNode;

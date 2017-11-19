@@ -35,6 +35,6 @@ public class RedisUI implements DatabaseUI {
     @Override
     public NoSqlResultView createResultPanel(Project project, NoSqlDatabaseObjectFile objectFile) {
         RedisObjectFile redisObjectFile = (RedisObjectFile) objectFile;
-        return new RedisPanel(project, RedisClient.getInstance(project), redisObjectFile.getConfiguration(), redisObjectFile.getDatabase());
+        return new RedisPanel(project, new RedisContext(RedisClient.getInstance(project), redisObjectFile.getConfiguration(), redisObjectFile.getDatabase()));
     }
 }

@@ -33,6 +33,7 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 import org.codinjutsu.tools.nosql.mongo.view.columninfo.MongoWriteableColumnInfoDecider;
 import org.codinjutsu.tools.nosql.mongo.view.model.MongoTreeModelFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoResult, DBObject> {
 
@@ -40,7 +41,7 @@ public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoResult, DBOb
         super(project, noSQLResultPanelDocumentOperations, new MongoTreeModelFactory());
     }
 
-    @NotNull
+    @Nullable
     @Override
     protected EditionPanel<DBObject> createEditionPanel() {
         EditionPanel<DBObject> mongoEditionPanel = new EditionPanel<>(new MongoTreeModelFactory(), new MongoWriteableColumnInfoDecider());

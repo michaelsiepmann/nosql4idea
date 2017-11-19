@@ -1,6 +1,8 @@
 package org.codinjutsu.tools.nosql.commons.model
 
-interface Query {
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 
-    val limit: Int
+interface Query<out OPTIONS : QueryOptions> {
+
+    val queryOptions: OPTIONS
 }

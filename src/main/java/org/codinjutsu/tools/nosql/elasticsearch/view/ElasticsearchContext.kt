@@ -8,6 +8,6 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
 
 internal class ElasticsearchContext(client: ElasticsearchClient,
                                     serverConfiguration: ServerConfiguration,
-                                    val elasticsearchCollection: ElasticsearchCollection?,
-                                    val elasticsearchDatabase: ElasticsearchDatabase) :
+                                    val collection: ElasticsearchCollection?,
+                                    val database: ElasticsearchDatabase) :
         DatabaseContext<ElasticsearchClient>(client, serverConfiguration)

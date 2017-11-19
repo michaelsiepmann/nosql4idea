@@ -7,7 +7,6 @@ import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperation
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseQuery;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
 
 public class CouchbasePanel extends DatabasePanel<CouchbaseClient, CouchbaseContext, CouchbaseResult, JsonObject> {
@@ -23,6 +22,6 @@ public class CouchbasePanel extends DatabasePanel<CouchbaseClient, CouchbaseCont
 
     @Override
     protected CouchbaseResult getSearchResult(CouchbaseContext context, QueryOptions queryOptions) {
-        return context.getClient().loadRecords(context.getServerConfiguration(), context.getDatabase(), new CouchbaseQuery(queryOptions.getResultLimit()));
+        return context.getClient().loadRecords(context, queryOptions);
     }
 }

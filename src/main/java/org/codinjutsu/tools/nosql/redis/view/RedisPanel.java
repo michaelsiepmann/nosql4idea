@@ -16,89 +16,42 @@
 
 package org.codinjutsu.tools.nosql.redis.view;
 
-import com.intellij.ide.CommonActionsManager;
-import com.intellij.ide.TreeExpander;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.LoadingDecorator;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.panels.NonOpaquePanel;
-import com.intellij.ui.treeStructure.treetable.TreeTableTree;
-import com.intellij.util.ui.tree.TreeUtil;
 import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
-import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
+import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
+import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperationsImpl;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
-import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView;
+import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
+import org.codinjutsu.tools.nosql.redis.RedisContext;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
-import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
-import org.codinjutsu.tools.nosql.redis.model.RedisQuery;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
 import org.codinjutsu.tools.nosql.redis.view.action.EnableGroupingAction;
 import org.codinjutsu.tools.nosql.redis.view.action.SetSeparatorAction;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 
-public class RedisPanel extends NoSqlResultView {
+public class RedisPanel extends DatabasePanel<RedisClient, RedisContext, RedisResult, Object> {
 
-    private JPanel toolBarPanel;
-    private JPanel containerPanel;
-    private JPanel errorPanel;
-    private JPanel resultPanel;
-    private JPanel mainPanel;
-    private final LoadingDecorator loadingDecorator;
-
-
-    private JsonTreeTableView resultTableView;
-
-    private final Project project;
-    private final RedisClient redisClient;
-    private final ServerConfiguration configuration;
-    private final RedisDatabase database;
     private JBTextField filterField;
-    private RedisResult redisResult;
     private boolean groupData;
     private String groupSeparator;
 
-    public RedisPanel(Project project, RedisClient redisClient, ServerConfiguration configuration, RedisDatabase database) {
-        this.project = project;
-        this.redisClient = redisClient;
-        this.configuration = configuration;
-        this.database = database;
-        this.resultPanel = new JPanel(new BorderLayout());
-
-
-        buildQueryToolBar();
-
-        loadingDecorator = new LoadingDecorator(resultPanel, this, 0);
-
-        containerPanel.add(loadingDecorator.getComponent());
-        loadAndDisplayResults(getFilter(), this.groupData, this.groupSeparator);
-
-        setLayout(new BorderLayout());
-        add(mainPanel);
+    public RedisPanel(Project project, RedisContext context) {
+        super(project, context);
+        this.resultPanel = new RedisResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this));
     }
 
-    private void loadAndDisplayResults(final String filter, final boolean groupByPrefix, final String separator) {
-        redisResult = redisClient.loadRecords(configuration, database, new RedisQuery(filter, 100));
-        updateResultTableTree(redisResult, groupByPrefix, separator);
-    }
-
-    protected void buildQueryToolBar() {
-        toolBarPanel.setLayout(new BorderLayout());
+    @Override
+    protected JPanel initToolBar() {
+        JPanel toolBar = super.initToolBar();
 
         filterField = new JBTextField("*");
         filterField.setColumns(10);
@@ -111,63 +64,18 @@ public class RedisPanel extends NoSqlResultView {
         filterPanel.add(Box.createHorizontalStrut(5), BorderLayout.EAST);
         westPanel.add(filterPanel, BorderLayout.WEST);
 
-        toolBarPanel.add(westPanel, BorderLayout.WEST);
+        toolBar.add(westPanel, BorderLayout.WEST);
 
-        addCommonsActions();
+        return toolBar;
     }
 
-    protected void addCommonsActions() {
-        final TreeExpander treeExpander = new TreeExpander() {
-            @Override
-            public void expandAll() {
-                RedisPanel.this.expandAll();
-            }
-
-            @Override
-            public boolean canExpand() {
-                return true;
-            }
-
-            @Override
-            public void collapseAll() {
-                RedisPanel.this.collapseAll();
-            }
-
-            @Override
-            public boolean canCollapse() {
-                return true;
-            }
-        };
-
-        CommonActionsManager actionsManager = CommonActionsManager.getInstance();
-
-        final AnAction expandAllAction = actionsManager.createExpandAllAction(treeExpander, resultPanel);
-        final AnAction collapseAllAction = actionsManager.createCollapseAllAction(treeExpander, resultPanel);
-
-        Disposer.register(this, new Disposable() {
-            @Override
-            public void dispose() {
-                collapseAllAction.unregisterCustomShortcutSet(resultPanel);
-                expandAllAction.unregisterCustomShortcutSet(resultPanel);
-            }
-        });
-
-        DefaultActionGroup actionResultGroup = new DefaultActionGroup("RedisResultGroup", true);
-        actionResultGroup.add(new ExecuteQuery<>(this));
+    @Override
+    protected void addActions(DefaultActionGroup actionResultGroup, AnAction expandAllAction, AnAction collapseAllAction) {
+        actionResultGroup.add(new ExecuteQuery(this));
         actionResultGroup.addSeparator();
         actionResultGroup.add(new EnableGroupingAction(this));
         actionResultGroup.add(new SetSeparatorAction(this));
-        actionResultGroup.addSeparator();
-        actionResultGroup.add(expandAllAction);
-        actionResultGroup.add(collapseAllAction);
-
-        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("MongoResultGroupActions", actionResultGroup, true);
-        actionToolBar.setLayoutPolicy(ActionToolbar.AUTO_LAYOUT_POLICY);
-        JComponent actionToolBarComponent = actionToolBar.getComponent();
-        actionToolBarComponent.setBorder(null);
-        actionToolBarComponent.setOpaque(false);
-
-        toolBarPanel.add(actionToolBarComponent, BorderLayout.CENTER);
+        super.addActions(actionResultGroup, expandAllAction, collapseAllAction);
     }
 
     private String getFilter() {
@@ -178,88 +86,32 @@ public class RedisPanel extends NoSqlResultView {
         return "*";
     }
 
-    void expandAll() {
-        TreeUtil.expandAll(resultTableView.getTree());
-    }
-
-    void collapseAll() {
-        TreeTableTree tree = resultTableView.getTree();
-        TreeUtil.collapseAll(tree, 1);
-    }
-
     public void updateResultTableTree(RedisResult redisResult, boolean groupByPrefix, String separator) {
-        DefaultMutableTreeNode rootNode = RedisTreeModel.buildTree(redisResult);
-        DefaultMutableTreeNode renderedNode = rootNode;
-        if (groupByPrefix && StringUtils.isNotBlank(separator)) {
-            renderedNode = RedisFragmentedKeyTreeModel.wrapNodes(rootNode, separator);
-        }
-        resultTableView = new JsonTreeTableView(renderedNode, JsonTreeTableView.COLUMNS_FOR_READING);
-        resultTableView.setName("resultTreeTable");
-
-        resultPanel.invalidate();
-        resultPanel.removeAll();
-        resultPanel.add(new JBScrollPane(resultTableView));
-        resultPanel.validate();
-    }
-
-    @Override
-    public void showResults() {
-        executeQuery();
-    }
-
-    @Override
-    public JPanel getResultPanel() {
-        return resultPanel;
+        ((RedisResultPanel) resultPanel).prepareTable(groupByPrefix, separator);
+        resultPanel.updateResultTableTree(redisResult);
     }
 
     @Override
     public Object getRecords() {
-        return redisResult;
+        return getSearchResult(getContext(), new QueryOptionsImpl());
     }
 
     @Override
-    public void executeQuery() {
-        errorPanel.setVisible(false);
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Executing query", true)  {
-            @Override
-            public void run(ProgressIndicator indicator) {
-                try {
-                    GuiUtils.runInSwingThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadingDecorator.startLoading(false);
-                        }
-                    });
-
-
-                    loadAndDisplayResults(getFilter(), isGroupDataEnabled(), getGroupSeparator());
-                } catch (final Exception ex) {
-                    GuiUtils.runInSwingThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            errorPanel.invalidate();
-                            errorPanel.removeAll();
-                            errorPanel.add(new ErrorPanel(ex), BorderLayout.CENTER);
-                            errorPanel.validate();
-                            errorPanel.setVisible(true);
-                        }
-                    });
-                } finally {
-                    GuiUtils.runInSwingThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadingDecorator.stopLoading();
-                        }
-                    });
-                }
-            }
-        });
-
+    protected AbstractNoSQLResultPanel<RedisResult, Object> createResultPanel(Project project, RedisContext context) {
+        return new RedisResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this));
     }
 
     @Override
-    public void dispose() {
+    protected RedisResult getSearchResult(RedisContext context, QueryOptions queryOptions) {
+        return context.getClient().loadRecords(context, queryOptions);
+    }
 
+    @NotNull
+    @Override
+    protected QueryOptions createQueryOptions() {
+        QueryOptionsImpl queryOptions = (QueryOptionsImpl) super.createQueryOptions();
+        queryOptions.setFilter(getFilter());
+        return queryOptions;
     }
 
     public boolean isGroupDataEnabled() {
@@ -268,7 +120,7 @@ public class RedisPanel extends NoSqlResultView {
 
     public void toggleGroupData(boolean enabled) {
         this.groupData = enabled;
-        updateResultTableTree(redisResult, this.groupData, this.groupSeparator);
+        updateResultTableTree(getSearchResult(), this.groupData, this.groupSeparator);
     }
 
     public String getGroupSeparator() {
@@ -277,12 +129,11 @@ public class RedisPanel extends NoSqlResultView {
 
     public void setGroupSeparator(String groupSeparator) {
         this.groupSeparator = groupSeparator;
-        updateResultTableTree(redisResult, this.groupData, this.groupSeparator);
+        updateResultTableTree(getSearchResult(), this.groupData, this.groupSeparator);
     }
 
     @Override
     public void closeFindEditor() {
-
     }
 
     @Override
@@ -292,12 +143,9 @@ public class RedisPanel extends NoSqlResultView {
 
     @Override
     public void openFindEditor() {
-
     }
 
     @Override
     public void focusOnEditor() {
-
     }
-
 }

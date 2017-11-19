@@ -8,6 +8,7 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFact
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CouchbaseResultPanel extends AbstractNoSQLResultPanel<CouchbaseResult, JsonObject> {
 
@@ -15,7 +16,7 @@ public class CouchbaseResultPanel extends AbstractNoSQLResultPanel<CouchbaseResu
         super(project, documentOperations, new CouchbaseTreeModelFactory());
     }
 
-    @NotNull
+    @Nullable
     @Override
     protected EditionPanel<JsonObject> createEditionPanel() {
         return null;

@@ -13,6 +13,7 @@ import com.intellij.util.ui.tree.TreeUtil
 import org.apache.commons.lang.StringUtils
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
+import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction
@@ -21,7 +22,6 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDe
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ResultDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.buildTree
-import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView
 import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -29,11 +29,11 @@ import java.util.*
 import javax.swing.JPanel
 import javax.swing.tree.DefaultMutableTreeNode
 
-internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUMENT>(project: Project, protected val documentOperations: NoSQLResultPanelDocumentOperations<DOCUMENT>, val treeModelFactory: NodeDescriptorFactory<DOCUMENT>) : JPanel(), Disposable {
+internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUMENT>(project: Project, protected val documentOperations: NoSQLResultPanelDocumentOperations<DOCUMENT>, private val treeModelFactory: NodeDescriptorFactory<DOCUMENT>) : JPanel(), Disposable {
 
     private val splitter: Splitter
     protected val resultTreePanel = JPanel(BorderLayout())
-    private val editionPanel: EditionPanel<DOCUMENT>
+    private val editionPanel: EditionPanel<DOCUMENT>?
 
     @Volatile
     var resultTableView: JsonTreeTableView? = null
@@ -51,20 +51,22 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
         Disposer.register(project, this)
     }
 
-    protected abstract fun createEditionPanel(): EditionPanel<DOCUMENT>
+    protected abstract fun createEditionPanel(): EditionPanel<DOCUMENT>?
 
     fun updateResultTableTree(searchResult: RESULT) {
-        resultTableView = JsonTreeTableView(buildTree(searchResult, treeModelFactory), JsonTreeTableView.KEY, JsonTreeTableView.READONLY_VALUE)
+        resultTableView = createTableView(searchResult)
         with(resultTableView) {
             name = "resultTreeTable"
 
-            addMouseListener(object : MouseAdapter() {
-                override fun mouseClicked(mouseEvent: MouseEvent?) {
-                    if (mouseEvent!!.clickCount == 2 && isSelectedNodeId()) {
-                        editSelectedDocument()
+            if (isEditable()) {
+                addMouseListener(object : MouseAdapter() {
+                    override fun mouseClicked(mouseEvent: MouseEvent?) {
+                        if (mouseEvent!!.clickCount == 2 && isSelectedNodeId()) {
+                            editSelectedDocument()
+                        }
                     }
-                }
-            })
+                })
+            }
         }
 
         buildPopupMenu()
@@ -74,6 +76,9 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
         resultTreePanel.add(JBScrollPane(resultTableView))
         resultTreePanel.validate()
     }
+
+    protected open fun createTableView(searchResult: RESULT) =
+            JsonTreeTableView(buildTree(searchResult, treeModelFactory), JsonTreeTableView.KEY, JsonTreeTableView.READONLY_VALUE)
 
     protected open fun buildPopupMenu() {
         val actionPopupGroup = DefaultActionGroup("MongoResultPopupGroup", true)
@@ -85,14 +90,16 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
         PopupHandler.installPopupHandler(resultTableView, actionPopupGroup, "POPUP", ActionManager.getInstance())
     }
 
+    fun isEditable() = editionPanel != null
+
     fun editSelectedDocument() {
         val document = getSelectedDocument() ?: return
-        editionPanel.updateEditionTree(document)
+        editionPanel?.updateEditionTree(document)
         splitter.secondComponent = editionPanel
     }
 
     fun addDocument() {
-        editionPanel.updateEditionTree(null)
+        editionPanel?.updateEditionTree(null)
         splitter.secondComponent = editionPanel
     }
 
@@ -124,12 +131,12 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
     }
 
     fun collapseAll() {
-        val tree = resultTableView!!.getTree()
+        val tree = resultTableView!!.tree
         TreeUtil.collapseAll(tree, 1)
     }
 
     fun getSelectedNodeStringifiedValue(): String {
-        val tree = resultTableView?.getTree()
+        val tree = resultTableView?.tree
         var lastSelectedResultNode: NoSqlTreeNode? = tree?.lastSelectedPathComponent as NoSqlTreeNode
         if (lastSelectedResultNode == null) {
             lastSelectedResultNode = tree.model.root as NoSqlTreeNode
@@ -155,6 +162,6 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
 
     override fun dispose() {
         resultTableView = null
-        editionPanel.dispose()
+        editionPanel?.dispose()
     }
 }

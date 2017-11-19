@@ -7,19 +7,18 @@ import org.codinjutsu.tools.nosql.DatabaseVendor
 import org.codinjutsu.tools.nosql.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.logic.FolderDatabaseClient
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient
-import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetIndices
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetTypes
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Search
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchCollection
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
-import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchQuery
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult
 import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
 import java.net.URL
 
-internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, ElasticsearchResult, ElasticsearchQuery, JsonObject>, FolderDatabaseClient<ElasticsearchDatabase, ElasticsearchCollection> {
+internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, ElasticsearchResult, JsonObject>, FolderDatabaseClient<ElasticsearchDatabase, ElasticsearchCollection> {
 
     override fun connect(serverConfiguration: ServerConfiguration) {
         URL(serverConfiguration.serverUrl).openConnection().connect()
@@ -44,9 +43,11 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
     override fun defaultConfiguration() =
             ServerConfiguration(serverUrl = "localhost", databaseVendor = DatabaseVendor.ELASTICSEARCH)
 
-    override fun loadRecords(configuration: ServerConfiguration, database: Database, query: ElasticsearchQuery): ElasticsearchResult {
+    override fun loadRecords(context: ElasticsearchContext, queryOptions: QueryOptions): ElasticsearchResult {
+        val configuration = context.serverConfiguration
+        val database = context.database
         val elasticsearchResult = ElasticsearchResult(database.name)
-        elasticsearchResult.addAll(Search(configuration.serverUrl!!, database.name, query).execute().getAsJsonObject("hits").getAsJsonArray("hits"))
+        elasticsearchResult.addAll(Search(context).execute().getAsJsonObject("hits").getAsJsonArray("hits"))
         return elasticsearchResult
     }
 

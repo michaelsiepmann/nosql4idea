@@ -16,27 +16,50 @@
 
 package org.codinjutsu.tools.nosql;
 
+import com.intellij.openapi.project.Project;
+import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
+import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
+import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
+import org.codinjutsu.tools.nosql.mongo.view.console.MongoConsoleRunner;
+import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
+import org.codinjutsu.tools.nosql.redis.view.console.RedisConsoleRunner;
 
 import javax.swing.*;
 
 public enum DatabaseVendor {
 
-    MONGO("MongoDB", "mongodb.png", "localhost:27017", "format: host:port. If replicat set: host:port1,host:port2,..."),
-    REDIS("RedisDB", "redis.png", "localhost:6379", "format: host:port. If cluster: host:port1,host:port2,..."),
-    COUCHBASE("Couchbase", "couchbase.png", "localhost", "format: host:port. If cluster: host:port1,host:port2,..."),
-    ELASTICSEARCH("Elasticsearch", "", "localhost:9200", "format: host:port. If cluster: host:port1,host:port2,...");
+    MONGO("MongoDB", "mongodb.png", "localhost:27017", "format: host:port. If replicat set: host:port1,host:port2,...", true) {
+        @Override
+        public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
+            return new MongoConsoleRunner(project, configuration, (MongoDatabase) database);
+        }
+    },
+    REDIS("RedisDB", "redis.png", "localhost:6379", "format: host:port. If cluster: host:port1,host:port2,...", true) {
+        @Override
+        public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
+            return new RedisConsoleRunner(project, configuration, (RedisDatabase) database);
+        }
+    },
+    COUCHBASE("Couchbase", "couchbase.png", "localhost", "format: host:port. If cluster: host:port1,host:port2,...", false),
+    ELASTICSEARCH("Elasticsearch", "", "localhost:9200", "format: http://host:port.", false);
 
     public final String name;
     public final Icon icon;
     public final String defaultUrl;
     public final String tips;
+    public final boolean hasConsoleWindow;
 
-    DatabaseVendor(String name, String iconFilename, String defaultUrl, String tips) {
+    DatabaseVendor(String name, String iconFilename, String defaultUrl, String tips, boolean hasConsoleWindow) {
         this.name = name;
         this.icon = GuiUtils.loadIcon(iconFilename);
         this.defaultUrl = defaultUrl;
         this.tips = tips;
+        this.hasConsoleWindow = hasConsoleWindow;
+    }
+
+    public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
+        return null;
     }
 
     @Override

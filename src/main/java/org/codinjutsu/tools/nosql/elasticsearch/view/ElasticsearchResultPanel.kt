@@ -15,7 +15,7 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult
 
 internal class ElasticsearchResultPanel(project: Project, documentOPerations: NoSQLResultPanelDocumentOperations<JsonObject>) : AbstractNoSQLResultPanel<ElasticsearchResult, JsonObject>(project, documentOPerations, ElasticsearchTreeModelFactory()) {
 
-    override fun createEditionPanel(): EditionPanel<JsonObject> {
+    override fun createEditionPanel(): EditionPanel<JsonObject>? {
         val elasticsearchEditionPanel = EditionPanel<JsonObject>(ElasticsearchTreeModelFactory(), object : WriteableColumnInfoDecider {
             override fun isNodeWriteable(treeNode: NoSqlTreeNode) = treeNode.descriptor.value is JsonObject
         })

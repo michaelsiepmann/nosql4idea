@@ -20,6 +20,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
@@ -28,11 +29,9 @@ import org.codinjutsu.tools.nosql.NoSqlConfiguration;
 import org.codinjutsu.tools.nosql.NoSqlExplorerPanel;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.mongo.view.console.MongoConsoleRunner;
-import org.codinjutsu.tools.nosql.redis.view.console.RedisConsoleRunner;
+import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
 
 public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
-
 
     private final NoSqlExplorerPanel noSqlExplorerPanel;
 
@@ -41,19 +40,18 @@ public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
         this.noSqlExplorerPanel = noSqlExplorerPanel;
     }
 
-
     @Override
     public void update(AnActionEvent e) {
         final Project project = e.getData(PlatformDataKeys.PROJECT);
 
-        boolean enabled = project != null;
-        if (!enabled) {
+        if (project == null) {
             return;
         }
 
         NoSqlConfiguration configuration = NoSqlConfiguration.getInstance(project);
 
-        e.getPresentation().setVisible(
+        Presentation presentation = e.getPresentation();
+        presentation.setVisible(
                 configuration != null &&
                         (StringUtils.isNotBlank(configuration.getShellPath(DatabaseVendor.MONGO)) ||
                                 StringUtils.isNotBlank(configuration.getShellPath(DatabaseVendor.REDIS))
@@ -61,37 +59,25 @@ public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
                         noSqlExplorerPanel.getConfiguration() != null &&
                         noSqlExplorerPanel.getConfiguration().isSingleServer()
         );
-        e.getPresentation().setEnabled(
-                noSqlExplorerPanel.getSelectedMongoDatabase() != null ||
-                        noSqlExplorerPanel.getSelectedRedisDatabase() != null
-        );
+        presentation.setEnabled(noSqlExplorerPanel.hasDatabaseConsoleApplication());
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
         final Project project = e.getData(PlatformDataKeys.PROJECT);
         assert project != null;
-
         runShell(project);
     }
 
     private void runShell(Project project) {
         ServerConfiguration configuration = noSqlExplorerPanel.getConfiguration();
-        if (DatabaseVendor.MONGO.equals(configuration.getDatabaseVendor())) {
-            MongoConsoleRunner consoleRunner = new MongoConsoleRunner(project, configuration, noSqlExplorerPanel.getSelectedMongoDatabase());
-            try {
-                consoleRunner.initAndRun();
-            } catch (ExecutionException e1) {
-                throw new RuntimeException(e1);
-            }
-        } else if (DatabaseVendor.REDIS.equals(configuration.getDatabaseVendor())) {
-            RedisConsoleRunner consoleRunner = new RedisConsoleRunner(project, configuration, noSqlExplorerPanel.getSelectedRedisDatabase());
+        if (configuration.getDatabaseVendor().hasConsoleWindow) {
+            AbstractNoSQLConsoleRunner consoleRunner = configuration.getDatabaseVendor().createConsoleRunner(project, configuration, noSqlExplorerPanel.getSelectedDatabase());
             try {
                 consoleRunner.initAndRun();
             } catch (ExecutionException e1) {
                 throw new RuntimeException(e1);
             }
         }
-
     }
 }

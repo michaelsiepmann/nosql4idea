@@ -25,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
@@ -41,7 +42,7 @@ public class MongoClientTest {
 
     private MongoClient mongoClient;
     private ServerConfiguration serverConfiguration;
-    private QueryOptions queryOptions = new QueryOptions();
+    private QueryOptions queryOptions = new QueryOptionsImpl();
     private MongoContext context;
 
     @Test

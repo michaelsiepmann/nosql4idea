@@ -17,7 +17,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.NumberDocument;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
-import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.action.AddMongoDocumentAction;
@@ -44,7 +43,8 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
     private JPanel toolBar;
     private JPanel errorPanel;
     private final JTextField rowLimitField = new JTextField("");
-    private AbstractNoSQLResultPanel<RESULT, DOCUMENT> resultPanel;
+    // TODO: 19.11.2017 make this private
+    protected AbstractNoSQLResultPanel<RESULT, DOCUMENT> resultPanel;
     private final QueryPanel queryPanel;
 
     private final Project project;
@@ -75,7 +75,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
 
     protected abstract AbstractNoSQLResultPanel<RESULT, DOCUMENT> createResultPanel(Project project, CONTEXT context);
 
-    private void initToolBar() {
+    protected JPanel initToolBar() {
         toolBar.setLayout(new BorderLayout());
 
         rowLimitField.setColumns(5);
@@ -88,17 +88,20 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
         toolBar.add(rowLimitPanel, BorderLayout.WEST);
 
         installResultPanelActions();
+        return toolBar;
     }
 
     private void installResultPanelActions() {
-        DefaultActionGroup actionResultGroup = new DefaultActionGroup("MongoResultGroup", true);
+        DefaultActionGroup actionResultGroup = new DefaultActionGroup("NoSQLResultGroup", true);
         if (ApplicationManager.getApplication() != null) {
-            actionResultGroup.add(new ExecuteQuery<>(this));
+            actionResultGroup.add(new ExecuteQuery(this));
             actionResultGroup.add(new OpenFindAction(this));
             actionResultGroup.add(new EnableAggregateAction(queryPanel));
             actionResultGroup.addSeparator();
-            actionResultGroup.add(new AddMongoDocumentAction(resultPanel));
-            actionResultGroup.add(new EditDocumentAction<>(resultPanel));
+            if (resultPanel.isEditable()) {
+                actionResultGroup.add(new AddMongoDocumentAction(resultPanel));
+                actionResultGroup.add(new EditDocumentAction<>(resultPanel));
+            }
             actionResultGroup.add(new CopyResultAction<>(resultPanel));
         }
         final TreeExpander treeExpander = new TreeExpander() {
@@ -133,12 +136,9 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
             expandAllAction.unregisterCustomShortcutSet(resultPanel);
         });
 
-        actionResultGroup.addSeparator();
-        actionResultGroup.add(expandAllAction);
-        actionResultGroup.add(collapseAllAction);
-        actionResultGroup.add(new CloseFindEditorAction(this));
+        addActions(actionResultGroup, expandAllAction, collapseAllAction);
 
-        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("MongoResultGroupActions", actionResultGroup, true);
+        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("NoSQLResultGroupActions", actionResultGroup, true);
         actionToolBar.setLayoutPolicy(ActionToolbar.AUTO_LAYOUT_POLICY);
         JComponent actionToolBarComponent = actionToolBar.getComponent();
         actionToolBarComponent.setBorder(null);
@@ -147,8 +147,19 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
         toolBar.add(actionToolBarComponent, BorderLayout.CENTER);
     }
 
+    protected void addActions(DefaultActionGroup actionResultGroup, AnAction expandAllAction, AnAction collapseAllAction) {
+        actionResultGroup.addSeparator();
+        actionResultGroup.add(expandAllAction);
+        actionResultGroup.add(collapseAllAction);
+        actionResultGroup.add(new CloseFindEditorAction(this));
+    }
+
     public void expandAll() {
         resultPanel.expandAll();
+    }
+
+    public void collapseAll() {
+        resultPanel.collapseAll();
     }
 
     protected CONTEXT getContext() {
@@ -173,8 +184,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
                 try {
                     GuiUtils.runInSwingThread(() -> loadingDecorator.startLoading(false));
                     GuiUtils.runInSwingThread(() -> {
-                        RESULT searchResult = getSearchResult(context, queryPanel.getQueryOptions(rowLimitField.getText()));
-                        resultPanel.updateResultTableTree(searchResult);
+                        resultPanel.updateResultTableTree(getSearchResult());
                     });
                 } catch (final Exception ex) {
                     GuiUtils.runInSwingThread(() -> {
@@ -189,6 +199,15 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
                 }
             }
         });
+    }
+
+    protected RESULT getSearchResult() {
+        return getSearchResult(context, createQueryOptions());
+    }
+
+    @NotNull
+    protected QueryOptions createQueryOptions() {
+        return queryPanel.getQueryOptions(rowLimitField.getText());
     }
 
     protected abstract RESULT getSearchResult(CONTEXT context, QueryOptions queryOptions);

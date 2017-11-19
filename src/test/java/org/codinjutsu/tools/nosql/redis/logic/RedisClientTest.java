@@ -18,7 +18,12 @@ package org.codinjutsu.tools.nosql.redis.logic;
 
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.redis.model.*;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
+import org.codinjutsu.tools.nosql.redis.RedisContext;
+import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
+import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
+import org.codinjutsu.tools.nosql.redis.model.RedisRecord;
+import org.codinjutsu.tools.nosql.redis.model.RedisResult;
 import org.junit.Before;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
@@ -45,8 +50,10 @@ public class RedisClientTest {
         serverConfiguration.setDatabaseVendor(DatabaseVendor.REDIS);
         serverConfiguration.setServerUrl("localhost:6379");
 
-        RedisQuery query = new RedisQuery("*", 300);
-        RedisResult result = redisClient.loadRecords(serverConfiguration, new RedisDatabase("1"), query);
+        QueryOptionsImpl queryOptions = new QueryOptionsImpl();
+        queryOptions.setFilter("*");
+        queryOptions.setResultLimit(300);
+        RedisResult result = redisClient.loadRecords(new RedisContext(redisClient, serverConfiguration, new RedisDatabase("1")), queryOptions);
 
         List<RedisRecord> redisRecords = result.getResults();
         assertEquals(4, redisRecords.size());
@@ -78,8 +85,10 @@ public class RedisClientTest {
         serverConfiguration.setDatabaseVendor(DatabaseVendor.REDIS);
         serverConfiguration.setServerUrl("localhost:6379");
 
-        RedisQuery query = new RedisQuery("reviews", 300);
-        RedisResult result = redisClient.loadRecords(serverConfiguration, new RedisDatabase("1"), query);
+        QueryOptionsImpl queryOptions = new QueryOptionsImpl();
+        queryOptions.setFilter("*");
+        queryOptions.setResultLimit(300);
+        RedisResult result = redisClient.loadRecords(new RedisContext(redisClient, serverConfiguration, new RedisDatabase("1")), queryOptions);
 
         List<RedisRecord> redisRecords = result.getResults();
         assertEquals(1, redisRecords.size());
