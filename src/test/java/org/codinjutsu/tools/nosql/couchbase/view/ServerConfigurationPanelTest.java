@@ -47,7 +47,7 @@ public class ServerConfigurationPanelTest {
     private FrameFixture frameFixture;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         databaseClientMock = Mockito.mock(DatabaseClient.class);
         configurationPanel = GuiActionRunner.execute(new GuiQuery<ServerConfigurationPanel>() {
             protected ServerConfigurationPanel executeInEDT() {
@@ -68,7 +68,7 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    public void createCouchbaseConfiguration() throws Exception {
+    public void createCouchbaseConfiguration() {
         frameFixture.textBox("labelField").setText("Localhost");
 
         frameFixture.label("databaseVendorLabel").requireText("Couchbase");
@@ -98,7 +98,7 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    public void loadCouchbaseConfiguration() throws Exception {
+    public void loadCouchbaseConfiguration() {
         ServerConfiguration configuration = new ServerConfiguration();
         configuration.setLabel("Localhost");
         configuration.setDatabaseVendor(DatabaseVendor.COUCHBASE);

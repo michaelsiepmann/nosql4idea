@@ -18,12 +18,15 @@ package org.codinjutsu.tools.nosql.redis.model;
 
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
+import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Tuple;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class RedisResult implements SearchResult {
 
@@ -59,8 +62,9 @@ public class RedisResult implements SearchResult {
         return null;
     }
 
+    @NotNull
     @Override
     public List<ObjectWrapper> getRecords() {
-        return null;
+        return redisRecords.stream().map((Function<RedisRecord, RedisObjectWrapper>) RedisObjectWrapper::new).collect(Collectors.toList());
     }
 }

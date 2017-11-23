@@ -21,6 +21,7 @@ import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,6 +51,6 @@ public class MongoResult implements SearchResult {
     @NotNull
     @Override
     public List<ObjectWrapper> getRecords() {
-        return null;
+        return Collections.emptyList(); // todo
     }
 }

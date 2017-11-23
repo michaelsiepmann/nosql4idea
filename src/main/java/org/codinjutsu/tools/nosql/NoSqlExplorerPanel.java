@@ -39,6 +39,8 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.Folder;
 import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
+import org.codinjutsu.tools.nosql.commons.view.action.DropCollectionAction;
+import org.codinjutsu.tools.nosql.commons.view.action.DropDatabaseAction;
 import org.codinjutsu.tools.nosql.commons.view.action.NoSqlDatabaseConsoleAction;
 import org.codinjutsu.tools.nosql.commons.view.action.OpenPluginSettingsAction;
 import org.codinjutsu.tools.nosql.commons.view.action.RefreshServerAction;
@@ -50,8 +52,6 @@ import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase;
 import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchObjectFile;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
-import org.codinjutsu.tools.nosql.commons.view.action.DropCollectionAction;
-import org.codinjutsu.tools.nosql.commons.view.action.DropDatabaseAction;
 import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.view.editor.RedisObjectFile;
@@ -417,6 +417,11 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
             return new ElasticsearchObjectFile(project, selectedConfiguration, getSelectedElasticsearchDatabase(), getSelectedCollection());
         }
         return new RedisObjectFile(project, selectedConfiguration, getSelectedRedisDatabase());
+    }
+
+    public boolean canCollectionBeDeleted() {
+        NoSQLCollection selectedCollection = getSelectedCollection();
+        return selectedCollection != null && selectedCollection.canBeDeleted();
     }
 
     public void dropCollection() {

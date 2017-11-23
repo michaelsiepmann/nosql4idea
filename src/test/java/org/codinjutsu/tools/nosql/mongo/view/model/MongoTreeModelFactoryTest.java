@@ -26,6 +26,8 @@ import org.codinjutsu.tools.nosql.commons.view.model.TreeModelUtilityKt;
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoResultDescriptor;
 import org.junit.Test;
 
+import java.nio.charset.Charset;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -33,7 +35,7 @@ public class MongoTreeModelFactoryTest {
 
     @Test
     public void buildDBObjectFromSimpleTree() throws Exception {
-        DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("simpleDocument.json")));
+        DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("simpleDocument.json"), Charset.defaultCharset()));
 
 //        Hack to convert _id fron string to ObjectId
         jsonObject.put("_id", new ObjectId(String.valueOf(jsonObject.get("_id"))));
@@ -51,7 +53,7 @@ public class MongoTreeModelFactoryTest {
 
     @Test
     public void buildDBObjectFromTreeWithSubNodes() throws Exception {
-        DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("simpleDocumentWithInnerNodes.json")));
+        DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("simpleDocumentWithInnerNodes.json"), Charset.defaultCharset()));
 
 //        Hack to convert _id fron string to ObjectId
         jsonObject.put("_id", new ObjectId(String.valueOf(jsonObject.get("_id"))));
@@ -71,7 +73,7 @@ public class MongoTreeModelFactoryTest {
 
     @Test
     public void buildDBObjectFromTreeWithSubList() throws Exception {
-        DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("simpleDocumentWithSubList.json")));
+        DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("simpleDocumentWithSubList.json"), Charset.defaultCharset()));
 
 //        Hack to convert _id fron string to ObjectId
         jsonObject.put("_id", new ObjectId(String.valueOf(jsonObject.get("_id"))));
@@ -89,7 +91,7 @@ public class MongoTreeModelFactoryTest {
 
     @Test
     public void getObjectIdFromANode() throws Exception {
-        DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("simpleDocumentWithInnerNodes.json")));
+        DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("simpleDocumentWithInnerNodes.json"), Charset.defaultCharset()));
         jsonObject.put("_id", new ObjectId(String.valueOf(jsonObject.get("_id"))));
 
         NoSqlTreeNode treeNode = buildJsonTree(jsonObject);
@@ -103,7 +105,7 @@ public class MongoTreeModelFactoryTest {
 
     @Test
     public void findDocumentFromANode() throws Exception {
-        BasicDBList dbList = (BasicDBList) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("arrayOfDocuments.json")));
+        BasicDBList dbList = (BasicDBList) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("arrayOfDocuments.json"), Charset.defaultCharset()));
 
         DBObject first = (DBObject) dbList.get(0);
         first.put("_id", new ObjectId(String.valueOf(first.get("_id"))));

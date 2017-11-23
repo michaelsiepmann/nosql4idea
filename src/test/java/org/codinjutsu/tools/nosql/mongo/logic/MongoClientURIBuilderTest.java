@@ -17,15 +17,17 @@
 package org.codinjutsu.tools.nosql.mongo.logic;
 
 import com.mongodb.AuthenticationMechanism;
-import org.codinjutsu.tools.nosql.mongo.logic.MongoClientURIBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MongoClientURIBuilderTest {
+class MongoClientURIBuilderTest {
 
     @Test
-    public void withoutAuthentication() throws Exception {
+    void withoutAuthentication() {
         assertEquals(
                 "mongodb://localhost:27017,localhost:27018/",
                 MongoClientURIBuilder.builder()
@@ -34,7 +36,7 @@ public class MongoClientURIBuilderTest {
     }
 
     @Test
-    public void withSimpleAuthentication() throws Exception {
+    void withSimpleAuthentication() {
         assertEquals(
                 "mongodb://toto:pass@localhost:27018/?authSource=userdb",
                 MongoClientURIBuilder.builder()
@@ -44,18 +46,19 @@ public class MongoClientURIBuilderTest {
     }
 
     @Test
-    public void withSpecificAuthentication() throws Exception {
-        assertEquals(
-                "mongodb://toto:pass@localhost:27018/?authMechanism=MONGODB-CR&authSource=userdb",
-                MongoClientURIBuilder.builder()
-                        .setServerAddresses("localhost:27018")
-                        .setCredential("toto", "pass", "userdb")
-                        .setAuthenticationMecanism(AuthenticationMechanism.MONGODB_CR)
-                        .build());
+    void withSpecificAuthentication() {
+        String uri = MongoClientURIBuilder.builder()
+                .setServerAddresses("localhost:27018")
+                .setCredential("toto", "pass", "userdb")
+                .setAuthenticationMecanism(AuthenticationMechanism.MONGODB_CR)
+                .build();
+        assertThat(uri, startsWith("mongodb://toto:pass@localhost:27018/?"));
+        assertThat(uri, containsString("authMechanism=MONGODB-CR"));
+        assertThat(uri, containsString("authSource=userdb"));
     }
 
     @Test
-    public void addSslOption() throws Exception {
+    void addSslOption() {
         assertEquals(
                 "mongodb://localhost:27018/?ssl=true",
                 MongoClientURIBuilder.builder()

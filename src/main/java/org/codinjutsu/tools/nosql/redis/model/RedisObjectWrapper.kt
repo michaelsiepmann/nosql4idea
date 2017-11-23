@@ -2,7 +2,7 @@ package org.codinjutsu.tools.nosql.redis.model
 
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 
-internal class RedisObjectWrapper() : ObjectWrapper {
+internal class RedisObjectWrapper<T>(private val redisRecord: RedisRecord<T>) : ObjectWrapper {
     override val names: Collection<String>
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 

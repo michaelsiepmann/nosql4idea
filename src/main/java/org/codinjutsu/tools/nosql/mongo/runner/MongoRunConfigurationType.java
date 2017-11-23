@@ -58,10 +58,12 @@ public class MongoRunConfigurationType implements ConfigurationType {
     }
 
     private static class MongoFactory extends ConfigurationFactory {
-        public MongoFactory(ConfigurationType type) {
+        MongoFactory(ConfigurationType type) {
             super(type);
         }
 
+        @Override
+        @NotNull
         public RunConfiguration createTemplateConfiguration(Project project) {
             return new MongoRunConfiguration(new RunConfigurationModule(project), this);
         }

@@ -52,10 +52,8 @@ class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationMod
     private MongoDatabase database;
     private String shellWorkingDir;
 
-
     MongoRunConfiguration(RunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
         super("Mongo Script", runConfigurationModule, factory);
-
         mongoShell = NoSqlConfiguration.getInstance(getProject()).getShellPath(DatabaseVendor.MONGO);
     }
 
@@ -64,7 +62,6 @@ class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationMod
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
         return new MongoRunConfigurationEditor(getProject());
     }
-
 
     @Override
     public Collection<Module> getValidModules() {

@@ -35,7 +35,7 @@ class MongoCommandLineState extends CommandLineState {
 
     private final MongoRunConfiguration mongoRunConfiguration;
 
-    public MongoCommandLineState(MongoRunConfiguration mongoRunConfiguration, ExecutionEnvironment environment) {
+    MongoCommandLineState(MongoRunConfiguration mongoRunConfiguration, ExecutionEnvironment environment) {
         super(environment);
         this.mongoRunConfiguration = mongoRunConfiguration;
     }

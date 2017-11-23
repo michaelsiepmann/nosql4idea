@@ -125,7 +125,7 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisRe
         return redisResult;
     }
 
-    private Jedis createJedis(ServerConfiguration serverConfiguration) {
+    protected Jedis createJedis(ServerConfiguration serverConfiguration) {
         String redisUri = "redis://";
         String password = serverConfiguration.getAuthenticationSettings().getPassword();
         if (StringUtils.isNotEmpty(password)) {

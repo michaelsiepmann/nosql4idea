@@ -46,28 +46,27 @@ public class MongoScriptRunConfigurationProducer extends RuntimeConfigurationPro
     @Override
     protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext configurationContext) {
         sourceFile = location.getPsiElement().getContainingFile();
-        if (sourceFile != null && sourceFile.getFileType().getName().toLowerCase().contains("javascript")) {
-            Project project = sourceFile.getProject();
-
-            VirtualFile file = sourceFile.getVirtualFile();
-
-            RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, configurationContext);
-
-            MongoRunConfiguration runConfiguration = (MongoRunConfiguration) settings.getConfiguration();
-            runConfiguration.setName(file.getName());
-
-            runConfiguration.setScriptPath(file.getPath());
-
-            Module module = ModuleUtil.findModuleForPsiElement(location.getPsiElement());
-            if (module != null) {
-                runConfiguration.setModule(module);
-            }
-
-            return settings;
+        if (sourceFile == null || !sourceFile.getFileType().getName().toLowerCase().contains("javascript")) {
+            return null;
         }
-        return null;
-    }
+        Project project = sourceFile.getProject();
 
+        VirtualFile file = sourceFile.getVirtualFile();
+
+        RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, configurationContext);
+
+        MongoRunConfiguration runConfiguration = (MongoRunConfiguration) settings.getConfiguration();
+        runConfiguration.setName(file.getName());
+
+        runConfiguration.setScriptPath(file.getPath());
+
+        Module module = ModuleUtil.findModuleForPsiElement(location.getPsiElement());
+        if (module != null) {
+            runConfiguration.setModule(module);
+        }
+
+        return settings;
+    }
 
     @Override
     public int compareTo(@NotNull Object o) {

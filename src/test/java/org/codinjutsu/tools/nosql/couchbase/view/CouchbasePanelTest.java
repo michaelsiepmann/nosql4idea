@@ -30,6 +30,7 @@ import org.fest.swing.fixture.Containers;
 import org.fest.swing.fixture.FrameFixture;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -46,7 +47,7 @@ public class CouchbasePanelTest {
     private CouchbasePanel couchbasePanelWrapper;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(couchbaseClientMock.loadRecords(any(CouchbaseContext.class), any(QueryOptions.class))).thenReturn(new CouchbaseResult("dummy"));
 
 
@@ -69,7 +70,8 @@ public class CouchbasePanelTest {
     }
 
     @Test
-    public void displayJsonObjects() throws Exception {
+    @Ignore
+    public void displayJsonObjects() {
         // TODO: 18.11.2017  couchbasePanelWrapper.updateResultTableTree(createResults());
         couchbasePanelWrapper.expandAll();
 

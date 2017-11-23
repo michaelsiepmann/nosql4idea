@@ -33,21 +33,22 @@ import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;
 import org.fest.swing.fixture.FrameFixture;
 import org.fest.swing.fixture.JTableFixture;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class MongoEditionPanelTest {
+class MongoEditionPanelTest {
 
     private EditionPanel<DBObject> mongoEditionPanel;
 
@@ -56,13 +57,13 @@ public class MongoEditionPanelTest {
     private NoSQLResultPanelDocumentOperations<DBObject> mockMongoOperations = mock(NoSQLResultPanelDocumentOperations.class);
     private ActionCallback mockActionCallback = mock(ActionCallback.class);
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         frameFixture.cleanUp();
     }
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
 
         mongoEditionPanel = GuiActionRunner.execute(new GuiQuery<EditionPanel<DBObject>>() {
             protected EditionPanel<DBObject> executeInEDT() {
@@ -82,7 +83,7 @@ public class MongoEditionPanelTest {
     }
 
     @Test
-    public void displayMongoDocumentInTheTreeTable() throws Exception {
+    void displayMongoDocumentInTheTreeTable() {
         frameFixture.table("editionTreeTable").cellReader(new JsonTableCellReader())
                 .requireColumnCount(2)
                 .requireContents(new String[][]{
@@ -94,7 +95,7 @@ public class MongoEditionPanelTest {
     }
 
     @Test
-    public void editKeyWithStringValue() throws Exception {
+    void editKeyWithStringValue() {
         JTableFixture editionTreeTable = frameFixture.table("editionTreeTable").cellReader(new JsonTableCellReader());
 
 //        edit 'label' key
@@ -105,14 +106,14 @@ public class MongoEditionPanelTest {
         ArgumentCaptor<DBObject> argument = ArgumentCaptor.forClass(DBObject.class);
         verify(mockMongoOperations).updateDocument(argument.capture());
 
-        Assert.assertEquals("{ \"_id\" : { \"$oid\" : \"50b8d63414f85401b9268b99\"} , \"label\" : \"Hello\" , \"visible\" : false , \"image\" :  null }",
+        assertEquals("{ \"_id\" : { \"$oid\" : \"50b8d63414f85401b9268b99\"} , \"label\" : \"Hello\" , \"visible\" : false , \"image\" :  null }",
                 argument.getValue().toString());
 
         verify(mockActionCallback, times(1)).onOperationSuccess(any(String.class));
     }
 
     @Test
-    public void cancelEdition() throws Exception {
+    void cancelEdition() {
         JTableFixture editionTreeTable = frameFixture.table("editionTreeTable").cellReader(new JsonTableCellReader());
 
 //        edit 'label' key
@@ -125,7 +126,7 @@ public class MongoEditionPanelTest {
     }
 
     @Test
-    public void addKeyWithSomeValue() throws Exception {
+    void addKeyWithSomeValue() {
         JTableFixture editionTreeTable = frameFixture.table("editionTreeTable").cellReader(new JsonTableCellReader());
 
 
@@ -146,7 +147,7 @@ public class MongoEditionPanelTest {
     }
 
     @Test
-    public void addValueInAList() throws Exception {
+    void addValueInAList() throws Exception {
 
         mongoEditionPanel.updateEditionTree(buildDocument("simpleDocumentWithSubList.json"));
         JTableFixture editionTreeTable = frameFixture.table("editionTreeTable").cellReader(new JsonTableCellReader());
@@ -189,15 +190,14 @@ public class MongoEditionPanelTest {
             if (value instanceof NodeDescriptor) {
                 NodeDescriptor nodeDescriptor = (NodeDescriptor) value;
                 return nodeDescriptor.getFormattedKey();
-            } else {
-                return value == null ? "null" : value.toString();
             }
+            return value == null ? "null" : value.toString();
         }
 
     }
 
     private DBObject buildDocument(String jsonFile) throws IOException {
-        DBObject mongoDocument = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream(jsonFile)));
+        DBObject mongoDocument = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream(jsonFile), Charset.defaultCharset()));
         mongoDocument.put("_id", new ObjectId(String.valueOf(mongoDocument.get("_id"))));
         return mongoDocument;
     }

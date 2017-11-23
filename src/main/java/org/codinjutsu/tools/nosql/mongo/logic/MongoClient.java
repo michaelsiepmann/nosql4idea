@@ -241,7 +241,7 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject>, Fold
         return mongoResult;
     }
 
-    private com.mongodb.MongoClient createMongoClient(ServerConfiguration configuration) {
+    protected com.mongodb.MongoClient createMongoClient(ServerConfiguration configuration) {
         String serverUrl = configuration.getServerUrl();
         if (StringUtils.isEmpty(serverUrl)) {
             throw new ConfigurationException("server host is not set");

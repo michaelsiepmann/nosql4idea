@@ -6,7 +6,7 @@ internal class ElasticsearchCollection(override val name: String, val databaseNa
 
     override fun toString() = name
 
-    override fun compareTo(other: ElasticsearchCollection): Int {
-        return this.name.compareTo(other.name)
-    }
+    override fun compareTo(other: ElasticsearchCollection) = this.name.compareTo(other.name)
+
+    override fun canBeDeleted() = false // todo: This is only true from ES 2.0 and above
 }

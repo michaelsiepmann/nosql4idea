@@ -22,8 +22,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import org.codinjutsu.tools.nosql.NoSqlExplorerPanel
 import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection
-
-import javax.swing.*
+import javax.swing.JOptionPane
 
 class DropCollectionAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction("Drop collection", "Drop the selected collection", REMOVE_ICON), DumbAware {
 
@@ -35,10 +34,10 @@ class DropCollectionAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) :
     }
 
     override fun update(event: AnActionEvent?) {
-        event!!.presentation.isVisible = noSqlExplorerPanel.getSelectedCollection<NoSQLCollection>() != null
+        event!!.presentation.isVisible = noSqlExplorerPanel.canCollectionBeDeleted()
     }
 
     companion object {
-        private val REMOVE_ICON = AllIcons.Actions.GC
+        private val REMOVE_ICON = AllIcons.Actions.Delete
     }
 }

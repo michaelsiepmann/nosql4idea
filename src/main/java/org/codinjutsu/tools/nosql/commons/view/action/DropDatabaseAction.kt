@@ -21,12 +21,13 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import org.codinjutsu.tools.nosql.NoSqlExplorerPanel
+import org.codinjutsu.tools.nosql.i18n.getResourceString
 import javax.swing.JOptionPane
 
 /**
  * Created by piddubnyi on 06.11.14 .
  */
-class DropDatabaseAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction("Drop Database", "Drop the selected database", REMOVE_ICON), DumbAware {
+class DropDatabaseAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction(getResourceString("action.dropdatabase.text"), getResourceString("action.dropdatabase.description"), REMOVE_ICON), DumbAware {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
         val result = JOptionPane.showConfirmDialog(null, String.format("Do you REALLY want to drop the '%s' database?", noSqlExplorerPanel.selectedDatabase!!.name), "Warning", JOptionPane.YES_NO_OPTION)

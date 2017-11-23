@@ -17,7 +17,6 @@
 package org.codinjutsu.tools.nosql.mongo.runner;
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
@@ -34,10 +33,9 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfiguration> {
 
@@ -56,15 +54,15 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
 
         shellParametersField.setDialogCaption("Mongo arguments");
 
-        DatabaseServer[] mongoServers = getAvailableMongoServers(project);
+        Vector<DatabaseServer> mongoServers = getAvailableMongoServers(project);
 
-        if (mongoServers.length == 0) {
+        if (mongoServers.isEmpty()) {
             serverConfigurationCombobox.setEnabled(false);
             databaseCombobox.setEnabled(false);
             return;
         }
 
-        serverConfigurationCombobox.setModel(new DefaultComboBoxModel(mongoServers));
+        serverConfigurationCombobox.setModel(new DefaultComboBoxModel<>(mongoServers));
 
         serverConfigurationCombobox.setRenderer(new ColoredListCellRenderer() {
             @Override
@@ -87,18 +85,14 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
         });
 
 
-        serverConfigurationCombobox.addItemListener(new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent itemEvent) {
-                DatabaseServer selectedServer = (DatabaseServer) serverConfigurationCombobox.getSelectedItem();
-                if (selectedServer == null) {
-                    return;
-                }
-                databaseCombobox.removeAllItems();
-                for (Database mongoDatabase : selectedServer.getDatabases()) {
-                    databaseCombobox.addItem(mongoDatabase);
-                }
+        serverConfigurationCombobox.addItemListener(itemEvent -> {
+            DatabaseServer selectedServer = (DatabaseServer) serverConfigurationCombobox.getSelectedItem();
+            if (selectedServer == null) {
+                return;
+            }
+            databaseCombobox.removeAllItems();
+            for (Database mongoDatabase : selectedServer.getDatabases()) {
+                databaseCombobox.addItem(mongoDatabase);
             }
         });
 
@@ -106,15 +100,15 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
         serverConfigurationCombobox.setSelectedIndex(0);
     }
 
-    private DatabaseServer[] getAvailableMongoServers(Project project) {
+    private Vector<DatabaseServer> getAvailableMongoServers(Project project) {
         List<DatabaseServer> mongoServers = MongoClient.getInstance(project).getServers();
-        List<DatabaseServer> availableMongoServers = new LinkedList<DatabaseServer>();
+        List<DatabaseServer> availableMongoServers = new LinkedList<>();
         for (DatabaseServer mongoServer : mongoServers) {
             if (mongoServer.hasDatabases()) {
                 availableMongoServers.add(mongoServer);
             }
         }
-        return availableMongoServers.toArray(new DatabaseServer[availableMongoServers.size()]);
+        return new Vector<>(availableMongoServers);
     }
 
     @Override
@@ -125,7 +119,7 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
     }
 
     @Override
-    protected void applyEditorTo(MongoRunConfiguration configuration) throws ConfigurationException {
+    protected void applyEditorTo(MongoRunConfiguration configuration) {
         configuration.setScriptPath(getScriptPath());
         configuration.setServerConfiguration(getSelectedConfiguration());
         configuration.setDatabase(getSelectedDatabase());

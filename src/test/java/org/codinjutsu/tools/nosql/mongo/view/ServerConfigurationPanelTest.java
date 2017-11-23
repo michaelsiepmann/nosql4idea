@@ -29,25 +29,26 @@ import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;
 import org.fest.swing.fixture.FrameFixture;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ServerConfigurationPanelTest {
+class ServerConfigurationPanelTest {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException thrown = ExpectedException.none();
 
     private ServerConfigurationPanel configurationPanel;
     private DatabaseClient databaseClientMock;
 
     private FrameFixture frameFixture;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         databaseClientMock = Mockito.mock(DatabaseClient.class);
         configurationPanel = GuiActionRunner.execute(new GuiQuery<ServerConfigurationPanel>() {
             protected ServerConfigurationPanel executeInEDT() {
@@ -62,13 +63,13 @@ public class ServerConfigurationPanelTest {
         frameFixture = Containers.showInFrame(configurationPanel);
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         frameFixture.cleanUp();
     }
 
     @Test
-    public void createMongoConfiguration() throws Exception {
+    void createMongoConfiguration() {
         frameFixture.textBox("labelField").setText("Localhost");
 
         frameFixture.label("databaseVendorLabel").requireText("MongoDB");
@@ -106,7 +107,7 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    public void loadMongoConfiguration() throws Exception {
+    void loadMongoConfiguration() {
         ServerConfiguration configuration = new ServerConfiguration();
         configuration.setLabel("Localhost");
         configuration.setDatabaseVendor(DatabaseVendor.MONGO);
@@ -137,12 +138,12 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    public void validateFormWithEmptyLabelShouldReturnAValidationInfo() {
+    void validateFormWithEmptyLabelShouldReturnAValidationInfo() {
         assertEquals("Label should be set", configurationPanel.validateInputs().message);
     }
 
     @Test
-    public void validateFormWithMissingMongoUrlShouldThrowAConfigurationException() {
+    void validateFormWithMissingMongoUrlShouldThrowAConfigurationException() {
         frameFixture.textBox("labelField").setText("Localhost");
         frameFixture.textBox("serverUrlField").setText(null);
 
@@ -150,7 +151,7 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    public void validateFormWithEmptyMongoUrlShouldReturnAValidationInfo() {
+    void validateFormWithEmptyMongoUrlShouldReturnAValidationInfo() {
         frameFixture.textBox("labelField").setText("Localhost");
 
         frameFixture.textBox("serverUrlField").setText("");
@@ -159,7 +160,7 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    public void validateFormWithBadMongoUrlShouldReturnAValidationInfo() {
+    void validateFormWithBadMongoUrlShouldReturnAValidationInfo() {
         frameFixture.textBox("labelField").setText("Localhost");
 
         frameFixture.textBox("serverUrlField").setText("host");
@@ -168,8 +169,7 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    @Ignore
-    public void validateFormWithBadMongoPortShouldThrowAConfigurationException() {
+    void validateFormWithBadMongoPortShouldThrowAConfigurationException() {
         thrown.expect(ConfigurationException.class);
         thrown.expectMessage("Port in the URL 'host:port' is incorrect. It should be a number");
         frameFixture.textBox("labelField").setText("Localhost");
@@ -180,7 +180,7 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    public void validateFormWithReplicatSet() throws Exception {
+    void validateFormWithReplicatSet() {
         frameFixture.textBox("labelField").setText("Localhost");
         frameFixture.textBox("serverUrlField").setText("localhost:25, localhost:26");
 
@@ -192,7 +192,7 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    public void loadFormWithReplicatSet() throws Exception {
+    void loadFormWithReplicatSet() {
         ServerConfiguration configuration = new ServerConfiguration();
         configuration.setAuthenticationSettings(new AuthenticationSettings());
 

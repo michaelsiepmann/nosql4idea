@@ -22,33 +22,27 @@ import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel;
-import org.codinjutsu.tools.nosql.redis.view.RedisAuthenticationPanel;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;
 import org.fest.swing.fixture.FrameFixture;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ServerConfigurationPanelTest {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+class ServerConfigurationPanelTest {
 
     private ServerConfigurationPanel configurationPanel;
     private DatabaseClient databaseClientMock;
 
     private FrameFixture frameFixture;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         databaseClientMock = Mockito.mock(DatabaseClient.class);
         configurationPanel = GuiActionRunner.execute(new GuiQuery<ServerConfigurationPanel>() {
             protected ServerConfigurationPanel executeInEDT() {
@@ -63,13 +57,13 @@ public class ServerConfigurationPanelTest {
         frameFixture = Containers.showInFrame(configurationPanel);
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         frameFixture.cleanUp();
     }
 
     @Test
-    public void createRedisConfiguration() throws Exception {
+    void createRedisConfiguration() {
         frameFixture.textBox("labelField").setText("Localhost");
 
         frameFixture.label("databaseVendorLabel").requireText("RedisDB");
@@ -97,7 +91,7 @@ public class ServerConfigurationPanelTest {
     }
 
     @Test
-    public void loadRedisConfiguration() throws Exception {
+    void loadRedisConfiguration() {
         ServerConfiguration configuration = new ServerConfiguration();
         configuration.setLabel("Localhost");
         configuration.setDatabaseVendor(DatabaseVendor.REDIS);
