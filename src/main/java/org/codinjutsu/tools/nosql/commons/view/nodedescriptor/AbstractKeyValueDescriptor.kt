@@ -39,6 +39,5 @@ internal abstract class AbstractKeyValueDescriptor(val key: String, private var 
 
     companion object {
         private const val TO_STRING_TEMPLATE = "\"%s\" : %s"
-
     }
 }

@@ -53,4 +53,9 @@ public class MongoResult implements SearchResult {
     public List<ObjectWrapper> getRecords() {
         return Collections.emptyList(); // todo
     }
+
+    @Override
+    public int getCount() {
+        return getRecords().size();
+    }
 }

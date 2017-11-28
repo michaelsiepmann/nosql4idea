@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.elasticsearch.logic
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
@@ -11,8 +12,10 @@ import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.DeleteElement
+import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.FetchDocument
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetIndices
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetTypes
+import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Insert
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Search
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchCollection
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
@@ -51,7 +54,7 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
 
     override fun loadRecords(context: ElasticsearchContext, queryOptions: QueryOptions): ElasticsearchResult {
         val elasticsearchResult = ElasticsearchResult(context.database.name)
-        elasticsearchResult.addAll(Search(context).execute().getAsJsonObject("hits").getAsJsonArray("hits"))
+        elasticsearchResult.addAll(Search(context, queryOptions).execute().getAsJsonObject("hits")?.getAsJsonArray("hits") ?: JsonArray())
         return elasticsearchResult
     }
 
@@ -63,11 +66,12 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
         DeleteElement("${serverConfiguration.serverUrl!!}/${database.name}").execute()
     }
 
-    override fun findDocument(context: ElasticsearchContext, _id: Any): JsonObject? {
-        return null
+    override fun findDocument(context: ElasticsearchContext, id: Any): JsonObject? {
+        return FetchDocument(context, id.toString()).execute()
     }
 
     override fun update(context: ElasticsearchContext, document: JsonObject) {
+        Insert(context, document).execute()
     }
 
     override fun delete(context: ElasticsearchContext, _id: Any) {

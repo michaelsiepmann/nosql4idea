@@ -10,10 +10,12 @@ import org.codinjutsu.tools.nosql.commons.view.EditionPanel
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult
 
-internal class ElasticsearchResultPanel(project: Project, documentOPerations: NoSQLResultPanelDocumentOperations<JsonObject>) : AbstractNoSQLResultPanel<ElasticsearchResult, JsonObject>(project, documentOPerations, ElasticsearchTreeModelFactory()) {
+internal class ElasticsearchResultPanel(project: Project, documentOPerations: NoSQLResultPanelDocumentOperations<JsonObject>) :
+        AbstractNoSQLResultPanel<ElasticsearchResult, JsonObject>(project, documentOPerations, ElasticsearchTreeModelFactory()) {
 
     override fun createEditionPanel(): EditionPanel<JsonObject>? {
         val elasticsearchEditionPanel = EditionPanel<JsonObject>(ElasticsearchTreeModelFactory(), object : WriteableColumnInfoDecider {
@@ -37,7 +39,7 @@ internal class ElasticsearchResultPanel(project: Project, documentOPerations: No
     }
 
     override fun isSelectedNodeId(treeNode: NoSqlTreeNode): Boolean {
-        val obj = treeNode.descriptor
-        return super.isSelectedNodeId(treeNode)
+        val descriptor = treeNode.descriptor
+        return descriptor is AbstractKeyValueDescriptor && descriptor.key == "_id"
     }
 }

@@ -4,7 +4,9 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.process
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchObjectWrapper
+import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchDescriptor
 import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchKeyValueDescriptor
 import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchResultDescriptor
 import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchValueDescriptor
@@ -21,16 +23,21 @@ internal class ElasticsearchTreeModelFactory : NodeDescriptorFactory<JsonObject>
 
     override fun processObject(parentNode: NoSqlTreeNode, value: Any?) {
         if (value is JsonObject) {
-            processDbObject(parentNode, value)
+            process(value, parentNode, this)
         }
     }
 
-    private fun processDbObject(parentNode: NoSqlTreeNode, mongoObject: JsonObject) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun buildDBObject(rootNode: NoSqlTreeNode): JsonObject {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val result = JsonObject()
+        rootNode.childTreeNodes
+                .asSequence()
+                .map {
+                    it.userObject as ElasticsearchDescriptor
+                }
+                .forEach {
+                    it.buildObject(result)
+                }
+        return result
     }
 
     override fun isArray(value: Any?) = value is JsonArray

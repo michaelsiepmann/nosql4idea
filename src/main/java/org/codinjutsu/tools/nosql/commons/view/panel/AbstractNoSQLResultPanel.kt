@@ -81,7 +81,7 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
             JsonTreeTableView(buildTree(searchResult, treeModelFactory), JsonTreeTableView.KEY, JsonTreeTableView.READONLY_VALUE)
 
     protected open fun buildPopupMenu() {
-        val actionPopupGroup = DefaultActionGroup("MongoResultPopupGroup", true)
+        val actionPopupGroup = DefaultActionGroup("NoSQLResultPopupGroup", true)
         if (ApplicationManager.getApplication() != null) {
             actionPopupGroup.add(EditDocumentAction(this))
             actionPopupGroup.add(CopyResultAction(this))
@@ -109,7 +109,7 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
 
         val descriptor = treeNode.descriptor
         if (descriptor is AbstractKeyValueDescriptor) {
-            if (StringUtils.equals(descriptor.key, "_id")) {
+            if (descriptor.key == "_id") {
                 return documentOperations.getDocument(descriptor.value!!)
             }
         }

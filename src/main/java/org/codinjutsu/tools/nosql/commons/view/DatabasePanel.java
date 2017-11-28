@@ -19,15 +19,21 @@ import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.commons.view.action.AddMongoDocumentAction;
+import org.codinjutsu.tools.nosql.commons.view.action.AddDocumentAction;
 import org.codinjutsu.tools.nosql.commons.view.action.CloseFindEditorAction;
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction;
 import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction;
 import org.codinjutsu.tools.nosql.commons.view.action.EnableAggregateAction;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
 import org.codinjutsu.tools.nosql.commons.view.action.OpenFindAction;
+import org.codinjutsu.tools.nosql.commons.view.action.paging.FirstPageAction;
+import org.codinjutsu.tools.nosql.commons.view.action.paging.LastPageAction;
+import org.codinjutsu.tools.nosql.commons.view.action.paging.NextPageAction;
+import org.codinjutsu.tools.nosql.commons.view.action.paging.PreviousPageAction;
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.Pageable;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.Page;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +55,8 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
 
     private final Project project;
     private final CONTEXT context;
+
+    private Page currentPage = null;
 
     protected DatabasePanel(Project project, CONTEXT context) {
         this.project = project;
@@ -99,11 +107,23 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
             actionResultGroup.add(new EnableAggregateAction(queryPanel));
             actionResultGroup.addSeparator();
             if (resultPanel.isEditable()) {
-                actionResultGroup.add(new AddMongoDocumentAction(resultPanel));
+                actionResultGroup.add(new AddDocumentAction(resultPanel));
                 actionResultGroup.add(new EditDocumentAction<>(resultPanel));
             }
+
             actionResultGroup.add(new CopyResultAction<>(resultPanel));
+
+
+            if (this instanceof Pageable) {
+                Pageable pageable = (Pageable) this;
+                actionResultGroup.addSeparator();
+                actionResultGroup.add(new FirstPageAction(pageable));
+                actionResultGroup.add(new PreviousPageAction(pageable));
+                actionResultGroup.add(new NextPageAction(pageable));
+                actionResultGroup.add(new LastPageAction(pageable));
+            }
         }
+
         final TreeExpander treeExpander = new TreeExpander() {
             @Override
             public void expandAll() {
@@ -202,12 +222,14 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
     }
 
     protected RESULT getSearchResult() {
-        return getSearchResult(context, createQueryOptions());
+        QueryOptions queryOptions = createQueryOptions();
+        currentPage = null;
+        return getSearchResult(context, queryOptions);
     }
 
     @NotNull
     protected QueryOptions createQueryOptions() {
-        return queryPanel.getQueryOptions(rowLimitField.getText());
+        return queryPanel.getQueryOptions(rowLimitField.getText(), currentPage);
     }
 
     protected abstract RESULT getSearchResult(CONTEXT context, QueryOptions queryOptions);
@@ -244,7 +266,15 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
         return splitter.getFirstComponent() == queryPanel;
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
+    @NotNull
+    public Page getCurrentPage() {
+        if (currentPage == null) {
+            currentPage = new Page(10, 0, getSearchResult().getCount());
+        }
+        return currentPage;
+    }
+
+    public void moveToPage(@NotNull Page page) {
+
     }
 }

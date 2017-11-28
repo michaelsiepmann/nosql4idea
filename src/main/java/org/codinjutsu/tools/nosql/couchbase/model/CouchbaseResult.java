@@ -60,4 +60,9 @@ public class CouchbaseResult implements SearchResult {
     public List<JsonObject> getErrors() {
         return errors;
     }
+
+    @Override
+    public int getCount() {
+        return getRecords().size();
+    }
 }

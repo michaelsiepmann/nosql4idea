@@ -24,7 +24,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel
 
 import java.awt.event.KeyEvent
 
-internal class AddMongoDocumentAction(private val resultPanel: AbstractNoSQLResultPanel<*, *>) : AnAction("Add", "Add mongo document", AllIcons.General.Add), DumbAware {
+internal class AddDocumentAction(private val resultPanel: AbstractNoSQLResultPanel<*, *>) : AnAction("Add", "Add document", AllIcons.General.Add), DumbAware {
 
     init {
         registerCustomShortcutSet(KeyEvent.VK_INSERT, KeyEvent.ALT_MASK, resultPanel)

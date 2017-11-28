@@ -5,5 +5,6 @@ data class QueryOptionsImpl @JvmOverloads constructor(
         override var resultLimit: Int = 300,
         override var filter: String? = null,
         override var projection: String? = null,
-        override var sort: String? = null
+        override var sort: String? = null,
+        override var page: Page? = null
 ) : QueryOptions

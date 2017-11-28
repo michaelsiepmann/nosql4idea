@@ -6,4 +6,5 @@ interface QueryOptions {
     val filter: String?
     val projection: String?
     val sort: String?
+    val page: Page?
 }

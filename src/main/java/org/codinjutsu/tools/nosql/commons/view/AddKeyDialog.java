@@ -32,8 +32,8 @@ public class AddKeyDialog<DOCUMENT> extends AbstractAddDialog<DOCUMENT> {
     private JPanel valuePanel;
     private JPanel mainPanel;
 
-    private AddKeyDialog(EditionPanel<DOCUMENT> mongoEditionPanel) {
-        super(mongoEditionPanel);
+    private AddKeyDialog(EditionPanel<DOCUMENT> editionPanel) {
+        super(editionPanel);
         mainPanel.setPreferredSize(GuiUtils.enlargeWidth(mainPanel.getPreferredSize(), 1.5d));
         valuePanel.setLayout(new BorderLayout());
         nameTextfield.setName("keyName");

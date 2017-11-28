@@ -19,6 +19,7 @@ package org.codinjutsu.tools.nosql.commons.view;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.Enumeration;
 
 public class NoSqlTreeNode extends DefaultMutableTreeNode {
 
@@ -28,5 +29,9 @@ public class NoSqlTreeNode extends DefaultMutableTreeNode {
 
     public NodeDescriptor getDescriptor() {
         return (NodeDescriptor) this.getUserObject();
+    }
+
+    public Enumeration<NoSqlTreeNode> getChildTreeNodes() {
+        return children();
     }
 }

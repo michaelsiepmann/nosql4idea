@@ -72,7 +72,9 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
 
             parentPanel.invalidate();
             parentPanel.removeAll();
-            parentPanel.add(currentEditor.getComponent(), BorderLayout.CENTER);
+            JComponent component = currentEditor.getComponent();
+            component.setName("valueEditor");
+            parentPanel.add(component, BorderLayout.CENTER);
             parentPanel.validate();
         });
 
@@ -210,7 +212,6 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
 
         @Override
         public void reset() {
-
         }
     }
 

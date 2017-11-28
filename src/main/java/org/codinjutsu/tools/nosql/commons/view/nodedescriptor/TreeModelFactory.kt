@@ -27,7 +27,7 @@ private fun <DOCUMENT> processRecordListValues(parentNode: NoSqlTreeNode, values
     }
 }
 
-private fun <DOCUMENT> process(value: Any?, currentValueNode: NoSqlTreeNode, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
+internal fun <DOCUMENT> process(value: Any?, currentValueNode: NoSqlTreeNode, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
     if (value != null) {
         if (nodeDescriptorFactory.isArray(value)) {
             processRecordListValues(currentValueNode, value, nodeDescriptorFactory)

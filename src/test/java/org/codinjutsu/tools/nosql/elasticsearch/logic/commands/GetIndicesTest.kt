@@ -31,6 +31,6 @@ class GetIndicesTest {
         const val RESPONSE = """{
             "index": "test",
             "type": "testtype"
-}""";
+}"""
     }
 }

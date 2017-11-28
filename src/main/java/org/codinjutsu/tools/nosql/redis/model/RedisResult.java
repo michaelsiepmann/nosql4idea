@@ -67,4 +67,9 @@ public class RedisResult implements SearchResult {
     public List<ObjectWrapper> getRecords() {
         return redisRecords.stream().map((Function<RedisRecord, RedisObjectWrapper>) RedisObjectWrapper::new).collect(Collectors.toList());
     }
+
+    @Override
+    public int getCount() {
+        return getRecords().size();
+    }
 }

@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor
 
+import com.google.gson.JsonObject
 import com.intellij.ui.ColoredTableCellRenderer
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.SimpleTextAttributes
@@ -8,7 +9,7 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecrip
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ValueDescriptor
 import java.lang.String.format
 
-internal open class ElasticsearchValueDescriptor(private val index: Int, private var value: Any?, private val valueTextAttributes: SimpleTextAttributes) : AbstractNodeDecriptor(), ValueDescriptor {
+internal open class ElasticsearchValueDescriptor(private val index: Int, private var value: Any?, private val valueTextAttributes: SimpleTextAttributes) : AbstractNodeDecriptor(), ValueDescriptor, ElasticsearchDescriptor {
 
     override fun renderValue(cellRenderer: ColoredTableCellRenderer, isNodeExpanded: Boolean) {
         if (!isNodeExpanded) {
@@ -28,6 +29,10 @@ internal open class ElasticsearchValueDescriptor(private val index: Int, private
 
     override fun setValue(value: Any?) {
         this.value = value
+    }
+
+    override fun buildObject(jsonObject: JsonObject) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun toString() = value.toString()

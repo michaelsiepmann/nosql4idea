@@ -107,7 +107,7 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
         return LexerEditorHighlighter(PlainTextSyntaxHighlighterFactory.getSyntaxHighlighter(language!!, null, null), settings)
     }
 
-    fun getQueryOptions(rowLimit: String) = getCurrentOperatorPanel().buildQueryOptions(rowLimit)
+    fun getQueryOptions(rowLimit: String, page: Page?) = getCurrentOperatorPanel().buildQueryOptions(rowLimit, page)
 
     override fun dispose() {
         myUpdateAlarm.cancelAllRequests()
@@ -133,7 +133,7 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
 
         abstract fun validateQuery()
 
-        abstract fun buildQueryOptions(rowLimit: String): QueryOptions
+        abstract fun buildQueryOptions(rowLimit: String, page: Page?): QueryOptions
 
         internal fun notifyOnErrorForOperator(component: JComponent, ex: Exception) {
             val message = if (ex is JSONParseException) {
@@ -203,8 +203,8 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
 
         }
 
-        override fun buildQueryOptions(rowLimit: String): QueryOptions {
-            val queryOptions = QueryOptionsImpl()
+        override fun buildQueryOptions(rowLimit: String, page: Page?): QueryOptions {
+            val queryOptions = QueryOptionsImpl(page = page)
             try {
                 queryOptions.operations = query
             } catch (ex: JSONParseException) {
@@ -255,21 +255,21 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
             validateEditorQuery(sortEditor)
         }
 
-        override fun buildQueryOptions(rowLimit: String): QueryOptions {
-            val mongoQueryOptions = QueryOptionsImpl()
+        override fun buildQueryOptions(rowLimit: String, page: Page?): QueryOptions {
+            val queryOptions = QueryOptionsImpl()
             try {
-                mongoQueryOptions.filter = getQueryFrom(selectEditor)
-                mongoQueryOptions.projection = getQueryFrom(projectionEditor)
-                mongoQueryOptions.sort = getQueryFrom(sortEditor)
+                queryOptions.filter = getQueryFrom(selectEditor)
+                queryOptions.projection = getQueryFrom(projectionEditor)
+                queryOptions.sort = getQueryFrom(sortEditor)
             } catch (ex: JSONParseException) {
                 notifyOnErrorForOperator(selectEditor.component, ex)
             }
 
             if (StringUtils.isNotBlank(rowLimit)) {
-                mongoQueryOptions.resultLimit = Integer.parseInt(rowLimit)
+                queryOptions.resultLimit = Integer.parseInt(rowLimit)
             }
 
-            return mongoQueryOptions
+            return queryOptions
         }
 
         override fun dispose() {
