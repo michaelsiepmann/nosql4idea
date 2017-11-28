@@ -1,21 +1,18 @@
 package org.codinjutsu.tools.nosql.mongo.view.wrapper
 
+import com.mongodb.BasicDBList
+import com.mongodb.BasicDBObject
+import com.mongodb.DBObject
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 
-internal class MongoObjectWrapper: ObjectWrapper {
+internal class MongoObjectWrapper(private val dbObject: DBObject) : ObjectWrapper {
 
     override val names: Collection<String>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = dbObject.keySet()
 
-    override fun get(name: String): Any? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun get(name: String): Any? = dbObject.get(name)
 
-    override fun isArray(value: Any?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun isArray(value: Any?) = value is BasicDBList
 
-    override fun isObject(value: Any?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun isObject(value: Any?) = value is BasicDBObject
 }

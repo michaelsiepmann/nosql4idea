@@ -10,6 +10,7 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoResult
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoKeyValueDescriptor
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoResultDescriptor
 import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoValueDescriptor
+import org.codinjutsu.tools.nosql.mongo.view.wrapper.MongoObjectWrapper
 import javax.swing.tree.TreeNode
 
 class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
@@ -114,7 +115,5 @@ class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
 
     override fun isObject(value: Any?) = value is DBObject
 
-    override fun createObjectWrapper(value: Any?): ObjectWrapper {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun createObjectWrapper(value: Any?): ObjectWrapper = MongoObjectWrapper(value as DBObject)
 }
