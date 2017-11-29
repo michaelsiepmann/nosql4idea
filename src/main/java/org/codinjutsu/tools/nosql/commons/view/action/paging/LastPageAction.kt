@@ -5,7 +5,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
 
 internal class LastPageAction(pageable: Pageable) : AbstractPageableAction(pageable) {
 
-    override fun followingPage(page: Page) = page.copy(pageIndex = page.pageIndex + 1) // todo
+    override fun followingPage(page: Page) = page.copy(pageIndex = page.itemCount / page.pageSize)
 
-    override fun canSwitchToPage(page: Page) = page.pageIndex < page.pageSize // todo
+    override fun canSwitchToPage(page: Page) = page.pageIndex * page.pageSize < page.itemCount
 }

@@ -7,5 +7,5 @@ internal class NextPageAction(pageable: Pageable) : AbstractPageableAction(pagea
 
     override fun followingPage(page: Page) = page.copy(pageIndex = page.pageIndex + 1)
 
-    override fun canSwitchToPage(page: Page) = page.pageIndex < page.pageSize // todo
+    override fun canSwitchToPage(page: Page) = page.pageIndex * page.pageSize < page.itemCount
 }

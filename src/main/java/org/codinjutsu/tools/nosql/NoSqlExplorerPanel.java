@@ -50,6 +50,8 @@ import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile;
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase;
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchServerConfiguration;
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion;
 import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchObjectFile;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile;
@@ -163,7 +165,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         });
     }
 
-    private void addDatabasesIfAny(DatabaseServer databaseServer, DefaultMutableTreeNode serverNode) {
+    private void addDatabasesIfAny(DatabaseServer<ServerConfiguration> databaseServer, DefaultMutableTreeNode serverNode) {
         for (Database database : databaseServer.getDatabases()) {
             DefaultMutableTreeNode databaseNode = new DefaultMutableTreeNode(database);
             if (database instanceof Folder) {
@@ -414,7 +416,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
             return new CouchbaseObjectFile(project, selectedConfiguration, getSelectedCouchbaseDatabase());
         }
         if (DatabaseVendor.ELASTICSEARCH.equals(selectedConfiguration.getDatabaseVendor())) {
-            return new ElasticsearchObjectFile(project, selectedConfiguration, getSelectedElasticsearchDatabase(), getSelectedCollection());
+            return new ElasticsearchObjectFile(project, new ElasticsearchServerConfiguration(ElasticsearchVersion.VERSION_20, selectedConfiguration), getSelectedElasticsearchDatabase(), getSelectedCollection());
         }
         return new RedisObjectFile(project, selectedConfiguration, getSelectedRedisDatabase());
     }

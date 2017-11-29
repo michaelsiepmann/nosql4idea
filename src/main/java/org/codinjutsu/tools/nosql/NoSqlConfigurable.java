@@ -23,7 +23,6 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.BaseConfigurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -31,9 +30,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.ui.*;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.PanelWithButtons;
+import com.intellij.ui.TableUtil;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanelFactory;
@@ -45,8 +46,6 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -54,7 +53,6 @@ import java.util.concurrent.TimeoutException;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class NoSqlConfigurable extends BaseConfigurable {
-
 
     private final Project project;
 
@@ -69,7 +67,6 @@ public class NoSqlConfigurable extends BaseConfigurable {
     private final NoSqlServerTableModel tableModel;
     private ShellPathPanel mongoShellPanel;
     private ShellPathPanel redisShellPanel;
-
 
     public NoSqlConfigurable(Project project) {
         this.project = project;
@@ -148,82 +145,72 @@ public class NoSqlConfigurable extends BaseConfigurable {
                 autoConnectColumn.setMinWidth(autoConnectColumnWidth);
 
                 return ToolbarDecorator.createDecorator(table)
-                        .setAddAction(new AnActionButtonRunnable() {
-                            @Override
-                            public void run(AnActionButton button) {
-                                stopEditing();
+                        .setAddAction(button -> {
+                            stopEditing();
 
-                                SelectDatabaseVendorDialog databaseVendorDialog = new SelectDatabaseVendorDialog(mainPanel);
-                                databaseVendorDialog.setTitle("Add a NoSql Server");
-                                databaseVendorDialog.show();
-                                if (!databaseVendorDialog.isOK()) {
-                                    return;
-                                }
-
-                                DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
-                                ServerConfiguration serverConfiguration = databaseVendorClientManager.get(selectedDatabaseVendor).defaultConfiguration();
-                                serverConfiguration.setDatabaseVendor(selectedDatabaseVendor);
-
-                                ConfigurationDialog dialog = new ConfigurationDialog(
-                                        mainPanel,
-                                        serverConfigurationPanelFactory,
-                                        serverConfiguration
-                                );
-                                dialog.setTitle("Add a NoSql Server");
-                                dialog.show();
-                                if (!dialog.isOK()) {
-                                    return;
-                                }
-
-                                configurations.add(serverConfiguration);
-                                int index = configurations.size() - 1;
-                                tableModel.fireTableRowsInserted(index, index);
-                                table.getSelectionModel().setSelectionInterval(index, index);
-                                table.scrollRectToVisible(table.getCellRect(index, 0, true));
+                            SelectDatabaseVendorDialog databaseVendorDialog = new SelectDatabaseVendorDialog(mainPanel);
+                            databaseVendorDialog.setTitle("Add a NoSql Server");
+                            databaseVendorDialog.show();
+                            if (!databaseVendorDialog.isOK()) {
+                                return;
                             }
+
+                            DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
+                            ServerConfiguration serverConfiguration = databaseVendorClientManager.get(selectedDatabaseVendor).defaultConfiguration();
+                            serverConfiguration.setDatabaseVendor(selectedDatabaseVendor);
+
+                            ConfigurationDialog dialog = new ConfigurationDialog(
+                                    mainPanel,
+                                    serverConfigurationPanelFactory,
+                                    serverConfiguration
+                            );
+                            dialog.setTitle("Add a NoSql Server");
+                            dialog.show();
+                            if (!dialog.isOK()) {
+                                return;
+                            }
+
+                            configurations.add(serverConfiguration);
+                            int index = configurations.size() - 1;
+                            tableModel.fireTableRowsInserted(index, index);
+                            table.getSelectionModel().setSelectionInterval(index, index);
+                            table.scrollRectToVisible(table.getCellRect(index, 0, true));
                         })
                         .setAddActionName("addServer")
-                        .setEditAction(new AnActionButtonRunnable() {
-                            @Override
-                            public void run(AnActionButton button) {
-                                stopEditing();
+                        .setEditAction(button -> {
+                            stopEditing();
 
-                                int selectedIndex = table.getSelectedRow();
-                                if (selectedIndex < 0 || selectedIndex >= tableModel.getRowCount()) {
-                                    return;
-                                }
-                                ServerConfiguration sourceConfiguration = configurations.get(selectedIndex);
-                                ServerConfiguration copiedConfiguration = sourceConfiguration.clone();
-
-
-                                ConfigurationDialog dialog = new ConfigurationDialog(
-                                        mainPanel,
-                                        serverConfigurationPanelFactory,
-                                        copiedConfiguration
-                                );
-                                dialog.setTitle("Edit a NoSql Server");
-                                dialog.show();
-                                if (!dialog.isOK()) {
-                                    return;
-                                }
-
-                                configurations.set(selectedIndex, copiedConfiguration);
-                                tableModel.fireTableRowsUpdated(selectedIndex, selectedIndex);
-                                table.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+                            int selectedIndex = table.getSelectedRow();
+                            if (selectedIndex < 0 || selectedIndex >= tableModel.getRowCount()) {
+                                return;
                             }
+                            ServerConfiguration sourceConfiguration = configurations.get(selectedIndex);
+                            ServerConfiguration copiedConfiguration = sourceConfiguration.cloneConfiguration();
+
+                            ConfigurationDialog dialog = new ConfigurationDialog(
+                                    mainPanel,
+                                    serverConfigurationPanelFactory,
+                                    copiedConfiguration
+                            );
+                            dialog.setTitle("Edit a NoSql Server");
+                            dialog.show();
+                            if (!dialog.isOK()) {
+                                return;
+                            }
+
+                            configurations.set(selectedIndex, copiedConfiguration);
+                            tableModel.fireTableRowsUpdated(selectedIndex, selectedIndex);
+                            table.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
                         })
                         .setEditActionName("editServer")
-                        .setRemoveAction(new AnActionButtonRunnable() {
-                            @Override
-                            public void run(AnActionButton button) {
-                                stopEditing();
+                        .setRemoveAction(button -> {
+                            stopEditing();
 
-                                int selectedIndex = table.getSelectedRow();
-                                if (selectedIndex < 0 || selectedIndex >= tableModel.getRowCount()) {
-                                    return;
-                                }
-                                TableUtil.removeSelectedItems(table);
+                            int selectedIndex = table.getSelectedRow();
+                            if (selectedIndex < 0 || selectedIndex >= tableModel.getRowCount()) {
+                                return;
                             }
+                            TableUtil.removeSelectedItems(table);
                         })
                         .setRemoveActionName("removeServer")
                         .disableUpDownActions().createPanel();
@@ -240,7 +227,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
     }
 
     @Override
-    public void apply() throws ConfigurationException {
+    public void apply() {
         stopEditing();
         if (areConfigurationsModified()) {
             configuration.setServerConfigurations(configurations);
@@ -325,25 +312,14 @@ public class NoSqlConfigurable extends BaseConfigurable {
 
         private JButton createTestButton(final DatabaseVendor databaseVendorName) {
             JButton testButton = new JButton("Test");
-            testButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    testPath(databaseVendorName);
-                }
-            });
+            testButton.addActionListener(actionEvent -> testPath(databaseVendorName));
             return testButton;
         }
-
 
         private void testPath(final DatabaseVendor databaseVendor) {
             ProcessOutput processOutput;
             try {
-                processOutput = ProgressManager.getInstance().runProcessWithProgressSynchronously(new ThrowableComputable<ProcessOutput, Exception>() {
-                    @Override
-                    public ProcessOutput compute() throws Exception {
-                        return checkShellPath(databaseVendor, getShellPath());
-                    }
-                }, "Testing " + databaseVendor.name + " CLI Executable...", true, NoSqlConfigurable.this.project);
+                processOutput = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> checkShellPath(databaseVendor, getShellPath()), "Testing " + databaseVendor.name + " CLI Executable...", true, NoSqlConfigurable.this.project);
             } catch (ProcessCanceledException pce) {
                 return;
             } catch (Exception e) {

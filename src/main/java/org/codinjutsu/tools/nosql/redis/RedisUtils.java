@@ -17,8 +17,6 @@
 package org.codinjutsu.tools.nosql.redis;
 
 import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import redis.clients.jedis.Tuple;
 
 import java.util.LinkedList;

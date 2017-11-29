@@ -20,12 +20,14 @@ import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Search
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchCollection
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchServerConfiguration
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion
 import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
 import java.net.URL
 
-internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, ElasticsearchResult, JsonObject>, FolderDatabaseClient<ElasticsearchDatabase, ElasticsearchCollection> {
+internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, ElasticsearchResult, JsonObject, ElasticsearchServerConfiguration>, FolderDatabaseClient<ElasticsearchDatabase, ElasticsearchCollection> {
 
-    override fun connect(serverConfiguration: ServerConfiguration) {
+    override fun connect(serverConfiguration: ElasticsearchServerConfiguration) {
         try {
             URL(serverConfiguration.serverUrl).openConnection().connect()
         } catch (e: Exception) {
@@ -33,7 +35,7 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
         }
     }
 
-    override fun loadServer(databaseServer: DatabaseServer) {
+    override fun loadServer(databaseServer: DatabaseServer<ElasticsearchServerConfiguration>) {
         val databases = GetIndices(databaseServer.configuration.serverUrl!!)
                 .execute()
                 .entrySet()
@@ -46,11 +48,11 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
     override fun cleanUpServers() {
     }
 
-    override fun registerServer(databaseServer: DatabaseServer?) {
+    override fun registerServer(databaseServer: DatabaseServer<ElasticsearchServerConfiguration>?) {
     }
 
     override fun defaultConfiguration() =
-            ServerConfiguration(serverUrl = "localhost", databaseVendor = DatabaseVendor.ELASTICSEARCH)
+            ElasticsearchServerConfiguration(ElasticsearchVersion.VERSION_20, "http://localhost:9200", DatabaseVendor.ELASTICSEARCH)
 
     override fun loadRecords(context: ElasticsearchContext, queryOptions: QueryOptions): ElasticsearchResult {
         val elasticsearchResult = ElasticsearchResult(context.database.name)
@@ -83,13 +85,13 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
         }
     }
 
-    private fun getTypes(configuration: ServerConfiguration, index: String): Collection<ElasticsearchCollection> {
+    private fun getTypes(configuration: ElasticsearchServerConfiguration, index: String): Collection<ElasticsearchCollection> {
         return GetTypes(configuration.serverUrl!!, index)
                 .execute()
                 .getAsJsonObject(index)
                 .getAsJsonObject("mappings")
                 .entrySet()
-                .map { ElasticsearchCollection(it.key, index) }
+                .map { ElasticsearchCollection(it.key, index, configuration.version) }
     }
 
     companion object {

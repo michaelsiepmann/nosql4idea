@@ -21,7 +21,7 @@ import org.codinjutsu.tools.nosql.ServerConfiguration;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DatabaseServer {
+public class DatabaseServer<SERVERCONFIGURATION extends ServerConfiguration> {
 
     public enum Status {
         OK, LOADING, ERROR
@@ -29,11 +29,11 @@ public class DatabaseServer {
 
     private List<Database> databases = new LinkedList<Database>();
 
-    private final ServerConfiguration configuration;
+    private final SERVERCONFIGURATION configuration;
 
     private Status status = Status.OK;
 
-    public DatabaseServer(ServerConfiguration configuration) {
+    public DatabaseServer(SERVERCONFIGURATION configuration) {
         this.configuration = configuration;
     }
 
@@ -65,7 +65,7 @@ public class DatabaseServer {
         this.status = status;
     }
 
-    public ServerConfiguration getConfiguration() {
+    public SERVERCONFIGURATION getConfiguration() {
         return configuration;
     }
 }

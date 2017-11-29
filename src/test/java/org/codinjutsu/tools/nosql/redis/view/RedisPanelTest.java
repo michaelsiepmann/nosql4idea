@@ -32,7 +32,7 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.impl.SettingsImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.PlatformLiteFixture;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.redis.RedisContext;
@@ -119,7 +119,7 @@ class RedisPanelTest extends PlatformLiteFixture {
 
         redisPanelWrapper = GuiActionRunner.execute(new GuiQuery<RedisPanel>() {
             protected RedisPanel executeInEDT() {
-                return new RedisPanel(dummyProject, new RedisContext(redisClientMock, new ServerConfiguration(), new RedisDatabase("0"))) {
+                return new RedisPanel(dummyProject, new RedisContext(redisClientMock, new ServerConfigurationImpl(), new RedisDatabase("0"))) {
                     @Override
                     protected void addActions(DefaultActionGroup actionResultGroup, AnAction expandAllAction, AnAction collapseAllAction) {
                     }

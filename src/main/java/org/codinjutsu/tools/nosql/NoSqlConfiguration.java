@@ -16,9 +16,15 @@
 
 package org.codinjutsu.tools.nosql;
 
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.intellij.util.xmlb.XmlSerializer;
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchServerConfiguration;
+import org.jdom.Element;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,22 +39,36 @@ import java.util.Map;
                 @Storage(file = "$PROJECT_CONFIG_DIR$/noSqlSettings.xml", scheme = StorageScheme.DIRECTORY_BASED)
         }
 )
-public class NoSqlConfiguration implements PersistentStateComponent<NoSqlConfiguration> {
+public class NoSqlConfiguration implements PersistentStateComponent<Element> {
 
-    private List<ServerConfiguration> serverConfigurations = new LinkedList<ServerConfiguration>();
-    private Map<DatabaseVendor, String> shellPathByDatabaseVendor = new HashMap<DatabaseVendor, String>();
+    private List<ServerConfiguration> serverConfigurations = new LinkedList<>();
+    private Map<DatabaseVendor, String> shellPathByDatabaseVendor = new HashMap<>();
 
     public static NoSqlConfiguration getInstance(Project project) {
         return ServiceManager.getService(project, NoSqlConfiguration.class);
     }
 
-
-    public NoSqlConfiguration getState() {
-        return this;
+    @Override
+    public Element getState() {
+        Element rootElement = new Element("nosql");
+        Element configurations = new Element("configurations");
+        rootElement.addContent(configurations);
+        for (ServerConfiguration configuration : serverConfigurations) {
+            configurations.addContent(XmlSerializer.serialize(configuration));
+        }
+        Element shell = new Element("shell");
+        rootElement.addContent(shell);
+        shell.addContent(XmlSerializer.serialize(shellPathByDatabaseVendor));
+        return rootElement;
     }
 
-    public void loadState(NoSqlConfiguration noSqlConfiguration) {
-        XmlSerializerUtil.copyBean(noSqlConfiguration, this);
+    @Override
+    public void loadState(Element element) {
+        for (Element child : element.getChild("configurations").getChildren()) {
+            Class<? extends ServerConfiguration> clazz = child.getName().equalsIgnoreCase("ElasticsearchServerConfiguration") ? ElasticsearchServerConfiguration.class : ServerConfigurationImpl.class;
+            serverConfigurations.add(XmlSerializer.deserialize(child, clazz));
+        }
+        shellPathByDatabaseVendor = XmlSerializer.deserialize(element.getChild("shell"), HashMap.class);
     }
 
     public void setServerConfigurations(List<ServerConfiguration> serverConfigurations) {

@@ -32,7 +32,7 @@ class NoSqlServerTableModel extends AbstractTableModel implements ItemRemovable 
 
     private final List<ServerConfiguration> mongoServerConfigurations;
 
-    public NoSqlServerTableModel(List<ServerConfiguration> mongoServerConfigurations) {
+    NoSqlServerTableModel(List<ServerConfiguration> mongoServerConfigurations) {
         this.mongoServerConfigurations = mongoServerConfigurations;
     }
 

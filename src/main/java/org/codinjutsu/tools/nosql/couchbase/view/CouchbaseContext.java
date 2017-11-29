@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.jetbrains.annotations.NotNull;
 
-public class CouchbaseContext extends DatabaseContext<CouchbaseClient> {
+public class CouchbaseContext extends DatabaseContext<CouchbaseClient, ServerConfiguration> {
 
     private final CouchbaseDatabase database;
 

@@ -24,7 +24,4 @@ internal class ElasticsearchResult(override val name: String) : SearchResult {
     fun hasErrors() = !errors.isEmpty()
 
     fun getErrors() = errors
-
-    override val count: Int
-        get() = jsonObjects.size // todo
 }

@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisResult, Object> {
+public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisResult, Object, ServerConfiguration> {
 
     public static RedisClient getInstance(Project project) {
         return ServiceManager.getService(project, RedisClient.class);
@@ -87,7 +88,7 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisRe
 
     @Override
     public ServerConfiguration defaultConfiguration() {
-        ServerConfiguration configuration = new ServerConfiguration();
+        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
         configuration.setDatabaseVendor(DatabaseVendor.REDIS);
         configuration.setServerUrl(DatabaseVendor.REDIS.defaultUrl);
         configuration.setAuthenticationSettings(new AuthenticationSettings());

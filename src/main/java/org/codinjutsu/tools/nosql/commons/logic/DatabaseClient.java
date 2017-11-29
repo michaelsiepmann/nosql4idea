@@ -21,17 +21,17 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface DatabaseClient<CONTEXT, DOCUMENT> {
+public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends ServerConfiguration> {
 
-    void connect(ServerConfiguration serverConfiguration);
+    void connect(SERVERCONFIGURATION serverConfiguration);
 
-    void loadServer(DatabaseServer databaseServer);
+    void loadServer(DatabaseServer<SERVERCONFIGURATION> databaseServer);
 
     void cleanUpServers();
 
-    void registerServer(DatabaseServer databaseServer);
+    void registerServer(DatabaseServer<SERVERCONFIGURATION> databaseServer);
 
-    ServerConfiguration defaultConfiguration();
+    SERVERCONFIGURATION defaultConfiguration();
 
     @Nullable
     DOCUMENT findDocument(CONTEXT context, @NotNull Object _id);

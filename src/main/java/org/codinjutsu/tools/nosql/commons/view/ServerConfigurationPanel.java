@@ -27,14 +27,13 @@ import com.intellij.ui.RawCommandLineEditor;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ServerConfigurationPanel extends JPanel {
 
@@ -136,7 +135,7 @@ public class ServerConfigurationPanel extends JPanel {
 
     @NotNull
     private ServerConfiguration createServerConfigurationForTesting() {
-        return ServerConfiguration.Companion.create(databaseVendor, getServerUrls(), authenticationView.create(), getUserDatabase());
+        return ServerConfigurationImpl.Companion.create(databaseVendor, getServerUrls(), authenticationView.create(), getUserDatabase());
     }
 
     public void applyConfigurationData(ServerConfiguration configuration) {

@@ -2,6 +2,7 @@ package org.codinjutsu.tools.nosql.mongo.view;
 
 import com.intellij.openapi.project.Project;
 import com.mongodb.DBObject;
+import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperationsImpl;
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
@@ -10,7 +11,7 @@ import org.codinjutsu.tools.nosql.mongo.logic.MongoClient;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 
-public class MongoPanel extends DatabasePanel<MongoClient, MongoContext, MongoResult, DBObject> {
+public class MongoPanel extends DatabasePanel<ServerConfiguration, MongoClient, MongoContext, MongoResult, DBObject> {
 
     public MongoPanel(Project project, MongoContext context) {
         super(project, context);

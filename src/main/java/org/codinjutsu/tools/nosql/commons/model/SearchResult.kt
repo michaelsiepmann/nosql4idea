@@ -7,4 +7,5 @@ interface SearchResult {
     val name: String
     val records: List<ObjectWrapper>
     val count: Int
+        get() = records.size
 }

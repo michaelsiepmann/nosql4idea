@@ -19,7 +19,7 @@ package org.codinjutsu.tools.nosql.mongo.view;
 import com.intellij.openapi.command.impl.DummyProject;
 import com.mongodb.AuthenticationMechanism;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
@@ -87,7 +87,7 @@ class ServerConfigurationPanelTest {
 
         frameFixture.checkBox("sslConnectionField").check();
         frameFixture.checkBox("autoConnectField").check();
-        ServerConfiguration configuration = new ServerConfiguration();
+        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
 
         configurationPanel.applyConfigurationData(configuration);
 
@@ -108,7 +108,7 @@ class ServerConfigurationPanelTest {
 
     @Test
     void loadMongoConfiguration() {
-        ServerConfiguration configuration = new ServerConfiguration();
+        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
         configuration.setLabel("Localhost");
         configuration.setDatabaseVendor(DatabaseVendor.MONGO);
         configuration.setServerUrl("localhost:25");
@@ -165,7 +165,7 @@ class ServerConfigurationPanelTest {
 
         frameFixture.textBox("serverUrlField").setText("host");
 
-        configurationPanel.applyConfigurationData(new ServerConfiguration());
+        configurationPanel.applyConfigurationData(new ServerConfigurationImpl());
     }
 
     @Test
@@ -176,7 +176,7 @@ class ServerConfigurationPanelTest {
 
         frameFixture.textBox("serverUrlField").setText("host:port");
 
-        configurationPanel.applyConfigurationData(new ServerConfiguration());
+        configurationPanel.applyConfigurationData(new ServerConfigurationImpl());
     }
 
     @Test
@@ -184,7 +184,7 @@ class ServerConfigurationPanelTest {
         frameFixture.textBox("labelField").setText("Localhost");
         frameFixture.textBox("serverUrlField").setText("localhost:25, localhost:26");
 
-        ServerConfiguration configuration = new ServerConfiguration();
+        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
 
         configurationPanel.applyConfigurationData(configuration);
 
@@ -193,7 +193,7 @@ class ServerConfigurationPanelTest {
 
     @Test
     void loadFormWithReplicatSet() {
-        ServerConfiguration configuration = new ServerConfiguration();
+        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
         configuration.setAuthenticationSettings(new AuthenticationSettings());
 
         configuration.setServerUrl("localhost:25, localhost:26");

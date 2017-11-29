@@ -17,7 +17,7 @@
 package org.codinjutsu.tools.nosql.redis.logic;
 
 import org.codinjutsu.tools.nosql.DatabaseVendor;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.redis.RedisClientStub;
 import org.codinjutsu.tools.nosql.redis.RedisContext;
@@ -29,8 +29,10 @@ import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -44,7 +46,7 @@ class RedisClientTest {
     @Test
     void loadWithEmptyFilter() {
         RedisClient redisClient = new RedisClientStub(jedis);
-        ServerConfiguration serverConfiguration = new ServerConfiguration();
+        ServerConfigurationImpl serverConfiguration = new ServerConfigurationImpl();
         serverConfiguration.setDatabaseVendor(DatabaseVendor.REDIS);
         serverConfiguration.setServerUrl("localhost:6379");
 
@@ -62,7 +64,7 @@ class RedisClientTest {
     @BeforeEach
     void setUp() {
         jedis = mock(Jedis.class);
-        when(jedis.keys("*")).thenReturn(new HashSet<>(Arrays.asList("testlist")));
+        when(jedis.keys("*")).thenReturn(new HashSet<>(singletonList("testlist")));
         when(jedis.type("testlist")).thenReturn(RedisKeyType.LIST.label);
         when(jedis.lrange("testlist", 0, -1)).thenReturn(Arrays.asList("value1", "value2"));
     }

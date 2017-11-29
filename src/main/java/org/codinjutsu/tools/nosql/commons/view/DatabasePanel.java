@@ -16,6 +16,7 @@ import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.NumberDocument;
 import com.intellij.ui.components.panels.NonOpaquePanel;
+import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
@@ -41,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT extends DatabaseContext<CLIENT>, RESULT extends SearchResult, DOCUMENT> extends NoSqlResultView {
+public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfiguration, CLIENT extends DatabaseClient, CONTEXT extends DatabaseContext<CLIENT, SERVERCONFIGURATION>, RESULT extends SearchResult, DOCUMENT> extends NoSqlResultView {
 
     private final LoadingDecorator loadingDecorator;
     private JPanel rootPanel;

@@ -86,7 +86,7 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
 
 
         serverConfigurationCombobox.addItemListener(itemEvent -> {
-            DatabaseServer selectedServer = (DatabaseServer) serverConfigurationCombobox.getSelectedItem();
+            DatabaseServer<ServerConfiguration> selectedServer = (DatabaseServer) serverConfigurationCombobox.getSelectedItem();
             if (selectedServer == null) {
                 return;
             }

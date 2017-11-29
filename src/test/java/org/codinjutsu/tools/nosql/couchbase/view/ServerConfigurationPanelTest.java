@@ -18,7 +18,7 @@ package org.codinjutsu.tools.nosql.couchbase.view;
 
 import com.intellij.openapi.command.impl.DummyProject;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel;
@@ -81,7 +81,7 @@ public class ServerConfigurationPanelTest {
         frameFixture.textBox("userDatabaseField").setText("mybucket");
         frameFixture.checkBox("autoConnectField").check();
 
-        ServerConfiguration configuration = new ServerConfiguration();
+        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
 
         configurationPanel.applyConfigurationData(configuration);
 
@@ -99,7 +99,7 @@ public class ServerConfigurationPanelTest {
 
     @Test
     public void loadCouchbaseConfiguration() {
-        ServerConfiguration configuration = new ServerConfiguration();
+        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
         configuration.setLabel("Localhost");
         configuration.setDatabaseVendor(DatabaseVendor.COUCHBASE);
         configuration.setServerUrl("localhost:25");

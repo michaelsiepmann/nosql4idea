@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.jetbrains.annotations.NotNull;
 
-public class RedisContext extends DatabaseContext<RedisClient> {
+public class RedisContext extends DatabaseContext<RedisClient, ServerConfiguration> {
 
     private final RedisDatabase database;
 

@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.logic.FolderDatabaseClient;
@@ -50,7 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class MongoClient implements DatabaseClient<MongoContext, DBObject>, FolderDatabaseClient<MongoDatabase, MongoCollection> {
+public class MongoClient implements DatabaseClient<MongoContext, DBObject, ServerConfiguration>, FolderDatabaseClient<MongoDatabase, MongoCollection> {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
@@ -86,7 +87,7 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject>, Fold
 
     @Override
     public ServerConfiguration defaultConfiguration() {
-        ServerConfiguration serverConfiguration = new ServerConfiguration();
+        ServerConfigurationImpl serverConfiguration = new ServerConfigurationImpl();
         serverConfiguration.setDatabaseVendor(DatabaseVendor.MONGO);
         serverConfiguration.setServerUrl(DatabaseVendor.MONGO.defaultUrl);
         return serverConfiguration;

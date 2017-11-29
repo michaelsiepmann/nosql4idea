@@ -24,18 +24,17 @@ import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public abstract class NoSqlDatabaseObjectFile extends VirtualFile {
+public abstract class NoSqlDatabaseObjectFile<SERVERCONFIGURATION extends ServerConfiguration> extends VirtualFile {
 
     private final Project project;
-    private final ServerConfiguration configuration;
+    private final SERVERCONFIGURATION configuration;
     private final String name;
     private final long myModStamp;
 
-    protected NoSqlDatabaseObjectFile(Project project, ServerConfiguration configuration, String name) {
+    protected NoSqlDatabaseObjectFile(Project project, SERVERCONFIGURATION configuration, String name) {
         this.project = project;
         this.configuration = configuration;
         this.name = name;
@@ -75,7 +74,7 @@ public abstract class NoSqlDatabaseObjectFile extends VirtualFile {
         return false;
     }
 
-    public ServerConfiguration getConfiguration() {
+    public SERVERCONFIGURATION getConfiguration() {
         return configuration;
     }
 
@@ -96,7 +95,7 @@ public abstract class NoSqlDatabaseObjectFile extends VirtualFile {
 
     @NotNull
     @Override
-    public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) throws IOException {
+    public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) {
         throw new UnsupportedOperationException("NoSqlResultFile is read-only");
     }
 
@@ -107,7 +106,7 @@ public abstract class NoSqlDatabaseObjectFile extends VirtualFile {
 
     @NotNull
     @Override
-    public byte[] contentsToByteArray() throws IOException {
+    public byte[] contentsToByteArray() {
         return new byte[0];
     }
 
@@ -127,7 +126,7 @@ public abstract class NoSqlDatabaseObjectFile extends VirtualFile {
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() {
         return null;
     }
 }

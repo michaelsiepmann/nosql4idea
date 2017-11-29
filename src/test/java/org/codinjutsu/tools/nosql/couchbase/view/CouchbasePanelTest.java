@@ -18,7 +18,7 @@ package org.codinjutsu.tools.nosql.couchbase.view;
 
 import com.couchbase.client.java.document.json.JsonObject;
 import com.intellij.openapi.command.impl.DummyProject;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
@@ -55,7 +55,7 @@ public class CouchbasePanelTest {
             protected CouchbasePanel executeInEDT() {
                 return new CouchbasePanel(DummyProject.getInstance(),
                         new CouchbaseContext(couchbaseClientMock,
-                                new ServerConfiguration(),
+                                new ServerConfigurationImpl(),
                                 new CouchbaseDatabase("default"))) {
                 };
             }
