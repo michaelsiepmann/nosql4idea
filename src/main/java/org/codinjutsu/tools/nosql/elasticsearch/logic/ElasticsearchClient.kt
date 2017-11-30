@@ -5,12 +5,12 @@ import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.DatabaseVendor
-import org.codinjutsu.tools.nosql.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException
 import org.codinjutsu.tools.nosql.commons.logic.FolderDatabaseClient
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
+import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.CreateType
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.DeleteElement
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.FetchDocument
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetIndices
@@ -25,7 +25,7 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion
 import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
 import java.net.URL
 
-internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, ElasticsearchResult, JsonObject, ElasticsearchServerConfiguration>, FolderDatabaseClient<ElasticsearchDatabase, ElasticsearchCollection> {
+internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, ElasticsearchResult, JsonObject, ElasticsearchServerConfiguration>, FolderDatabaseClient<ElasticsearchDatabase, ElasticsearchCollection, ElasticsearchServerConfiguration> {
 
     override fun connect(serverConfiguration: ElasticsearchServerConfiguration) {
         try {
@@ -60,11 +60,11 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
         return elasticsearchResult
     }
 
-    override fun dropFolder(serverConfiguration: ServerConfiguration, collection: ElasticsearchCollection) {
+    override fun dropFolder(serverConfiguration: ElasticsearchServerConfiguration, collection: ElasticsearchCollection) {
         DeleteElement("${serverConfiguration.serverUrl!!}/${collection.databaseName}/${collection.name}").execute()
     }
 
-    override fun dropDatabase(serverConfiguration: ServerConfiguration, database: ElasticsearchDatabase) {
+    override fun dropDatabase(serverConfiguration: ElasticsearchServerConfiguration, database: ElasticsearchDatabase) {
         DeleteElement("${serverConfiguration.serverUrl!!}/${database.name}").execute()
     }
 
@@ -85,13 +85,21 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
         }
     }
 
-    private fun getTypes(configuration: ElasticsearchServerConfiguration, index: String): Collection<ElasticsearchCollection> {
+    private fun getTypes(configuration: ElasticsearchServerConfiguration, index: String): MutableCollection<ElasticsearchCollection> {
         return GetTypes(configuration.serverUrl!!, index)
                 .execute()
                 .getAsJsonObject(index)
                 .getAsJsonObject("mappings")
                 .entrySet()
                 .map { ElasticsearchCollection(it.key, index, configuration.version) }
+                .toMutableList()
+    }
+
+    override fun isDatabaseWithCollections() = true
+
+    override fun createFolder(serverConfiguration: ElasticsearchServerConfiguration, parentFolderName: String, folderName: String): ElasticsearchCollection {
+        CreateType(serverConfiguration.serverUrl!!, parentFolderName, folderName).execute()
+        return ElasticsearchCollection(folderName, parentFolderName, serverConfiguration.version)
     }
 
     companion object {

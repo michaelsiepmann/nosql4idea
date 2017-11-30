@@ -18,31 +18,34 @@ package org.codinjutsu.tools.nosql;
 
 import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.commons.model.Database;
-import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
+import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseFakeFileType;
+import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchFakeFileType;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.view.console.MongoConsoleRunner;
+import org.codinjutsu.tools.nosql.mongo.view.editor.MongoFakeFileType;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.view.console.RedisConsoleRunner;
+import org.codinjutsu.tools.nosql.redis.view.editor.RedisFakeFileType;
 
 import javax.swing.*;
 
 public enum DatabaseVendor {
 
-    MONGO("MongoDB", "mongodb.png", "localhost:27017", "format: host:port. If replicat set: host:port1,host:port2,...", true) {
+    MONGO("MongoDB", MongoFakeFileType.INSTANCE.getIcon(), "localhost:27017", "format: host:port. If replicat set: host:port1,host:port2,...", true) {
         @Override
         public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
             return new MongoConsoleRunner(project, configuration, (MongoDatabase) database);
         }
     },
-    REDIS("RedisDB", "redis.png", "localhost:6379", "format: host:port. If cluster: host:port1,host:port2,...", true) {
+    REDIS("RedisDB", RedisFakeFileType.REDIS_ICON, "localhost:6379", "format: host:port. If cluster: host:port1,host:port2,...", true) {
         @Override
         public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
             return new RedisConsoleRunner(project, configuration, (RedisDatabase) database);
         }
     },
-    COUCHBASE("Couchbase", "couchbase.png", "localhost", "format: host:port. If cluster: host:port1,host:port2,...", false),
-    ELASTICSEARCH("Elasticsearch", "", "localhost:9200", "format: http://host:port.", false);
+    COUCHBASE("Couchbase", CouchbaseFakeFileType.INSTANCE.getIcon(), "localhost", "format: host:port. If cluster: host:port1,host:port2,...", false),
+    ELASTICSEARCH("Elasticsearch", ElasticsearchFakeFileType.INSTANCE.getIcon(), "localhost:9200", "format: http://host:port.", false);
 
     public final String name;
     public final Icon icon;
@@ -50,9 +53,9 @@ public enum DatabaseVendor {
     public final String tips;
     public final boolean hasConsoleWindow;
 
-    DatabaseVendor(String name, String iconFilename, String defaultUrl, String tips, boolean hasConsoleWindow) {
+    DatabaseVendor(String name, Icon icon, String defaultUrl, String tips, boolean hasConsoleWindow) {
         this.name = name;
-        this.icon = GuiUtils.loadIcon(iconFilename);
+        this.icon = icon;
         this.defaultUrl = defaultUrl;
         this.tips = tips;
         this.hasConsoleWindow = hasConsoleWindow;

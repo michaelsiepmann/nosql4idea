@@ -39,6 +39,7 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.Folder;
 import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
+import org.codinjutsu.tools.nosql.commons.view.action.AddCollectionAction;
 import org.codinjutsu.tools.nosql.commons.view.action.DropCollectionAction;
 import org.codinjutsu.tools.nosql.commons.view.action.DropDatabaseAction;
 import org.codinjutsu.tools.nosql.commons.view.action.NoSqlDatabaseConsoleAction;
@@ -62,6 +63,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -69,6 +71,7 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.codinjutsu.tools.nosql.commons.utils.GuiUtils.showNotification;
 
 public class NoSqlExplorerPanel extends JPanel implements Disposable {
@@ -220,8 +223,11 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         DefaultActionGroup actionGroup = new DefaultActionGroup("NoSqlExplorerGroup", false);
         ViewCollectionValuesAction viewCollectionValuesAction = new ViewCollectionValuesAction(this);
         RefreshServerAction refreshServerAction = new RefreshServerAction(this);
+        AddCollectionAction addCollectionAction = new AddCollectionAction(this);
         if (ApplicationManager.getApplication() != null) {
             actionGroup.add(refreshServerAction);
+            actionGroup.addSeparator();
+            actionGroup.add(addCollectionAction);
             actionGroup.add(new NoSqlDatabaseConsoleAction(this));
             actionGroup.add(viewCollectionValuesAction);
             actionGroup.add(expandAllAction);
@@ -236,6 +242,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         if (ApplicationManager.getApplication() != null) {
             actionPopupGroup.add(refreshServerAction);
             actionPopupGroup.add(viewCollectionValuesAction);
+            actionPopupGroup.add(addCollectionAction);
             actionPopupGroup.add(new DropCollectionAction(this));
             actionPopupGroup.add(new DropDatabaseAction(this));
         }
@@ -259,13 +266,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
                     if (userObject instanceof DatabaseServer && treeNode.getChildCount() == 0) {
                         reloadServerConfiguration(getSelectedServerNode(), true);
                     }
-                    if (userObject instanceof Folder) {
-                        loadRecords();
-                    }
-                    if (userObject instanceof RedisDatabase) {
-                        loadRecords();
-                    }
-                    if (userObject instanceof CouchbaseDatabase) {
+                    if (userObject instanceof Folder || userObject instanceof NoSQLCollection || userObject instanceof RedisDatabase || userObject instanceof CouchbaseDatabase) {
                         loadRecords();
                     }
                 }
@@ -287,36 +288,37 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
     public DefaultMutableTreeNode getSelectedServerNode() {
-        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) databaseTree.getLastSelectedPathComponent();
+        return getSelectedServerNode((DefaultMutableTreeNode) databaseTree.getLastSelectedPathComponent());
+    }
+
+    private DefaultMutableTreeNode getSelectedServerNode(DefaultMutableTreeNode treeNode) {
         if (treeNode != null) {
             Object userObject = treeNode.getUserObject();
-            if (userObject instanceof NoSQLCollection) {
-                return (DefaultMutableTreeNode) treeNode.getParent().getParent();
-            }
-
-            if (userObject instanceof Database) {
-                return (DefaultMutableTreeNode) treeNode.getParent();
-            }
-
             if (userObject instanceof DatabaseServer) {
                 return treeNode;
+            }
+            TreeNode parent = treeNode.getParent();
+            if (parent instanceof DefaultMutableTreeNode) {
+                return getSelectedServerNode((DefaultMutableTreeNode) parent);
             }
         }
         return null;
     }
 
-
     private DefaultMutableTreeNode getSelectedDatabaseNode() {
-        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) databaseTree.getLastSelectedPathComponent();
+        return getSelectedDatabaseNode((DefaultMutableTreeNode) databaseTree.getLastSelectedPathComponent());
+    }
+
+    private DefaultMutableTreeNode getSelectedDatabaseNode(DefaultMutableTreeNode treeNode) {
         if (treeNode != null) {
             Object userObject = treeNode.getUserObject();
-
-            if (userObject instanceof NoSQLCollection) {
-                return (DefaultMutableTreeNode) treeNode.getParent();
-            }
-
             if (userObject instanceof Database) {
                 return treeNode;
+            }
+
+            TreeNode parent = treeNode.getParent();
+            if (parent instanceof DefaultMutableTreeNode) {
+                return getSelectedDatabaseNode((DefaultMutableTreeNode) parent);
             }
         }
 
@@ -335,7 +337,6 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
     public ServerConfiguration getConfiguration() {
-
         DefaultMutableTreeNode serverNode = getSelectedServerNode();
         if (serverNode == null) {
             return null;
@@ -378,11 +379,18 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
     public Database getSelectedDatabase() {
-        DefaultMutableTreeNode databaseNode = getSelectedDatabaseNode();
+        return getSelectedDatabase(getSelectedDatabaseNode());
+    }
+
+    private Database getSelectedDatabase(DefaultMutableTreeNode databaseNode) {
         if (databaseNode != null) {
             Object database = databaseNode.getUserObject();
             if (database instanceof Database) {
-                return (Database) databaseNode.getUserObject();
+                return (Database) database;
+            }
+            TreeNode parent = databaseNode.getParent();
+            if (parent instanceof DefaultMutableTreeNode) {
+                return getSelectedDatabase((DefaultMutableTreeNode) parent);
             }
         }
         return null;
@@ -407,7 +415,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
     @NotNull
-    private NoSqlDatabaseObjectFile createNoSqlObjectFile() { // TODO need to put in the database UI manager
+    private NoSqlDatabaseObjectFile createNoSqlObjectFile() {
         ServerConfiguration selectedConfiguration = getConfiguration();
         if (DatabaseVendor.MONGO.equals(selectedConfiguration.getDatabaseVendor())) {
             return new MongoObjectFile(project, selectedConfiguration, getSelectedCollection());
@@ -482,5 +490,28 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         return tree;
+    }
+
+    public boolean isDatabaseWithCollections() {
+        ServerConfiguration configuration = getConfiguration();
+        DatabaseClient client = databaseVendorClientManager.get(configuration.getDatabaseVendor());
+        return client instanceof FolderDatabaseClient && ((FolderDatabaseClient) client).isDatabaseWithCollections();
+    }
+
+    public void createCollection() {
+        String collectionName = JOptionPane.showInputDialog("Please enter a collection-name");
+        if (isNotEmpty(collectionName)) {
+            ServerConfiguration configuration = getConfiguration();
+            DatabaseClient client = databaseVendorClientManager.get(configuration.getDatabaseVendor());
+            if (client instanceof FolderDatabaseClient) {
+                DefaultMutableTreeNode selectedDatabaseNode = getSelectedDatabaseNode();
+                Database selectedDatabase = getSelectedDatabase(selectedDatabaseNode);
+                NoSQLCollection collection = ((FolderDatabaseClient) client).createFolder(configuration, selectedDatabase.getName(), collectionName);
+                if (selectedDatabase instanceof Folder) {
+                    ((Folder) selectedDatabase).addCollection(collection);
+                }
+                selectedDatabaseNode.add(new DefaultMutableTreeNode(collection));
+            }
+        }
     }
 }

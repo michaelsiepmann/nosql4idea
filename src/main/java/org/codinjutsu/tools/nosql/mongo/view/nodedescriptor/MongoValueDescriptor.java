@@ -55,7 +55,9 @@ public class MongoValueDescriptor extends AbstractNodeDecriptor implements Value
             return new MongoValueDescriptor(index, value, StyleAttributesProvider.getNumberAttribute()) {
                 @Override
                 public void setValue(Object value) {
-                    this.value = Integer.parseInt((String) value);
+                    String number = (String) value;
+                    number = number.replaceAll("(.*)\\..*", "$1");
+                    this.value = Integer.parseInt(number);
                 }
             };
         } else if (value instanceof Date) {

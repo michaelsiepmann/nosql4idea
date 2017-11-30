@@ -18,7 +18,7 @@ public class RedisResultPanel extends AbstractNoSQLResultPanel<RedisResult, Obje
     private boolean groupByPrefix;
     private String separator;
 
-    public RedisResultPanel(@NotNull Project project, @NotNull NoSQLResultPanelDocumentOperations<Object> documentOperations) {
+    RedisResultPanel(@NotNull Project project, @NotNull NoSQLResultPanelDocumentOperations<Object> documentOperations) {
         super(project, documentOperations, new RedisTreeModelFactory());
     }
 

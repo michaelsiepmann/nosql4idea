@@ -26,7 +26,7 @@ import javax.swing.*;
 
 public class MongoFakeFileType extends FakeFileType {
 
-    public static final Icon MONGO_ICON = GuiUtils.loadIcon("mongodb.png");
+    private static final Icon MONGO_ICON = GuiUtils.loadIcon("mongodb.png");
 
     public static final FileType INSTANCE = new MongoFakeFileType();
 

@@ -50,8 +50,7 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
     private JPanel toolBar;
     private JPanel errorPanel;
     private final JTextField rowLimitField = new JTextField("");
-    // TODO: 19.11.2017 make this private
-    protected AbstractNoSQLResultPanel<RESULT, DOCUMENT> resultPanel;
+    private AbstractNoSQLResultPanel<RESULT, DOCUMENT> resultPanel;
     private final QueryPanel queryPanel;
 
     private final Project project;
@@ -204,22 +203,22 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
             public void run(@NotNull final ProgressIndicator indicator) {
                 try {
                     GuiUtils.runInSwingThread(() -> loadingDecorator.startLoading(false));
-                    GuiUtils.runInSwingThread(() -> {
-                        resultPanel.updateResultTableTree(getSearchResult());
-                    });
+                    GuiUtils.runInSwingThread(() -> resultPanel.updateResultTableTree(getSearchResult()));
                 } catch (final Exception ex) {
-                    GuiUtils.runInSwingThread(() -> {
-                        errorPanel.invalidate();
-                        errorPanel.removeAll();
-                        errorPanel.add(new ErrorPanel(ex), BorderLayout.CENTER);
-                        errorPanel.validate();
-                        errorPanel.setVisible(true);
-                    });
+                    GuiUtils.runInSwingThread(() -> updateErrorPanel(ex));
                 } finally {
                     GuiUtils.runInSwingThread(loadingDecorator::stopLoading);
                 }
             }
         });
+    }
+
+    private void updateErrorPanel(Exception ex) {
+        errorPanel.invalidate();
+        errorPanel.removeAll();
+        errorPanel.add(new ErrorPanel(ex), BorderLayout.CENTER);
+        errorPanel.validate();
+        errorPanel.setVisible(true);
     }
 
     protected RESULT getSearchResult() {
@@ -244,6 +243,7 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
         resultPanel.dispose();
     }
 
+    @Override
     public AbstractNoSQLResultPanel<RESULT, DOCUMENT> getResultPanel() {
         return resultPanel;
     }

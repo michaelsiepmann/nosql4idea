@@ -51,7 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class MongoClient implements DatabaseClient<MongoContext, DBObject, ServerConfiguration>, FolderDatabaseClient<MongoDatabase, MongoCollection> {
+public class MongoClient implements DatabaseClient<MongoContext, DBObject, ServerConfiguration>, FolderDatabaseClient<MongoDatabase, MongoCollection, ServerConfiguration> {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
@@ -266,5 +266,18 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject, Serve
         }
 
         return new com.mongodb.MongoClient(new MongoClientURI(uriBuilder.build()));
+    }
+
+    @Override
+    public boolean isDatabaseWithCollections() {
+        return true;
+    }
+
+    @NotNull
+    @Override
+    public MongoCollection createFolder(@NotNull ServerConfiguration serverConfiguration, @NotNull String parentFolderName, @NotNull String folderName) {
+        com.mongodb.client.MongoDatabase database = createMongoClient(serverConfiguration).getDatabase(parentFolderName);
+        database.createCollection(folderName);
+        return new MongoCollection(folderName, parentFolderName);
     }
 }

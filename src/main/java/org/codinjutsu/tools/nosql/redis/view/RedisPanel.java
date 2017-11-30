@@ -47,7 +47,6 @@ public class RedisPanel extends DatabasePanel<ServerConfiguration, RedisClient, 
 
     public RedisPanel(Project project, RedisContext context) {
         super(project, context);
-        this.resultPanel = new RedisResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this));
     }
 
     @Override
@@ -87,8 +86,9 @@ public class RedisPanel extends DatabasePanel<ServerConfiguration, RedisClient, 
         return "*";
     }
 
-    public void updateResultTableTree(RedisResult redisResult, boolean groupByPrefix, String separator) {
-        ((RedisResultPanel) resultPanel).prepareTable(groupByPrefix, separator);
+    void updateResultTableTree(RedisResult redisResult, boolean groupByPrefix, String separator) {
+        RedisResultPanel resultPanel = (RedisResultPanel) getResultPanel();
+        resultPanel.prepareTable(groupByPrefix, separator);
         resultPanel.updateResultTableTree(redisResult);
     }
 

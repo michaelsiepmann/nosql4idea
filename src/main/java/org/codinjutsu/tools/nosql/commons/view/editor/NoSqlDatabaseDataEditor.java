@@ -33,7 +33,6 @@ import java.beans.PropertyChangeListener;
 
 public class NoSqlDatabaseDataEditor extends UserDataHolderBase implements FileEditor {
 
-
     private NoSqlResultView panel;
     private boolean disposed;
 

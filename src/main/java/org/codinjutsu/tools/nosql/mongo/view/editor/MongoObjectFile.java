@@ -23,14 +23,13 @@ import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.jetbrains.annotations.NotNull;
 
-public class MongoObjectFile extends NoSqlDatabaseObjectFile {
+public class MongoObjectFile extends NoSqlDatabaseObjectFile<ServerConfiguration> {
 
     private MongoCollection collection;
 
     public MongoObjectFile(Project project, ServerConfiguration configuration, MongoCollection collection) {
         super(project, configuration, String.format("%s/%s/%s", configuration.getLabel(), collection.getDatabaseName(), collection.getName()));
         this.collection = collection;
-
     }
 
     @NotNull

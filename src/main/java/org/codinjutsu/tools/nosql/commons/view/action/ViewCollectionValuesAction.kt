@@ -28,8 +28,8 @@ class ViewCollectionValuesAction(private val noSqlExplorerPanel: NoSqlExplorerPa
         noSqlExplorerPanel.loadRecords()
     }
 
-    override fun update(event: AnActionEvent?) {
-        event!!.presentation.isVisible = noSqlExplorerPanel.isDatabaseSelected
+    override fun update(event: AnActionEvent) {
+        event.presentation.isVisible = noSqlExplorerPanel.isDatabaseSelected
     }
 
     companion object {

@@ -21,6 +21,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.commons.lang.StringUtils;
+import org.codinjutsu.tools.nosql.NoSqlException;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 
 import java.util.LinkedList;
@@ -75,7 +76,11 @@ public class MongoQueryOptions {
 
     public void setProjection(String query) {
         if (!StringUtils.isBlank(query)) {
-            projection = (DBObject) JSON.parse(query);
+            try {
+                projection = (DBObject) JSON.parse(query);
+            } catch (Exception e) {
+                throw new NoSqlException("", e);
+            }
         }
     }
 
