@@ -20,6 +20,7 @@ import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.commons.io.IOUtils;
+import org.bson.BSONObject;
 import org.bson.types.ObjectId;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.model.TreeModelUtilityKt;
@@ -107,10 +108,10 @@ public class MongoTreeModelFactoryTest {
     public void findDocumentFromANode() throws Exception {
         BasicDBList dbList = (BasicDBList) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("arrayOfDocuments.json"), Charset.defaultCharset()));
 
-        DBObject first = (DBObject) dbList.get(0);
+        BSONObject first = (BSONObject) dbList.get(0);
         first.put("_id", new ObjectId(String.valueOf(first.get("_id"))));
 
-        DBObject second = (DBObject) dbList.get(1);
+        BSONObject second = (BSONObject) dbList.get(1);
         second.put("_id", new ObjectId(String.valueOf(second.get("_id"))));
 
         NoSqlTreeNode treeNode = buildJsonTree(dbList);

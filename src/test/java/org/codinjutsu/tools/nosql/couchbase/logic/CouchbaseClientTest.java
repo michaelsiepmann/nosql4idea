@@ -58,7 +58,7 @@ class CouchbaseClientTest {
     @Test
     void loadServersWithoutUserDatabase() {
         CouchbaseClient couchbaseClient = new CouchbaseClientStub();
-        DatabaseServer databaseServer = new DatabaseServer(configuration);
+        DatabaseServer databaseServer = new DatabaseServer<>(configuration);
         couchbaseClient.loadServer(databaseServer);
         verify(couchbaseCluster).disconnect();
         List<Database> databases = databaseServer.getDatabases();
@@ -71,7 +71,7 @@ class CouchbaseClientTest {
     void loadServersWithUserDatabase() {
         configuration.setUserDatabase("usertest");
         CouchbaseClient couchbaseClient = new CouchbaseClientStub();
-        DatabaseServer databaseServer = new DatabaseServer(configuration);
+        DatabaseServer databaseServer = new DatabaseServer<>(configuration);
         couchbaseClient.loadServer(databaseServer);
         verify(couchbaseCluster).disconnect();
         List<Database> databases = databaseServer.getDatabases();

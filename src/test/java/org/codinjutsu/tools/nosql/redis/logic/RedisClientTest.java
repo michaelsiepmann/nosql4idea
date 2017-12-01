@@ -17,6 +17,7 @@
 package org.codinjutsu.tools.nosql.redis.logic;
 
 import org.codinjutsu.tools.nosql.DatabaseVendor;
+import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.redis.RedisClientStub;
@@ -29,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 
 import static java.util.Collections.singletonList;
@@ -46,7 +46,7 @@ class RedisClientTest {
     @Test
     void loadWithEmptyFilter() {
         RedisClient redisClient = new RedisClientStub(jedis);
-        ServerConfigurationImpl serverConfiguration = new ServerConfigurationImpl();
+        ServerConfiguration serverConfiguration = new ServerConfigurationImpl();
         serverConfiguration.setDatabaseVendor(DatabaseVendor.REDIS);
         serverConfiguration.setServerUrl("localhost:6379");
 

@@ -18,6 +18,7 @@ package org.codinjutsu.tools.nosql.redis.view;
 
 import com.intellij.openapi.command.impl.DummyProject;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
+import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
@@ -75,7 +76,7 @@ class ServerConfigurationPanelTest {
         frameFixture.textBox("userDatabaseField").setText("0");
         frameFixture.checkBox("autoConnectField").check();
 
-        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
+        ServerConfiguration configuration = new ServerConfigurationImpl();
 
         configurationPanel.applyConfigurationData(configuration);
 
@@ -92,7 +93,7 @@ class ServerConfigurationPanelTest {
 
     @Test
     void loadRedisConfiguration() {
-        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
+        ServerConfiguration configuration = new ServerConfigurationImpl();
         configuration.setLabel("Localhost");
         configuration.setDatabaseVendor(DatabaseVendor.REDIS);
         configuration.setServerUrl("localhost:6379");

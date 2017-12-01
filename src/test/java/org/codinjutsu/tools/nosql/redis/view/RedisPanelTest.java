@@ -51,13 +51,12 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Tuple;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static org.mockito.Matchers.any;
@@ -72,9 +71,9 @@ class RedisPanelTest extends PlatformLiteFixture {
 
     private FrameFixture frameFixture;
 
-    private Project dummyProject = DummyProject.getInstance();
+    private final Project dummyProject = DummyProject.getInstance();
 
-    private RedisClient redisClientMock = mock(RedisClient.class);
+    private final RedisClient redisClientMock = mock(RedisClient.class);
 
     @Override
     @AfterEach
@@ -136,26 +135,26 @@ class RedisPanelTest extends PlatformLiteFixture {
         redisPanelWrapper.updateResultTableTree(createRedisResults(), false, "");
 
         frameFixture.table("resultTreeTable").cellReader(new TableCellReader())
-                .requireColumnCount(2)
-                .requireContents(new String[][]{
-                        {"foo:bar", "john"},
-                        {"stuff:bar", "[drink, some, beer]"},
-                        {"[0]", "drink"},
-                        {"[1]", "some"},
-                        {"[2]", "beer"},
-                        {"stuff:countries", "{France, Canada, Japan}"},
-                        {"-", "France"},
-                        {"-", "Canada"},
-                        {"-", "Japan"},
-                        {"stuff:aliases", "{david=dada, mickael=mike, bruno=nono}"},
-                        {"david", "dada"},
-                        {"mickael", "mike"},
-                        {"bruno", "nono"},
-                        {"stuff:games:critics", "{(unreal, 8.0), (quake, 9.0), (half-life, 10.0)}"},
-                        {"-", "(unreal, 8.0)"},
-                        {"-", "(quake, 9.0)"},
-                        {"-", "(half-life, 10.0)"},
-                });
+                    .requireColumnCount(2)
+                    .requireContents(new String[][]{
+                            {"foo:bar", "john"},
+                            {"stuff:bar", "[drink, some, beer]"},
+                            {"[0]", "drink"},
+                            {"[1]", "some"},
+                            {"[2]", "beer"},
+                            {"stuff:countries", "{France, Canada, Japan}"},
+                            {"-", "France"},
+                            {"-", "Canada"},
+                            {"-", "Japan"},
+                            {"stuff:aliases", "{david=dada, mickael=mike, bruno=nono}"},
+                            {"david", "dada"},
+                            {"mickael", "mike"},
+                            {"bruno", "nono"},
+                            {"stuff:games:critics", "{(unreal, 8.0), (quake, 9.0), (half-life, 10.0)}"},
+                            {"-", "(unreal, 8.0)"},
+                            {"-", "(quake, 9.0)"},
+                            {"-", "(half-life, 10.0)"},
+                    });
     }
 
     @Test
@@ -165,29 +164,29 @@ class RedisPanelTest extends PlatformLiteFixture {
 
         JTableFixture resultTreeTable = frameFixture.table("resultTreeTable");
         resultTreeTable.cellReader(new TableCellReader())
-                .requireColumnCount(2)
-                .requireContents(new String[][]{
-                        {"foo", ""},
-                        {"bar", "john"},
-                        {"stuff", ""},
-                        {"bar", "[drink, some, beer]"},
-                        {"[0]", "drink"},
-                        {"[1]", "some"},
-                        {"[2]", "beer"},
-                        {"countries", "{France, Canada, Japan}"},
-                        {"-", "France"},
-                        {"-", "Canada"},
-                        {"-", "Japan"},
-                        {"aliases", "{david=dada, mickael=mike, bruno=nono}"},
-                        {"david", "dada"},
-                        {"mickael", "mike"},
-                        {"bruno", "nono"},
-                        {"games", ""},
-                        {"critics", "{(unreal, 8.0), (quake, 9.0), (half-life, 10.0)}"},
-                        {"-", "(unreal, 8.0)"},
-                        {"-", "(quake, 9.0)"},
-                        {"-", "(half-life, 10.0)"},
-                });
+                       .requireColumnCount(2)
+                       .requireContents(new String[][]{
+                               {"foo", ""},
+                               {"bar", "john"},
+                               {"stuff", ""},
+                               {"bar", "[drink, some, beer]"},
+                               {"[0]", "drink"},
+                               {"[1]", "some"},
+                               {"[2]", "beer"},
+                               {"countries", "{France, Canada, Japan}"},
+                               {"-", "France"},
+                               {"-", "Canada"},
+                               {"-", "Japan"},
+                               {"aliases", "{david=dada, mickael=mike, bruno=nono}"},
+                               {"david", "dada"},
+                               {"mickael", "mike"},
+                               {"bruno", "nono"},
+                               {"games", ""},
+                               {"critics", "{(unreal, 8.0), (quake, 9.0), (half-life, 10.0)}"},
+                               {"-", "(unreal, 8.0)"},
+                               {"-", "(quake, 9.0)"},
+                               {"-", "(half-life, 10.0)"},
+                       });
     }
 
     private RedisResult createRedisResults() {
@@ -206,7 +205,7 @@ class RedisPanelTest extends PlatformLiteFixture {
         aliasByPeopleName.put("bruno", "nono");
         redisResult.addHash("stuff:aliases", aliasByPeopleName);
 
-        SortedSet<Tuple> scoreByGameTitle = new TreeSet<>();
+        Set<Tuple> scoreByGameTitle = new TreeSet<>();
         scoreByGameTitle.add(new Tuple("quake", 9d));
         scoreByGameTitle.add(new Tuple("half-life", 10d));
         scoreByGameTitle.add(new Tuple("unreal", 8d));

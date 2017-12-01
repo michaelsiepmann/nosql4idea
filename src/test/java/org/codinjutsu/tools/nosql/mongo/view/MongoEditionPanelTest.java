@@ -53,9 +53,9 @@ class MongoEditionPanelTest {
     private EditionPanel<DBObject> mongoEditionPanel;
 
     private FrameFixture frameFixture;
-    private MongoTreeModelFactory nodeDescriptorFactory = new MongoTreeModelFactory();
-    private NoSQLResultPanelDocumentOperations<DBObject> mockMongoOperations = mock(NoSQLResultPanelDocumentOperations.class);
-    private ActionCallback mockActionCallback = mock(ActionCallback.class);
+    private final MongoTreeModelFactory nodeDescriptorFactory = new MongoTreeModelFactory();
+    private final NoSQLResultPanelDocumentOperations<DBObject> mockMongoOperations = mock(NoSQLResultPanelDocumentOperations.class);
+    private final ActionCallback mockActionCallback = mock(ActionCallback.class);
 
     @AfterEach
     void tearDown() {

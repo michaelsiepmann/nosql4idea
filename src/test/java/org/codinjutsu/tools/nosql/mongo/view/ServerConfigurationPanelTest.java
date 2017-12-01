@@ -19,6 +19,7 @@ package org.codinjutsu.tools.nosql.mongo.view;
 import com.intellij.openapi.command.impl.DummyProject;
 import com.mongodb.AuthenticationMechanism;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
+import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ServerConfigurationPanelTest {
 
-    private ExpectedException thrown = ExpectedException.none();
+    private final ExpectedException thrown = ExpectedException.none();
 
     private ServerConfigurationPanel configurationPanel;
     private DatabaseClient databaseClientMock;
@@ -87,7 +88,7 @@ class ServerConfigurationPanelTest {
 
         frameFixture.checkBox("sslConnectionField").check();
         frameFixture.checkBox("autoConnectField").check();
-        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
+        ServerConfiguration configuration = new ServerConfigurationImpl();
 
         configurationPanel.applyConfigurationData(configuration);
 
@@ -108,7 +109,7 @@ class ServerConfigurationPanelTest {
 
     @Test
     void loadMongoConfiguration() {
-        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
+        ServerConfiguration configuration = new ServerConfigurationImpl();
         configuration.setLabel("Localhost");
         configuration.setDatabaseVendor(DatabaseVendor.MONGO);
         configuration.setServerUrl("localhost:25");
