@@ -26,8 +26,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 public class NoSqlDatabaseFileSystem extends VirtualFileSystem implements ApplicationComponent {
 
     private static final String PROTOCOL = "nosql";
@@ -93,33 +91,32 @@ public class NoSqlDatabaseFileSystem extends VirtualFileSystem implements Applic
     }
 
     @Override
-    protected void deleteFile(Object requestor, @NotNull VirtualFile vFile) throws IOException {
+    protected void deleteFile(Object requestor, @NotNull VirtualFile vFile) {
 
     }
 
     @Override
-    protected void moveFile(Object requestor, @NotNull VirtualFile vFile, @NotNull VirtualFile newParent) throws IOException {
+    protected void moveFile(Object requestor, @NotNull VirtualFile vFile, @NotNull VirtualFile newParent) {
 
     }
 
     @Override
-    protected void renameFile(Object requestor, @NotNull VirtualFile vFile, @NotNull String newName) throws IOException {
-
+    protected void renameFile(Object requestor, @NotNull VirtualFile vFile, @NotNull String newName) {
     }
 
     @Override
-    protected VirtualFile createChildFile(Object requestor, @NotNull VirtualFile vDir, @NotNull String fileName) throws IOException {
+    protected VirtualFile createChildFile(Object requestor, @NotNull VirtualFile vDir, @NotNull String fileName) {
         return null;
     }
 
     @NotNull
     @Override
-    protected VirtualFile createChildDirectory(Object requestor, @NotNull VirtualFile vDir, @NotNull String dirName) throws IOException {
+    protected VirtualFile createChildDirectory(Object requestor, @NotNull VirtualFile vDir, @NotNull String dirName) {
         throw new UnsupportedOperationException("No file management in this plugin");
     }
 
     @Override
-    protected VirtualFile copyFile(Object requestor, @NotNull VirtualFile virtualFile, @NotNull VirtualFile newParent, @NotNull String copyName) throws IOException {
+    protected VirtualFile copyFile(Object requestor, @NotNull VirtualFile virtualFile, @NotNull VirtualFile newParent, @NotNull String copyName) {
         return null;
     }
 

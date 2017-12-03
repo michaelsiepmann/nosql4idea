@@ -16,6 +16,7 @@
 
 package org.codinjutsu.tools.nosql.commons.model;
 
+import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 
 import java.util.LinkedList;
@@ -67,5 +68,9 @@ public class DatabaseServer<SERVERCONFIGURATION extends ServerConfiguration> {
 
     public SERVERCONFIGURATION getConfiguration() {
         return configuration;
+    }
+
+    public DatabaseVendor getVendor() {
+        return configuration.getDatabaseVendor();
     }
 }

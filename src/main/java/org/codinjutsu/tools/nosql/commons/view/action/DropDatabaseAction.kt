@@ -21,6 +21,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import org.codinjutsu.tools.nosql.NoSqlExplorerPanel
+import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType
 import org.codinjutsu.tools.nosql.i18n.getResourceString
 import javax.swing.JOptionPane
 
@@ -32,12 +33,13 @@ class DropDatabaseAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : A
     override fun actionPerformed(anActionEvent: AnActionEvent) {
         val result = JOptionPane.showConfirmDialog(null, String.format("Do you REALLY want to drop the '%s' database?", noSqlExplorerPanel.selectedDatabase!!.name), "Warning", JOptionPane.YES_NO_OPTION)
         if (result == JOptionPane.YES_OPTION) {
-            noSqlExplorerPanel.dropDatabase()
+            noSqlExplorerPanel.dropFolder()
         }
     }
 
     override fun update(event: AnActionEvent) {
-        event.presentation.isVisible = noSqlExplorerPanel.selectedDatabase != null
+        event.presentation.isVisible = noSqlExplorerPanel.canFolderBeDeleted(FolderType.MONGO_DATABASE) ||
+                noSqlExplorerPanel.canFolderBeDeleted(FolderType.ELASTICSEARCH_INDEX)
     }
 
     companion object {

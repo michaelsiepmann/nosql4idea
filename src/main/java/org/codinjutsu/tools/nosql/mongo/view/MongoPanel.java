@@ -8,6 +8,7 @@ import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperation
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient;
+import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 
@@ -19,7 +20,7 @@ public class MongoPanel extends DatabasePanel<ServerConfiguration, MongoClient, 
 
     @Override
     protected AbstractNoSQLResultPanel<MongoResult, DBObject> createResultPanel(Project project, MongoContext context) {
-        return new MongoResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this));
+        return new MongoResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<ServerConfiguration, MongoCollection, MongoClient, MongoContext, MongoResult, DBObject>(this));
     }
 
     @Override

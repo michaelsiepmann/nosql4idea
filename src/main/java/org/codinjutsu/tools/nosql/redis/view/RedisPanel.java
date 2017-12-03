@@ -23,6 +23,7 @@ import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperationsImpl;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
@@ -99,7 +100,7 @@ public class RedisPanel extends DatabasePanel<ServerConfiguration, RedisClient, 
 
     @Override
     protected AbstractNoSQLResultPanel<RedisResult, Object> createResultPanel(Project project, RedisContext context) {
-        return new RedisResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this));
+        return new RedisResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<ServerConfiguration, NoSQLCollection, RedisClient, RedisContext, RedisResult, Object>(this));
     }
 
     @Override

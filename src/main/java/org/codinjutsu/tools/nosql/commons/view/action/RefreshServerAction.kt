@@ -26,18 +26,17 @@ import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
 class RefreshServerAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction(REFRESH_TEXT), DumbAware {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
-        noSqlExplorerPanel.reloadServerConfiguration(noSqlExplorerPanel.selectedServerNode, true)
+        noSqlExplorerPanel.refreshSelectedServer()
     }
 
     override fun update(event: AnActionEvent) {
-        val selectedServerNode = noSqlExplorerPanel.selectedServerNode
-        event.presentation.isVisible = selectedServerNode != null
-        if (selectedServerNode == null) {
-            return
+        val selected = noSqlExplorerPanel.isDatabaseServerSelected
+        event.presentation.isVisible = selected
+        if (selected) {
+            val isConnected = noSqlExplorerPanel.hasDatabaseServerChildren()
+            event.presentation.icon = if (isConnected) REFRESH_ICON else CONNECT_ICON
+            event.presentation.text = if (isConnected) REFRESH_TEXT else CONNECT_TEXT
         }
-        val isConnected = selectedServerNode.childCount > 0
-        event.presentation.icon = if (isConnected) REFRESH_ICON else CONNECT_ICON
-        event.presentation.text = if (isConnected) REFRESH_TEXT else CONNECT_TEXT
     }
 
     companion object {

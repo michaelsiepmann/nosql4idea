@@ -17,11 +17,13 @@
 package org.codinjutsu.tools.nosql.commons.logic;
 
 import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends ServerConfiguration> {
+public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends ServerConfiguration, COLLECTON extends NoSQLCollection> {
 
     void connect(SERVERCONFIGURATION serverConfiguration);
 
@@ -39,4 +41,19 @@ public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends S
     void update(@NotNull CONTEXT context, @NotNull DOCUMENT document);
 
     void delete(@NotNull CONTEXT context, @NotNull Object _id);
+
+    default boolean isDatabaseWithCollections() {
+        return false;
+    }
+
+    @Nullable
+    default COLLECTON createFolder(SERVERCONFIGURATION serverconfiguration, String parentFolderName, String folderName) {
+        return null;
+    }
+
+    default void dropFolder(SERVERCONFIGURATION serverconfiguration, COLLECTON collection) {
+    }
+
+    default void dropDatabase(SERVERCONFIGURATION serverconfiguration, Database database) {
+    }
 }

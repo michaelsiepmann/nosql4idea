@@ -34,7 +34,6 @@ import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
-import org.codinjutsu.tools.nosql.commons.logic.FolderDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
@@ -51,7 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class MongoClient implements DatabaseClient<MongoContext, DBObject, ServerConfiguration>, FolderDatabaseClient<MongoDatabase, MongoCollection, ServerConfiguration> {
+public class MongoClient implements DatabaseClient<MongoContext, DBObject, ServerConfiguration, MongoCollection> {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
@@ -163,7 +162,7 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject, Serve
     @Override
     public void dropFolder(@NotNull ServerConfiguration configuration, @NotNull MongoCollection mongoCollection) {
         try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
-            String databaseName = mongoCollection.getDatabaseName();
+            String databaseName = ((MongoCollection) mongoCollection).getDatabaseName();
 
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(mongoCollection.getName());
@@ -173,7 +172,7 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject, Serve
     }
 
     @Override
-    public void dropDatabase(@NotNull ServerConfiguration configuration, @NotNull MongoDatabase database) {
+    public void dropDatabase(@NotNull ServerConfiguration configuration, @NotNull Database database) {
         try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             mongo.dropDatabase(database.getName());
         }

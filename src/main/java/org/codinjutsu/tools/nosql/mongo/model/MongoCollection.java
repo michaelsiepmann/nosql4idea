@@ -43,9 +43,4 @@ public class MongoCollection implements Comparable<MongoCollection>, NoSQLCollec
     public int compareTo(@NotNull MongoCollection otherCollection) {
         return this.name.compareTo(otherCollection.getName());
     }
-
-    @Override
-    public boolean canBeDeleted() {
-        return true;
-    }
 }

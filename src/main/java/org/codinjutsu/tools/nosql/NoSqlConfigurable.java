@@ -156,7 +156,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                             }
 
                             DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
-                            ServerConfiguration serverConfiguration = databaseVendorClientManager.get(selectedDatabaseVendor).defaultConfiguration();
+                            ServerConfiguration serverConfiguration = databaseVendorClientManager.getClient(selectedDatabaseVendor).defaultConfiguration();
                             serverConfiguration.setDatabaseVendor(selectedDatabaseVendor);
 
                             ConfigurationDialog dialog = new ConfigurationDialog(

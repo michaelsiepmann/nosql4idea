@@ -39,7 +39,7 @@ public class ServerConfigurationPanelFactory {
         return new ServerConfigurationPanel(
                 this.project,
                 databaseVendor,
-                databaseVendorClientManager.get(databaseVendor),
+                databaseVendorClientManager.getClient(databaseVendor),
                 databaseVendorUIManager.get(databaseVendor).createAythenticationView()
         );
     }

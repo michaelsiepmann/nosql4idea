@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.commons;
+package org.codinjutsu.tools.nosql.commons
 
-import com.intellij.openapi.project.Project;
-import org.codinjutsu.tools.nosql.commons.view.AuthenticationView;
-import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
-import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
+import com.intellij.openapi.project.Project
+import org.codinjutsu.tools.nosql.ServerConfiguration
+import org.codinjutsu.tools.nosql.commons.view.AuthenticationView
+import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
+import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 
-public interface DatabaseUI {
-    AuthenticationView createAythenticationView();
+interface DatabaseUI<SERVERCONFIGURATION : ServerConfiguration> {
+    fun createAythenticationView(): AuthenticationView
 
-    NoSqlResultView createResultPanel(Project project, NoSqlDatabaseObjectFile objectFile);
+    fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile<SERVERCONFIGURATION>): NoSqlResultView
 }

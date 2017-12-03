@@ -23,7 +23,7 @@ import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.jetbrains.annotations.NotNull;
 
-public class RedisObjectFile extends NoSqlDatabaseObjectFile {
+public class RedisObjectFile extends NoSqlDatabaseObjectFile<ServerConfiguration> {
     private RedisDatabase database;
 
     public RedisObjectFile(Project project, ServerConfiguration configuration, RedisDatabase redisDatabase) {

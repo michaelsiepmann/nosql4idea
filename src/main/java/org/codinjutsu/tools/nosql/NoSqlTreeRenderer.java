@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
+import org.codinjutsu.tools.nosql.commons.model.explorer.Folder;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +40,11 @@ public class NoSqlTreeRenderer extends ColoredTreeCellRenderer {
 
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
-        Object userObject = node.getUserObject();
+        Object object = node.getUserObject();
+        if (!(object instanceof Folder)) {
+            return;
+        }
+        Object userObject = ((Folder) object).getData();
         if (userObject instanceof DatabaseServer) {
             DatabaseServer databaseServer = (DatabaseServer) userObject;
             String label = databaseServer.getLabel();
@@ -48,7 +53,7 @@ public class NoSqlTreeRenderer extends ColoredTreeCellRenderer {
 
             if (DatabaseServer.Status.OK.equals(databaseServer.getStatus())) {
                 setToolTipText(host);
-                setIcon(databaseServer.getConfiguration().getDatabaseVendor().icon);
+                setIcon(databaseServer.getVendor().icon);
             } else {
                 setForeground(JBColor.RED);
                 setToolTipText("Unable to connect");

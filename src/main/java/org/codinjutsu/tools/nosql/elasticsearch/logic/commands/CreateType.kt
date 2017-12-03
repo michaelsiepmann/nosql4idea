@@ -8,5 +8,5 @@ internal class CreateType(private val url: String, private val index: String, pr
 
     private fun buildUrl() = url.addNameToPath(index).addNameToPath(type)
 
-    override fun createMethod(url: String) = PutMethod()
+    override fun createMethod(url: String) = PutMethod(url)
 }

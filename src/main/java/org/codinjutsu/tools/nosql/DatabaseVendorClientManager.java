@@ -49,21 +49,19 @@ public class DatabaseVendorClientManager {
         return ServiceManager.getService(project, DatabaseVendorClientManager.class);
     }
 
-    public DatabaseClient get(DatabaseVendor databaseVendor) {
+    public DatabaseClient getClient(DatabaseVendor databaseVendor) {
         return ServiceManager.getService(project, dataClientByVendor.get(databaseVendor));
     }
 
     public void cleanUpServers() {
-        for (DatabaseVendor databaseVendor : dataClientByVendor.keySet()) {
-            this.get(databaseVendor).cleanUpServers();
-        }
+        dataClientByVendor.keySet().forEach(databaseVendor -> getClient(databaseVendor).cleanUpServers());
     }
 
     public void registerServer(DatabaseServer databaseServer) {
-        this.get(databaseServer.getConfiguration().getDatabaseVendor()).registerServer(databaseServer);
+        getClient(databaseServer.getVendor()).registerServer(databaseServer);
     }
 
     public void loadServer(DatabaseServer databaseServer) {
-        this.get(databaseServer.getConfiguration().getDatabaseVendor()).loadServer(databaseServer);
+        getClient(databaseServer.getVendor()).loadServer(databaseServer);
     }
 }

@@ -17,16 +17,15 @@
 package org.codinjutsu.tools.nosql.mongo.model
 
 import org.codinjutsu.tools.nosql.commons.model.Database
-import org.codinjutsu.tools.nosql.commons.model.Folder
-import java.util.TreeSet
+import java.util.*
 
-class MongoDatabase(name: String) : Database(name), Folder<MongoCollection> {
+class MongoDatabase(name: String) : Database(name) {
 
     private val collections = TreeSet<MongoCollection>()
 
-    override fun getChildFolders() = collections
+    fun getCollections() = collections
 
-    override fun addCollection(collection: MongoCollection) {
+    fun addCollection(collection: MongoCollection) {
         collections.add(collection)
     }
 }

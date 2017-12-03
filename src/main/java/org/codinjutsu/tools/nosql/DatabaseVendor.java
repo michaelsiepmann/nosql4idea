@@ -18,13 +18,19 @@ package org.codinjutsu.tools.nosql;
 
 import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.commons.model.Database;
+import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.model.explorer.DatabaseServerFolder;
 import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
+import org.codinjutsu.tools.nosql.couchbase.model.explorer.CouchbaseDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseFakeFileType;
+import org.codinjutsu.tools.nosql.elasticsearch.model.explorer.ElasticsearchDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchFakeFileType;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
+import org.codinjutsu.tools.nosql.mongo.model.explorer.MongoDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.mongo.view.console.MongoConsoleRunner;
 import org.codinjutsu.tools.nosql.mongo.view.editor.MongoFakeFileType;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
+import org.codinjutsu.tools.nosql.redis.model.explorer.RedisDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.redis.view.console.RedisConsoleRunner;
 import org.codinjutsu.tools.nosql.redis.view.editor.RedisFakeFileType;
 
@@ -37,15 +43,35 @@ public enum DatabaseVendor {
         public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
             return new MongoConsoleRunner(project, configuration, (MongoDatabase) database);
         }
+
+        @Override
+        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager) {
+            return new MongoDatabaseServerFolder(databaseServer, databaseVendorClientManager);
+        }
     },
     REDIS("RedisDB", RedisFakeFileType.REDIS_ICON, "localhost:6379", "format: host:port. If cluster: host:port1,host:port2,...", true) {
         @Override
         public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
             return new RedisConsoleRunner(project, configuration, (RedisDatabase) database);
         }
+
+        @Override
+        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager) {
+            return new RedisDatabaseServerFolder(databaseServer);
+        }
     },
-    COUCHBASE("Couchbase", CouchbaseFakeFileType.INSTANCE.getIcon(), "localhost", "format: host:port. If cluster: host:port1,host:port2,...", false),
-    ELASTICSEARCH("Elasticsearch", ElasticsearchFakeFileType.INSTANCE.getIcon(), "localhost:9200", "format: http://host:port.", false);
+    COUCHBASE("Couchbase", CouchbaseFakeFileType.INSTANCE.getIcon(), "localhost", "format: host:port. If cluster: host:port1,host:port2,...", false) {
+        @Override
+        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager) {
+            return new CouchbaseDatabaseServerFolder(databaseServer);
+        }
+    },
+    ELASTICSEARCH("Elasticsearch", ElasticsearchFakeFileType.INSTANCE.getIcon(), "localhost:9200", "format: http://host:port.", false) {
+        @Override
+        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager) {
+            return new ElasticsearchDatabaseServerFolder(databaseServer, databaseVendorClientManager);
+        }
+    };
 
     public final String name;
     public final Icon icon;
@@ -69,4 +95,6 @@ public enum DatabaseVendor {
     public String toString() {
         return "DatabaseVendor{name='" + name + "'}";
     }
+
+    public abstract DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager);
 }

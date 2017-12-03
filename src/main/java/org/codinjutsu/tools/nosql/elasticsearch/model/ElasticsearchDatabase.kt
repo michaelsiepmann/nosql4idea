@@ -1,12 +1,11 @@
 package org.codinjutsu.tools.nosql.elasticsearch.model
 
-import org.codinjutsu.tools.nosql.commons.model.Folder
 import org.codinjutsu.tools.nosql.commons.model.Database
 
-internal class ElasticsearchDatabase(name: String, private val types: MutableCollection<ElasticsearchCollection> = mutableListOf()) : Database(name), Folder<ElasticsearchCollection> {
-    override fun getChildFolders() = types
+internal class ElasticsearchDatabase(name: String, private val types: MutableCollection<ElasticsearchType> = mutableListOf()) : Database(name) {
+    fun getTypes() = types
 
-    override fun addCollection(collection: ElasticsearchCollection) {
-        types.add(collection)
+    fun addType(type: ElasticsearchType) {
+        types.add(type)
     }
 }

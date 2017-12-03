@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import org.codinjutsu.tools.nosql.NoSqlExplorerPanel
+import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType
 import org.codinjutsu.tools.nosql.i18n.getResourceString
 
 internal class AddCollectionAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction(getResourceString("action.addcollection.text"), getResourceString("action.addcollection.description"), AllIcons.General.Add), DumbAware {
@@ -14,6 +15,7 @@ internal class AddCollectionAction(private val noSqlExplorerPanel: NoSqlExplorer
     }
 
     override fun update(event: AnActionEvent) {
-        event.presentation.isVisible = noSqlExplorerPanel.isDatabaseWithCollections
+        event.presentation.isVisible = noSqlExplorerPanel.canCreateChildAtSelectedFolder(FolderType.MONGO_COLLECTION) ||
+                noSqlExplorerPanel.canCreateChildAtSelectedFolder(FolderType.ELASTICSEARCH_TYPE)
     }
 }

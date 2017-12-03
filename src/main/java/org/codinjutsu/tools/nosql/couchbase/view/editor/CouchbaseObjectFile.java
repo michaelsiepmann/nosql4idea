@@ -23,7 +23,7 @@ import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.jetbrains.annotations.NotNull;
 
-public class CouchbaseObjectFile extends NoSqlDatabaseObjectFile {
+public class CouchbaseObjectFile extends NoSqlDatabaseObjectFile<ServerConfiguration> {
     private final CouchbaseDatabase couchbaseDatabase;
 
     public CouchbaseObjectFile(Project project, ServerConfiguration configuration, CouchbaseDatabase database) {
