@@ -1,6 +1,8 @@
 package org.codinjutsu.tools.nosql.mongo.model.explorer
 
 import com.intellij.openapi.project.Project
+import com.intellij.ui.ColoredTreeCellRenderer
+import org.codinjutsu.tools.nosql.NoSqlTreeRenderer
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.explorer.Folder
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType
@@ -30,4 +32,11 @@ internal class MongoCollectionFolder(override val data: MongoCollection, overrid
     override fun isViewableContent() = true
 
     override fun canShowConsoleApplication() = parent.canShowConsoleApplication()
+
+    override fun updateTreeCell(renderer: ColoredTreeCellRenderer) {
+        renderer.apply {
+            append(data.name)
+            icon = NoSqlTreeRenderer.MONGO_COLLECTION
+        }
+    }
 }

@@ -18,11 +18,6 @@ package org.codinjutsu.tools.nosql;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.JBColor;
-import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.commons.model.Database;
-import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
-import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.model.explorer.Folder;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.jetbrains.annotations.NotNull;
@@ -32,40 +27,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class NoSqlTreeRenderer extends ColoredTreeCellRenderer {
 
-    private static final Icon DATABASE = GuiUtils.loadIcon("database.png");
-    private static final Icon MONGO_COLLECTION = AllIcons.Nodes.Folder;
+    public static final Icon DATABASE = GuiUtils.loadIcon("database.png");
+    public static final Icon MONGO_COLLECTION = AllIcons.Nodes.Folder;
 
     @Override
     public void customizeCellRenderer(@NotNull JTree mongoTree, Object value, boolean isSelected, boolean isExpanded, boolean isLeaf, int row, boolean focus) {
-
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-
-        Object object = node.getUserObject();
-        if (!(object instanceof Folder)) {
-            return;
-        }
-        Object userObject = ((Folder) object).getData();
-        if (userObject instanceof DatabaseServer) {
-            DatabaseServer databaseServer = (DatabaseServer) userObject;
-            String label = databaseServer.getLabel();
-            String host = databaseServer.getServerUrl();
-            append(StringUtils.isBlank(label) ? host : label);
-
-            if (DatabaseServer.Status.OK.equals(databaseServer.getStatus())) {
-                setToolTipText(host);
-                setIcon(databaseServer.getVendor().icon);
-            } else {
-                setForeground(JBColor.RED);
-                setToolTipText("Unable to connect");
-            }
-        } else if (userObject instanceof Database) {
-            Database noSqlDatabase = (Database) userObject;
-            append(noSqlDatabase.getName());
-            setIcon(DATABASE);
-        } else if (userObject instanceof NoSQLCollection) {
-            NoSQLCollection mongoCollection = (NoSQLCollection) userObject;
-            append(mongoCollection.getName());
-            setIcon(MONGO_COLLECTION);
+        Object object = ((DefaultMutableTreeNode) value).getUserObject();
+        if ((object instanceof Folder)) {
+            ((Folder) object).updateTreeCell(this);
         }
     }
 }

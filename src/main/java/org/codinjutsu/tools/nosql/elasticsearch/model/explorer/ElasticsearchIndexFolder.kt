@@ -10,11 +10,12 @@ import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType.ELASTICSEARC
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchServerConfiguration
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchType
 import javax.swing.JOptionPane
 
-internal class ElasticsearchDatabaseFolder(override val data: ElasticsearchDatabase, override val parent: ElasticsearchDatabaseServerFolder) : DatabaseFolder(data) {
+internal class ElasticsearchIndexFolder(override val data: ElasticsearchDatabase, override val parent: ElasticsearchDatabaseServerFolder) : DatabaseFolder(data) {
     override val children: Collection<Folder<*>>
-        get() = data.getTypes().map { ElasticsearchCollectionFolder(it, this) }
+        get() = data.getTypes().map { ElasticsearchTypeFolder(it, this) }
 
     override val databaseServer: DatabaseServer<ElasticsearchServerConfiguration>
         get() = parent.data
@@ -31,16 +32,16 @@ internal class ElasticsearchDatabaseFolder(override val data: ElasticsearchDatab
     override fun createChild(): Folder<*>? {
         val typeName = JOptionPane.showInputDialog("Please enter a type-name")
         if (typeName?.isNotEmpty() == true) {
-            val collection = parent.databaseClient.createFolder(databaseServer.configuration, data.name, typeName)
-            if (collection != null) {
-                database?.addType(collection)
-                return ElasticsearchCollectionFolder(collection, this)
+            val type = parent.databaseClient.createFolder(databaseServer.configuration, data.name, typeName)
+            if (type is ElasticsearchType) {
+                database?.addType(type)
+                return ElasticsearchTypeFolder(type, this)
             }
         }
         return null
     }
 
     override fun deleteChild(child: Folder<*>) {
-        parent.databaseClient.dropFolder(databaseServer.configuration as ElasticsearchServerConfiguration, (child as ElasticsearchCollectionFolder).data)
+        parent.databaseClient.dropFolder(databaseServer.configuration, (child as ElasticsearchTypeFolder).data)
     }
 }

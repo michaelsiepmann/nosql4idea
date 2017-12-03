@@ -50,7 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class MongoClient implements DatabaseClient<MongoContext, DBObject, ServerConfiguration, MongoCollection> {
+public class MongoClient implements DatabaseClient<MongoContext, DBObject, ServerConfiguration> {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
@@ -160,12 +160,12 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject, Serve
     }
 
     @Override
-    public void dropFolder(@NotNull ServerConfiguration configuration, @NotNull MongoCollection mongoCollection) {
+    public void dropFolder(@NotNull ServerConfiguration configuration, @NotNull Object mongoCollection) {
         try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String databaseName = ((MongoCollection) mongoCollection).getDatabaseName();
 
             DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(mongoCollection.getName());
+            DBCollection collection = database.getCollection(((MongoCollection) mongoCollection).getName());
 
             collection.drop();
         }
@@ -194,7 +194,7 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject, Serve
         }
     }
 
-    public DBObject findDocument(MongoContext context, Object _id) {
+    public DBObject findDocument(MongoContext context, @NotNull Object _id) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
             String databaseName = context.getMongoCollection().getDatabaseName();
             DB database = mongo.getDB(databaseName);

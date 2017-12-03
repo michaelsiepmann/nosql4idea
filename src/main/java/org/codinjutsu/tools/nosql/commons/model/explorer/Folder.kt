@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.model.explorer
 
 import com.intellij.openapi.project.Project
+import com.intellij.ui.ColoredTreeCellRenderer
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
@@ -35,4 +36,6 @@ interface Folder<out T> {
     fun isViewableContent(): Boolean = false
 
     fun canShowConsoleApplication(): Boolean = false
+
+    fun updateTreeCell(renderer : ColoredTreeCellRenderer) {}
 }

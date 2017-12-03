@@ -26,7 +26,6 @@ import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
-import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.redis.RedisContext;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
@@ -42,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisResult, Object, ServerConfiguration, NoSQLCollection> {
+public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisResult, Object, ServerConfiguration> {
 
     public static RedisClient getInstance(Project project) {
         return ServiceManager.getService(project, RedisClient.class);

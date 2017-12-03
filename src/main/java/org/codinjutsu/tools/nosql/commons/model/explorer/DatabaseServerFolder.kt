@@ -1,12 +1,12 @@
 package org.codinjutsu.tools.nosql.commons.model.explorer
 
+import com.intellij.ui.ColoredTreeCellRenderer
+import com.intellij.ui.JBColor
 import org.codinjutsu.tools.nosql.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
-import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection
 
-abstract class DatabaseServerFolder<SERVERCONFIGURATION : ServerConfiguration, COLLECTION : NoSQLCollection> constructor(override val data: DatabaseServer<SERVERCONFIGURATION>) : Folder<DatabaseServer<SERVERCONFIGURATION>> {
-
+abstract class DatabaseServerFolder<SERVERCONFIGURATION : ServerConfiguration> constructor(override val data: DatabaseServer<SERVERCONFIGURATION>) : Folder<DatabaseServer<SERVERCONFIGURATION>> {
     override val name: String?
         get() = data.label
 
@@ -21,12 +21,26 @@ abstract class DatabaseServerFolder<SERVERCONFIGURATION : ServerConfiguration, C
 
     open fun dropDatabase(database: Database) {}
 
-    open fun createCollection(selectedDatabase: Database): COLLECTION? = null
-
-    open fun dropCollection(selectedCollection: COLLECTION) {}
+    open fun createCollection(selectedDatabase: Database): Any? = null
 
     override val children: Collection<Folder<*>>
         get() = data.databases.map { createDatabaseFolder(it) }
 
     internal abstract fun createDatabaseFolder(database: Database): DatabaseFolder
+
+    override fun updateTreeCell(renderer: ColoredTreeCellRenderer) {
+        renderer.apply {
+            val label = databaseServer.label
+            val host = databaseServer.serverUrl
+            append(if (label.isBlank()) host else label)
+
+            if (DatabaseServer.Status.OK == databaseServer.status) {
+                toolTipText = host
+                icon = databaseServer.vendor.icon
+            } else {
+                foreground = JBColor.RED
+                toolTipText = "Unable to connect"
+            }
+        }
+    }
 }

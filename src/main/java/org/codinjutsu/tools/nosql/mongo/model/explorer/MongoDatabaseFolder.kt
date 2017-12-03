@@ -8,6 +8,7 @@ import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType.MONGO_COLLECTION
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType.MONGO_DATABASE
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
+import org.codinjutsu.tools.nosql.mongo.model.MongoCollection
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase
 import javax.swing.JOptionPane
 
@@ -32,7 +33,7 @@ internal class MongoDatabaseFolder(override val data: MongoDatabase, override va
         val collectionName = JOptionPane.showInputDialog("Please enter a collection-name")
         if (collectionName?.isNotEmpty() == true) {
             val collection = parent.databaseClient.createFolder(databaseServer.configuration, data.name, collectionName)
-            if (collection != null) {
+            if (collection is MongoCollection) {
                 data.addCollection(collection)
                 return MongoCollectionFolder(collection, this)
             }

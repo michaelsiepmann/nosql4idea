@@ -19,11 +19,10 @@ package org.codinjutsu.tools.nosql.commons.logic;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
-import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends ServerConfiguration, COLLECTON extends NoSQLCollection> {
+public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends ServerConfiguration> {
 
     void connect(SERVERCONFIGURATION serverConfiguration);
 
@@ -47,11 +46,11 @@ public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends S
     }
 
     @Nullable
-    default COLLECTON createFolder(SERVERCONFIGURATION serverconfiguration, String parentFolderName, String folderName) {
+    default Object createFolder(SERVERCONFIGURATION serverconfiguration, String parentFolderName, String folderName) {
         return null;
     }
 
-    default void dropFolder(SERVERCONFIGURATION serverconfiguration, COLLECTON collection) {
+    default void dropFolder(SERVERCONFIGURATION serverconfiguration, Object folder) {
     }
 
     default void dropDatabase(SERVERCONFIGURATION serverconfiguration, Database database) {

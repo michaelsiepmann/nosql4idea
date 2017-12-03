@@ -3,7 +3,6 @@ package org.codinjutsu.tools.nosql.couchbase.view;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.model.NoSQLCollection;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperationsImpl;
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
@@ -19,7 +18,7 @@ public class CouchbasePanel extends DatabasePanel<ServerConfiguration, Couchbase
 
     @Override
     protected AbstractNoSQLResultPanel<CouchbaseResult, JsonObject> createResultPanel(Project project, CouchbaseContext context) {
-        return new CouchbaseResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<ServerConfiguration, NoSQLCollection, CouchbaseClient, CouchbaseContext, CouchbaseResult, JsonObject>(this));
+        return new CouchbaseResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this));
     }
 
     @Override

@@ -14,12 +14,11 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchServerConfigu
 internal class ElasticsearchDatabaseServerFolder(databaseserver: DatabaseServer<ElasticsearchServerConfiguration>, databaseVendorClientManager: DatabaseVendorClientManager) :
         FolderDatabaseServerFolder<ElasticsearchServerConfiguration, ElasticsearchType>(databaseserver, databaseVendorClientManager) {
     override fun createDatabaseFolder(database: Database) =
-            ElasticsearchDatabaseFolder(database as ElasticsearchDatabase, this)
+            ElasticsearchIndexFolder(database as ElasticsearchDatabase, this)
 
     override fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile<*>? = null
 
     override fun deleteChild(child: Folder<*>) {
-        val configuration = configuration
         databaseClient.dropDatabase(configuration, child.data as ElasticsearchDatabase)
     }
 }
