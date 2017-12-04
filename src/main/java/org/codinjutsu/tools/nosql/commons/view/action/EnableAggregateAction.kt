@@ -19,21 +19,20 @@ package org.codinjutsu.tools.nosql.commons.view.action
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
-import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel
+import org.codinjutsu.tools.nosql.mongo.view.panel.query.MongoQueryPanel
 
-internal class EnableAggregateAction(private val queryPanel: QueryPanel) : ToggleAction(ENABLE_AGGREGATION_MODE, QUERY_FIND_SAMPLE, AGGREGATION_ICON) {
+internal class EnableAggregateAction(private val mongoQueryPanel: MongoQueryPanel) : ToggleAction(ENABLE_AGGREGATION_MODE, QUERY_FIND_SAMPLE, AGGREGATION_ICON) {
 
     private var enableAggregation = false
-
 
     override fun isSelected(anActionEvent: AnActionEvent) = enableAggregation
 
     override fun setSelected(event: AnActionEvent, enableAggregation: Boolean) {
         this.enableAggregation = enableAggregation
         if (enableAggregation) {
-            queryPanel.toggleToAggregation()
+            mongoQueryPanel.toggleToAggregation()
         } else {
-            queryPanel.toggleToFind()
+            mongoQueryPanel.toggleToFind()
         }
     }
 
@@ -41,7 +40,7 @@ internal class EnableAggregateAction(private val queryPanel: QueryPanel) : Toggl
         event.presentation.apply {
             text = if (isSelected(event)) ENABLE_FIND_MODE else ENABLE_AGGREGATION_MODE
             description = if (isSelected(event)) QUERY_AGGREGATION_SAMPLE else QUERY_FIND_SAMPLE
-            isVisible = queryPanel.isVisible
+            isVisible = mongoQueryPanel.isVisible
         }
     }
 

@@ -24,17 +24,17 @@ import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 
 import java.awt.event.KeyEvent
 
-class OpenFindAction(private val mongoPanel: NoSqlResultView) : AnAction("Find", "Open Find editor", AllIcons.Actions.Find), DumbAware {
+class OpenFindAction(private val resultView: NoSqlResultView) : AnAction("Find", "Open Find editor", AllIcons.Actions.Find), DumbAware {
 
     init {
-        registerCustomShortcutSet(KeyEvent.VK_F, KeyEvent.CTRL_MASK, mongoPanel)
+        registerCustomShortcutSet(KeyEvent.VK_F, KeyEvent.CTRL_MASK, resultView)
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        if (!mongoPanel.isFindEditorOpened) {
-            mongoPanel.openFindEditor()
+        if (!resultView.isFindEditorOpened) {
+            resultView.openFindEditor()
         } else {
-            mongoPanel.focusOnEditor()
+            resultView.focusOnEditor()
         }
     }
 }

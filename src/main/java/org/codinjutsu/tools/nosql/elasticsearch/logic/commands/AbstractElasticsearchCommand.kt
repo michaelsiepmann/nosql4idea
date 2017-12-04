@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import org.apache.commons.httpclient.HttpMethod
 import org.apache.commons.httpclient.methods.GetMethod
 import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
+import java.net.URLEncoder
 
 internal abstract class AbstractElasticsearchCommand : ElasticsearchCommand {
 
@@ -40,11 +41,7 @@ internal abstract class AbstractElasticsearchCommand : ElasticsearchCommand {
 
     protected fun String.appendQueryParameter(key: String, value: String?) =
             if (value?.isNotEmpty() == true) {
-                if (isEmpty()) {
-                    "$key=$value"
-                } else {
-                    "$this&amp;$key=$value"
-                }
+                "${withAmp()}$key=${value.encode()}"
             } else {
                 this
             }
@@ -61,4 +58,15 @@ internal abstract class AbstractElasticsearchCommand : ElasticsearchCommand {
                 .addNameToPath(context.database.name)
                 .addNameToPath(context.type?.name)
     }
+
+    private fun String.withAmp() =
+            if (isNotEmpty()) {
+                "$this&"
+            } else {
+                ""
+            }
+
+    private fun String.encode(): String = URLEncoder.encode(this.removeLineBreaks(), "UTF-8")
+
+    private fun String.removeLineBreaks() = this.replace("\n", "").replace("\r", "")
 }

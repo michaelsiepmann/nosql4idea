@@ -16,6 +16,7 @@ import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.NumberDocument;
 import com.intellij.ui.components.panels.NonOpaquePanel;
+import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
@@ -24,7 +25,6 @@ import org.codinjutsu.tools.nosql.commons.view.action.AddDocumentAction;
 import org.codinjutsu.tools.nosql.commons.view.action.CloseFindEditorAction;
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction;
 import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction;
-import org.codinjutsu.tools.nosql.commons.view.action.EnableAggregateAction;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
 import org.codinjutsu.tools.nosql.commons.view.action.OpenFindAction;
 import org.codinjutsu.tools.nosql.commons.view.action.paging.FirstPageAction;
@@ -36,11 +36,13 @@ import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.Pageable;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Function;
 
 public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfiguration, CLIENT extends DatabaseClient, CONTEXT extends DatabaseContext<CLIENT, SERVERCONFIGURATION>, RESULT extends SearchResult, DOCUMENT> extends NoSqlResultView {
 
@@ -59,13 +61,19 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
     private Page currentPage = null;
 
     protected DatabasePanel(Project project, CONTEXT context) {
+        this(project, context, p -> null);
+    }
+
+    protected DatabasePanel(Project project, CONTEXT context, Function<Project, QueryPanel> queryPanelFactory) {
         this.project = project;
         this.context = context;
 
         errorPanel.setLayout(new BorderLayout());
 
-        queryPanel = new QueryPanel(project);
-        queryPanel.setVisible(false);
+        queryPanel = queryPanelFactory.apply(project);
+        if (queryPanel != null) {
+            queryPanel.setVisible(false);
+        }
 
         resultPanel = createResultPanel(project, context);
 
@@ -103,8 +111,10 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
         DefaultActionGroup actionResultGroup = new DefaultActionGroup("NoSQLResultGroup", true);
         if (ApplicationManager.getApplication() != null) {
             actionResultGroup.add(new ExecuteQuery(this));
-            actionResultGroup.add(new OpenFindAction(this));
-            actionResultGroup.add(new EnableAggregateAction(queryPanel));
+            if (queryPanel != null) {
+                actionResultGroup.add(new OpenFindAction(this));
+                queryPanel.addActions(actionResultGroup);
+            }
             actionResultGroup.addSeparator();
             if (resultPanel.isEditable()) {
                 actionResultGroup.add(new AddDocumentAction(resultPanel));
@@ -229,13 +239,24 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
 
     @NotNull
     protected QueryOptions createQueryOptions() {
-        return queryPanel.getQueryOptions(rowLimitField.getText(), currentPage);
+        String rowLimitFieldText = rowLimitField.getText();
+        if (queryPanel == null) {
+            QueryOptionsImpl queryOptions = new QueryOptionsImpl();
+            queryOptions.setPage(currentPage);
+            if (StringUtils.isNotEmpty(rowLimitFieldText)) {
+                queryOptions.setResultLimit(Integer.parseInt(rowLimitFieldText));
+            }
+            return queryOptions;
+        }
+        return queryPanel.getQueryOptions(rowLimitFieldText, currentPage);
     }
 
     protected abstract RESULT getSearchResult(CONTEXT context, QueryOptions queryOptions);
 
     private void validateQuery() {
-        queryPanel.validateQuery();
+        if (queryPanel != null) {
+            queryPanel.validateQuery();
+        }
     }
 
     @Override
@@ -250,7 +271,7 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
 
     public void openFindEditor() {
         queryPanel.setVisible(true);
-        splitter.setFirstComponent(queryPanel);
+        splitter.setFirstComponent(queryPanel.getComponent());
         GuiUtils.runInSwingThread(this::focusOnEditor);
     }
 

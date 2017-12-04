@@ -10,16 +10,17 @@ import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
+import org.codinjutsu.tools.nosql.mongo.view.panel.query.MongoQueryPanel;
 
 public class MongoPanel extends DatabasePanel<ServerConfiguration, MongoClient, MongoContext, MongoResult, DBObject> {
 
     public MongoPanel(Project project, MongoContext context) {
-        super(project, context);
+        super(project, context, MongoQueryPanel::new);
     }
 
     @Override
     protected AbstractNoSQLResultPanel<MongoResult, DBObject> createResultPanel(Project project, MongoContext context) {
-        return new MongoResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<ServerConfiguration, MongoClient, MongoContext, MongoResult, DBObject>(this));
+        return new MongoResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this));
     }
 
     @Override
