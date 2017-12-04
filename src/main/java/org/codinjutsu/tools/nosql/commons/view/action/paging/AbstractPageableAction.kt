@@ -4,8 +4,9 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import org.codinjutsu.tools.nosql.commons.view.panel.Pageable
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
+import javax.swing.Icon
 
-internal abstract class AbstractPageableAction(private val pageable: Pageable) : AnAction() {
+internal abstract class AbstractPageableAction(private val pageable: Pageable, text: String? = null, descrtiption: String? = null, icon: Icon? = null) : AnAction(text, descrtiption, icon) {
 
     override fun actionPerformed(e: AnActionEvent) {
         pageable.moveToPage(followingPage(pageable.getCurrentPage()))
@@ -15,9 +16,9 @@ internal abstract class AbstractPageableAction(private val pageable: Pageable) :
         e.presentation.isEnabled = canSwitchToPage(currentPage())
     }
 
-    abstract fun followingPage(page: Page) : Page
+    abstract fun followingPage(page: Page): Page
 
-    abstract fun canSwitchToPage(page: Page) : Boolean
+    abstract fun canSwitchToPage(page: Page): Boolean
 
     private fun currentPage(): Page = pageable.getCurrentPage()
 }
