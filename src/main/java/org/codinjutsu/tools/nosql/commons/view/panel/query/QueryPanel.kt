@@ -24,17 +24,12 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.UIUtil
 import com.mongodb.util.JSON
 import com.mongodb.util.JSONParseException
-import org.apache.commons.lang.StringUtils
 import org.codinjutsu.tools.nosql.commons.view.action.OperatorCompletionAction
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.awt.Font
 import java.awt.Point
-import javax.swing.BoxLayout
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.JTextPane
+import javax.swing.*
 
 internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
 
@@ -137,7 +132,7 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
 
         internal fun notifyOnErrorForOperator(component: JComponent, ex: Exception) {
             val message = if (ex is JSONParseException) {
-                StringUtils.removeStart(ex.message, "\n")
+                ex.message?.removePrefix("\n") ?: ""
             } else {
                 String.format("%s: %s", ex.javaClass.simpleName, ex.message)
             }
@@ -164,6 +159,18 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
 
             return editor
         }
+
+        protected fun validateQuery(query: String, editor: Editor) {
+            try {
+                if (query.isNotEmpty()) {
+                    JSON.parse(query)
+                }
+            } catch (ex: JSONParseException) {
+                notifyOnErrorForOperator(editor.component, ex)
+            } catch (ex: NumberFormatException) {
+                notifyOnErrorForOperator(editor.component, ex)
+            }
+        }
     }
 
     private inner class AggregatorPanel(project: Project, queryPanel: QueryPanel) : OperatorPanel(project, queryPanel) {
@@ -172,7 +179,7 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
         private val operatorCompletionAction: OperatorCompletionAction
 
         private val query: String
-            get() = String.format("[%s]", StringUtils.trim(this.editor.document.text))
+            get() = String.format("[%s]", editor.document.text).trim()
 
         init {
             layout = BorderLayout()
@@ -189,18 +196,7 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
         }
 
         override fun validateQuery() {
-            try {
-                val query = query
-                if (StringUtils.isEmpty(query)) {
-                    return
-                }
-                JSON.parse(query)
-            } catch (ex: JSONParseException) {
-                notifyOnErrorForOperator(editor.component, ex)
-            } catch (ex: NumberFormatException) {
-                notifyOnErrorForOperator(editor.component, ex)
-            }
-
+            validateQuery(query, editor)
         }
 
         override fun buildQueryOptions(rowLimit: String, page: Page?): QueryOptions {
@@ -211,8 +207,8 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
                 notifyOnErrorForOperator(editor.component, ex)
             }
 
-            if (StringUtils.isNotBlank(rowLimit)) {
-                queryOptions.resultLimit = Integer.parseInt(rowLimit)
+            if (rowLimit.isNotBlank()) {
+                queryOptions.resultLimit = rowLimit.toInt()
             }
 
             return queryOptions
@@ -265,8 +261,8 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
                 notifyOnErrorForOperator(selectEditor.component, ex)
             }
 
-            if (StringUtils.isNotBlank(rowLimit)) {
-                queryOptions.resultLimit = Integer.parseInt(rowLimit)
+            if (rowLimit.isNotBlank()) {
+                queryOptions.resultLimit = rowLimit.toInt()
             }
 
             return queryOptions
@@ -281,19 +277,10 @@ internal class QueryPanel(private val project: Project) : JPanel(), Disposable {
         }
 
         private fun validateEditorQuery(editor: Editor) {
-            try {
-                val query = getQueryFrom(editor)
-                if (StringUtils.isNotEmpty(query)) {
-                    JSON.parse(query)
-                }
-            } catch (ex: JSONParseException) {
-                notifyOnErrorForOperator(editor.component, ex)
-            } catch (ex: NumberFormatException) {
-                notifyOnErrorForOperator(editor.component, ex)
-            }
+            validateQuery(getQueryFrom(editor), editor)
         }
 
-        private fun getQueryFrom(editor: Editor) = StringUtils.trim(editor.document.text)
+        private fun getQueryFrom(editor: Editor) = editor.document.text.trim()
 
         private fun createSubOperatorPanel(title: String, subOperatorEditor: Editor): JPanel {
             val selectPanel = JPanel()

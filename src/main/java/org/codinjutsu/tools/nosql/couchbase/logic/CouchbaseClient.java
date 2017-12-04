@@ -101,9 +101,9 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
         }
 
         return clusterManager.getBuckets()
-                .stream()
-                .map(bucketSettings -> new CouchbaseDatabase(bucketSettings.name()))
-                .collect(Collectors.toList());
+                             .stream()
+                             .map(bucketSettings -> new CouchbaseDatabase(bucketSettings.name()))
+                             .collect(Collectors.toList());
     }
 
     @Override
@@ -125,11 +125,7 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
     public CouchbaseResult loadRecords(CouchbaseContext context, QueryOptions queryOptions) {
         ServerConfiguration configuration = context.getServerConfiguration();
         CouchbaseDatabase database = context.getDatabase();
-        Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment
-                        .builder()
-                        .queryEnabled(true)
-                        .build(),
-                configuration.getServerUrl());
+        Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment.builder().build(), configuration.getServerUrl());
 //        AuthenticationSettings authenticationSettings = configuration.getAuthenticationSettings();
 //        ClusterManager clusterManager = cluster.clusterManager(authenticationSettings.getUsername(), authenticationSettings.getPassword());
 

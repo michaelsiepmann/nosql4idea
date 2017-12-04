@@ -20,7 +20,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 intellij {
-    version '143.2370.31'
+    version '173.3942.4'
     pluginName 'nosql4idex'
 }
 
@@ -33,9 +33,9 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.couchbase.client:java-client:2.2.1'
-    compile 'org.mongodb:mongo-java-driver:3.0.4'
-    compile 'redis.clients:jedis:2.7.3'
+    compile 'com.couchbase.client:java-client:2.5.2'
+    compile 'org.mongodb:mongo-java-driver:3.5.0'
+    compile 'redis.clients:jedis:2.9.0'
 
     testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.2'
     testCompile 'org.junit.vintage:junit-vintage-engine:4.12.2'
