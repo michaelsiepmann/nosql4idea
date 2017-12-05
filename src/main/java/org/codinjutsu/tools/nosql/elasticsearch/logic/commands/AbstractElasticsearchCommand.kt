@@ -13,10 +13,8 @@ internal abstract class AbstractElasticsearchCommand : ElasticsearchCommand {
         val client = createClient()
         val method = createMethod(url)
         try {
-            val statusCode = client.executeMethod(method)
-            if (statusCode in 200..299) {
-                return Gson().fromJson<JsonObject>(method.responseBodyAsString, JsonObject::class.java)
-            }
+            client.executeMethod(method)
+            return Gson().fromJson<JsonObject>(method.responseBodyAsString, JsonObject::class.java)
         } finally {
             method.releaseConnection()
         }

@@ -26,11 +26,14 @@ import org.codinjutsu.tools.nosql.commons.view.action.CloseFindEditorAction;
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction;
 import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
+import org.codinjutsu.tools.nosql.commons.view.action.ImportAction;
 import org.codinjutsu.tools.nosql.commons.view.action.OpenFindAction;
 import org.codinjutsu.tools.nosql.commons.view.action.paging.FirstPageAction;
 import org.codinjutsu.tools.nosql.commons.view.action.paging.LastPageAction;
 import org.codinjutsu.tools.nosql.commons.view.action.paging.NextPageAction;
 import org.codinjutsu.tools.nosql.commons.view.action.paging.PreviousPageAction;
+import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportFileDialog;
+import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState;
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.Pageable;
@@ -42,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.function.Function;
 
 public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfiguration, CLIENT extends DatabaseClient, CONTEXT extends DatabaseContext<CLIENT, SERVERCONFIGURATION>, RESULT extends SearchResult, DOCUMENT> extends NoSqlResultView {
@@ -119,10 +123,10 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
             if (resultPanel.isEditable()) {
                 actionResultGroup.add(new AddDocumentAction(resultPanel));
                 actionResultGroup.add(new EditDocumentAction<>(resultPanel));
+                actionResultGroup.add(new ImportAction(this));
             }
 
             actionResultGroup.add(new CopyResultAction<>(resultPanel));
-
 
             if (this instanceof Pageable) {
                 Pageable pageable = (Pageable) this;
@@ -298,5 +302,24 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
 
     public void moveToPage(@NotNull Page page) {
 
+    }
+
+    public void startImport() {
+        ImportFileDialog dialog = new ImportFileDialog(context.getImportPanelSettings(), project);
+        if (dialog.showAndGet()) {
+            File file = dialog.getSelectedFile();
+            if (file.exists()) {
+                try {
+                    GuiUtils.runInSwingThread(() -> loadingDecorator.startLoading(false));
+                    GuiUtils.runInSwingThread(() -> {
+                        ImportResultState result = context.getClient().importFile(context, file);
+                    });
+                } catch (Exception e) {
+                    updateErrorPanel(e);
+                } finally {
+                    GuiUtils.runInSwingThread(loadingDecorator::stopLoading);
+                }
+            }
+        }
     }
 }

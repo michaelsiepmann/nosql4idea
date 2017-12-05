@@ -9,7 +9,9 @@ import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
+import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
+import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.BulkImport
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.CreateType
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.DeleteElement
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.FetchDocument
@@ -23,6 +25,7 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchServerConfigu
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchType
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion
 import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
+import java.io.File
 import java.net.URL
 
 internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, ElasticsearchResult, JsonObject, ElasticsearchServerConfiguration> {
@@ -102,6 +105,11 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
     override fun createFolder(serverConfiguration: ElasticsearchServerConfiguration, parentFolderName: String, folderName: String): ElasticsearchType {
         CreateType(serverConfiguration.serverUrl!!, parentFolderName, folderName).execute()
         return ElasticsearchType(folderName, parentFolderName, serverConfiguration.version)
+    }
+
+    override fun importFile(context: ElasticsearchContext, file: File): ImportResultState {
+        val result = BulkImport(context.serverConfiguration.serverUrl!!, file).execute()
+        return ImportResultState(false, "")
     }
 
     companion object {

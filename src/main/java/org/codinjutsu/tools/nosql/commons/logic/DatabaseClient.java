@@ -19,8 +19,11 @@ package org.codinjutsu.tools.nosql.commons.logic;
 import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
 
 public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends ServerConfiguration> {
 
@@ -54,5 +57,9 @@ public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends S
     }
 
     default void dropDatabase(SERVERCONFIGURATION serverconfiguration, Database database) {
+    }
+
+    default ImportResultState importFile(CONTEXT context, File file) {
+        return null;
     }
 }
