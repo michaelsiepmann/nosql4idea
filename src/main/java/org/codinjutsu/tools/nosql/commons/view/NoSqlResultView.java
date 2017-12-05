@@ -17,6 +17,7 @@
 package org.codinjutsu.tools.nosql.commons.view;
 
 import com.intellij.openapi.Disposable;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.Page;
 
 import javax.swing.*;
 

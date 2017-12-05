@@ -27,6 +27,7 @@ import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperationsImpl;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.Page;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.redis.RedisContext;
@@ -109,8 +110,8 @@ public class RedisPanel extends DatabasePanel<ServerConfiguration, RedisClient, 
 
     @NotNull
     @Override
-    protected QueryOptions createQueryOptions() {
-        QueryOptionsImpl queryOptions = (QueryOptionsImpl) super.createQueryOptions();
+    protected QueryOptions createQueryOptions(Page currentPage) {
+        QueryOptionsImpl queryOptions = (QueryOptionsImpl) super.createQueryOptions(currentPage);
         queryOptions.setFilter(getFilter());
         return queryOptions;
     }

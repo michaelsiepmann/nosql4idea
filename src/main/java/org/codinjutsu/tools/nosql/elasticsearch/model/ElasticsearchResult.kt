@@ -4,24 +4,23 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
-import java.util.*
 
-internal class ElasticsearchResult(override val name: String) : SearchResult {
-    private val jsonObjects = LinkedList<ObjectWrapper>()
-    private val errors = LinkedList<JsonObject>()
+internal class ElasticsearchResult(override val name: String, searchResult: JsonObject) : SearchResult {
+
+    private val objectWrappers: List<ObjectWrapper>
+    private val totalCount : Int
+
+    init {
+        val hits = searchResult.getAsJsonObject("hits")
+        val jsonArray = hits?.getAsJsonArray("hits") ?: JsonArray()
+        objectWrappers = jsonArray.map { ElasticsearchObjectWrapper(it.asJsonObject) }
+        totalCount = hits?.get("total")?.asInt ?: 0
+    }
 
     override val records: List<ObjectWrapper>
-        get() = jsonObjects
+        get() = objectWrappers
 
-    fun addAll(jsonArray: JsonArray) {
-        jsonObjects.addAll(jsonArray.map { ElasticsearchObjectWrapper(it.asJsonObject) })
-    }
+    override val resultCount: Int
+        get() = totalCount
 
-    fun addErrors(errors: List<JsonObject>) {
-        this.errors.addAll(errors)
-    }
-
-    fun hasErrors() = !errors.isEmpty()
-
-    fun getErrors() = errors
 }

@@ -210,6 +210,10 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
     }
 
     public void executeQuery() {
+        executeQuery(currentPage);
+    }
+
+    private void executeQuery(final Page currentPage) {
         errorPanel.setVisible(false);
         validateQuery();
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Executing query", true) {
@@ -217,7 +221,7 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
             public void run(@NotNull final ProgressIndicator indicator) {
                 try {
                     GuiUtils.runInSwingThread(() -> loadingDecorator.startLoading(false));
-                    GuiUtils.runInSwingThread(() -> resultPanel.updateResultTableTree(getSearchResult()));
+                    GuiUtils.runInSwingThread(() -> resultPanel.updateResultTableTree(getSearchResult(currentPage)));
                 } catch (final Exception ex) {
                     GuiUtils.runInSwingThread(() -> updateErrorPanel(ex));
                 } finally {
@@ -236,13 +240,17 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
     }
 
     protected RESULT getSearchResult() {
-        QueryOptions queryOptions = createQueryOptions();
+        RESULT searchResult = getSearchResult(currentPage);
         currentPage = null;
-        return getSearchResult(context, queryOptions);
+        return searchResult;
+    }
+
+    private RESULT getSearchResult(Page currentPage) {
+        return getSearchResult(context, createQueryOptions(currentPage));
     }
 
     @NotNull
-    protected QueryOptions createQueryOptions() {
+    protected QueryOptions createQueryOptions(Page currentPage) {
         String rowLimitFieldText = rowLimitField.getText();
         if (queryPanel == null) {
             QueryOptionsImpl queryOptions = new QueryOptionsImpl();
@@ -292,16 +300,19 @@ public abstract class DatabasePanel<SERVERCONFIGURATION extends ServerConfigurat
         return splitter.getFirstComponent() == queryPanel;
     }
 
+    @SuppressWarnings("unused")
     @NotNull
     public Page getCurrentPage() {
         if (currentPage == null) {
-            currentPage = new Page(10, 0, getSearchResult().getCount());
+            currentPage = new Page(10, 0, getSearchResult().getResultCount());
         }
         return currentPage;
     }
 
+    @SuppressWarnings("unused")
     public void moveToPage(@NotNull Page page) {
-
+        executeQuery(page);
+        currentPage = page;
     }
 
     public void startImport() {

@@ -1,6 +1,5 @@
 package org.codinjutsu.tools.nosql.elasticsearch.logic
 
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
@@ -57,11 +56,8 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
     override fun defaultConfiguration() =
             ElasticsearchServerConfiguration(ElasticsearchVersion.VERSION_20, "http://localhost:9200", DatabaseVendor.ELASTICSEARCH)
 
-    override fun loadRecords(context: ElasticsearchContext, queryOptions: QueryOptions): ElasticsearchResult {
-        val elasticsearchResult = ElasticsearchResult(context.database.name)
-        elasticsearchResult.addAll(Search(context, queryOptions).execute().getAsJsonObject("hits")?.getAsJsonArray("hits") ?: JsonArray())
-        return elasticsearchResult
-    }
+    override fun loadRecords(context: ElasticsearchContext, queryOptions: QueryOptions) =
+            ElasticsearchResult(context.database.name, Search(context, queryOptions).execute())
 
     override fun dropFolder(configuration: ElasticsearchServerConfiguration, type: Any) {
         if (type is ElasticsearchType) {
