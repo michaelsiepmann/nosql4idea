@@ -74,7 +74,7 @@ class ServerConfigurationPanelTest {
         frameFixture.textBox("passwordField").setText("johnpassword");
 
         frameFixture.textBox("userDatabaseField").setText("0");
-        frameFixture.checkBox("autoConnectField").check();
+        frameFixture.checkBox("autoConnectField").select();
 
         ServerConfiguration configuration = new ServerConfigurationImpl();
 

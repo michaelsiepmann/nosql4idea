@@ -28,6 +28,7 @@ import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;
 import org.fest.swing.fixture.FrameFixture;
+import org.fest.swing.fixture.JTableFixture;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -70,13 +71,13 @@ class CouchbasePanelTest {
     }
 
     @Test
-    @Disabled
     void displayJsonObjects() {
         // TODO: 18.11.2017  couchbasePanelWrapper.updateResultTableTree(createResults());
         couchbasePanelWrapper.expandAll();
 
-        frameFixture.table("resultTreeTable").cellReader(new TableCellReader())
-                    .requireColumnCount(2)
+        JTableFixture tableFixture = frameFixture.table("resultTreeTable");
+        tableFixture.replaceCellReader(new TableCellReader());
+        tableFixture.requireColumnCount(2)
                     .requireContents(new String[][]{
                             {"amount", "123456764"},
                             {"mad", "true"},

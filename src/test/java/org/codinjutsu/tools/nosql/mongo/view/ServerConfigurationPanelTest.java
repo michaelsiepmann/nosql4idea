@@ -86,8 +86,8 @@ class ServerConfigurationPanelTest {
         frameFixture.radioButton("defaultAuthMethod").requireSelected();
         frameFixture.radioButton("mongoCRAuthField").click();
 
-        frameFixture.checkBox("sslConnectionField").check();
-        frameFixture.checkBox("autoConnectField").check();
+        frameFixture.checkBox("sslConnectionField").select();
+        frameFixture.checkBox("autoConnectField").select();
         ServerConfiguration configuration = new ServerConfigurationImpl();
 
         configurationPanel.applyConfigurationData(configuration);

@@ -134,8 +134,9 @@ class RedisPanelTest extends PlatformLiteFixture {
 
         redisPanelWrapper.updateResultTableTree(createRedisResults(), false, "");
 
-        frameFixture.table("resultTreeTable").cellReader(new TableCellReader())
-                    .requireColumnCount(2)
+        JTableFixture tableFixture = frameFixture.table("resultTreeTable");
+        tableFixture.replaceCellReader(new TableCellReader());
+        tableFixture.requireColumnCount(2)
                     .requireContents(new String[][]{
                             {"foo:bar", "john"},
                             {"stuff:bar", "[drink, some, beer]"},
@@ -163,8 +164,8 @@ class RedisPanelTest extends PlatformLiteFixture {
         redisPanelWrapper.expandAll();
 
         JTableFixture resultTreeTable = frameFixture.table("resultTreeTable");
-        resultTreeTable.cellReader(new TableCellReader())
-                       .requireColumnCount(2)
+        resultTreeTable.replaceCellReader(new TableCellReader());
+        resultTreeTable.requireColumnCount(2)
                        .requireContents(new String[][]{
                                {"foo", ""},
                                {"bar", "john"},

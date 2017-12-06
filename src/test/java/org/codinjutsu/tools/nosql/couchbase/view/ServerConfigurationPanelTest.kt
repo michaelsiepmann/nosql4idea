@@ -35,7 +35,7 @@ import org.mockito.Mockito
 
 internal class ServerConfigurationPanelTest {
 
-    private lateinit var configurationPanel: ServerConfigurationPanel
+    private var configurationPanel: ServerConfigurationPanel? = null
     private lateinit var databaseClientMock: DatabaseClient<*, *, *>
 
     private lateinit var frameFixture: FrameFixture
@@ -53,7 +53,7 @@ internal class ServerConfigurationPanelTest {
             }
         })
 
-        frameFixture = Containers.showInFrame(configurationPanel)
+        frameFixture = Containers.showInFrame(configurationPanel!!)
     }
 
     @AfterEach
@@ -74,12 +74,12 @@ internal class ServerConfigurationPanelTest {
             textBox("passwordField").setText("johnpassword")
 
             textBox("userDatabaseField").setText("mybucket")
-            checkBox("autoConnectField").check()
+            checkBox("autoConnectField").select()
         }
 
         val configuration = ServerConfigurationImpl()
 
-        configurationPanel.applyConfigurationData(configuration)
+        configurationPanel?.applyConfigurationData(configuration)
 
         assertEquals("Localhost", configuration.label)
         assertEquals(DatabaseVendor.COUCHBASE, configuration.databaseVendor)
@@ -105,7 +105,7 @@ internal class ServerConfigurationPanelTest {
         authenticationSettings.password = "johnpassword"
         configuration.authenticationSettings = authenticationSettings
 
-        configurationPanel.loadConfigurationData(configuration)
+        configurationPanel?.loadConfigurationData(configuration)
 
         frameFixture.textBox("labelField").requireText("Localhost")
         frameFixture.label("databaseVendorLabel").requireText("Couchbase")

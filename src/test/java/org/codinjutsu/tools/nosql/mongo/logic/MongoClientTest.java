@@ -76,7 +76,7 @@ class MongoClientTest {
             mongoClient.loadCollectionValues(context, mongoQueryOptions);
 
             verify(dbCollection, times(1)).find(any());
-            verify(dbCollection, never()).find(any(), any());
+            verify(dbCollection, never()).find(any(), (DBObject) any());
             verify(cursor, never()).sort(any());
             verify(cursor, times(2)).hasNext();
             verify(cursor, times(1)).next();
@@ -152,7 +152,7 @@ class MongoClientTest {
 
         verify(dbCollection, times(1)).aggregate(any());
         verify(dbCollection, never()).find(any());
-        verify(dbCollection, never()).find(any(), any());
+        verify(dbCollection, never()).find(any(), (DBObject) any());
 
         List<DBObject> mongoObjects = mongoResult.getMongoObjects();
 
