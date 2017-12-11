@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.Pageable
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
 import javax.swing.Icon
 
-internal abstract class AbstractPageableAction(private val pageable: Pageable, text: String? = null, descrtiption: String? = null, icon: Icon? = null) : AnAction(text, descrtiption, icon) {
+internal abstract class AbstractPageableAction(private val pageable: Pageable, text: String? = null, description: String? = null, icon: Icon? = null) : AnAction(text, description, icon) {
 
     override fun actionPerformed(e: AnActionEvent) {
         pageable.moveToPage(followingPage(pageable.getCurrentPage()))

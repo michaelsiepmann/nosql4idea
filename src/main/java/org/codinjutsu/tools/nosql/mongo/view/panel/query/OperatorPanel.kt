@@ -1,16 +1,7 @@
 package org.codinjutsu.tools.nosql.mongo.view.panel.query
 
-import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.editor.EditorSettings
-import com.intellij.openapi.editor.colors.EditorColors
-import com.intellij.openapi.editor.colors.EditorColorsScheme
-import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.editor.ex.util.LexerEditorHighlighter
-import com.intellij.openapi.editor.highlighter.EditorHighlighter
-import com.intellij.openapi.fileTypes.PlainTextSyntaxHighlighterFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.Messages
@@ -20,6 +11,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.mongodb.util.JSON
 import com.mongodb.util.JSONParseException
+import org.codinjutsu.tools.nosql.commons.view.createJSONEditor
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import java.awt.BorderLayout
@@ -57,40 +49,7 @@ internal abstract class OperatorPanel(private val project: Project) : JPanel(), 
     }
 
     protected fun createEditor(): Editor {
-        val editorFactory = EditorFactory.getInstance()
-        val editorDocument = editorFactory.createDocument("")
-        val editor = editorFactory.createEditor(editorDocument, project)
-        fillEditorSettings(editor.settings)
-        val editorEx = editor as EditorEx
-        attachHighlighter(editorEx)
-        return editor
-    }
-
-    private fun fillEditorSettings(editorSettings: EditorSettings) {
-        editorSettings.apply {
-            isWhitespacesShown = true
-            isLineMarkerAreaShown = false
-            isIndentGuidesShown = false
-            isLineNumbersShown = false
-            isAllowSingleLogicalLineFolding = true
-            additionalColumnsCount = 0
-            additionalLinesCount = 1
-            isUseSoftWraps = true
-            setUseTabCharacter(false)
-            isCaretInsideTabs = false
-            isVirtualSpace = false
-        }
-    }
-
-    private fun attachHighlighter(editor: EditorEx) {
-        val scheme = editor.colorsScheme
-        scheme.setColor(EditorColors.CARET_ROW_COLOR, null)
-        editor.highlighter = createHighlighter(scheme)
-    }
-
-    private fun createHighlighter(settings: EditorColorsScheme): EditorHighlighter {
-        val language = Language.findLanguageByID("JSON") ?: Language.ANY
-        return LexerEditorHighlighter(PlainTextSyntaxHighlighterFactory.getSyntaxHighlighter(language!!, null, null), settings)
+        return createJSONEditor(project)
     }
 
     protected fun validateQuery(query: String, editor: Editor) {

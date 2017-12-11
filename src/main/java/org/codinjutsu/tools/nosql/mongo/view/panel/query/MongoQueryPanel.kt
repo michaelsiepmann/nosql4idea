@@ -51,7 +51,7 @@ internal class MongoQueryPanel(private val project: Project) : JPanel(), Disposa
     }
 
     override fun requestFocusOnEditor() {// Code from requestFocus of EditorImpl
-        val focusManager = IdeFocusManager.getInstance(this.project)
+        val focusManager = IdeFocusManager.getInstance(project)
         val editorContentComponent = getCurrentOperatorPanel().getRequestFocusComponent()
         if (focusManager.focusOwner !== editorContentComponent) {
             focusManager.requestFocus(editorContentComponent, true)
