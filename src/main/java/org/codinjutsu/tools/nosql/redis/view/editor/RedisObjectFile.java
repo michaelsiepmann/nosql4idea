@@ -18,12 +18,12 @@ package org.codinjutsu.tools.nosql.redis.view.editor;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.jetbrains.annotations.NotNull;
 
-public class RedisObjectFile extends NoSqlDatabaseObjectFile<ServerConfiguration> {
+public class RedisObjectFile extends NoSqlDatabaseObjectFile {
     private RedisDatabase database;
 
     public RedisObjectFile(Project project, ServerConfiguration configuration, RedisDatabase redisDatabase) {

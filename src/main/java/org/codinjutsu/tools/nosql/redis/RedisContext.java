@@ -1,12 +1,12 @@
 package org.codinjutsu.tools.nosql.redis;
 
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.DatabaseContext;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.jetbrains.annotations.NotNull;
 
-public class RedisContext extends DatabaseContext<RedisClient, ServerConfiguration> {
+public class RedisContext extends DatabaseContext<RedisClient> {
 
     private final RedisDatabase database;
 

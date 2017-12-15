@@ -32,7 +32,7 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.impl.SettingsImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.PlatformLiteFixture;
-import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.redis.RedisContext;

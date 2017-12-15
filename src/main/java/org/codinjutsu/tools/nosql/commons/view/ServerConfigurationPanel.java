@@ -20,14 +20,19 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.*;
+import com.intellij.openapi.ui.ComponentWithBrowseButton;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.TextComponentAccessor;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Ref;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.RawCommandLineEditor;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.commons.configuration.ConsoleRunnerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.jetbrains.annotations.NotNull;
@@ -126,8 +131,11 @@ public class ServerConfigurationPanel extends JPanel {
         labelField.setText(configuration.getLabel());
         serverUrlField.setText(configuration.getServerUrl());
         userDatabaseField.setText(configuration.getUserDatabase());
-        shellArgumentsLineField.setText(configuration.getShellArgumentsLine());
-        shellWorkingDirField.setText(configuration.getShellWorkingDir());
+        if (configuration instanceof ConsoleRunnerConfiguration) {
+            ConsoleRunnerConfiguration consoleRunnerConfiguration = (ConsoleRunnerConfiguration) configuration;
+            shellArgumentsLineField.setText(consoleRunnerConfiguration.getShellArgumentsLine());
+            shellWorkingDirField.setText(consoleRunnerConfiguration.getShellWorkingDir());
+        }
         autoConnectCheckBox.setSelected(configuration.isConnectOnIdeStartup());
 
         authenticationView.load(configuration.getAuthenticationSettings());
@@ -139,15 +147,17 @@ public class ServerConfigurationPanel extends JPanel {
     }
 
     public void applyConfigurationData(ServerConfiguration configuration) {
-
         configuration.setLabel(getLabel());
         configuration.setDatabaseVendor(databaseVendor);
         configuration.setServerUrl(getServerUrls());
         configuration.setAuthenticationSettings(authenticationView.create());
 
         configuration.setUserDatabase(getUserDatabase());
-        configuration.setShellArgumentsLine(getShellArgumentsLine());
-        configuration.setShellWorkingDir(getShellWorkingDir());
+        if (configuration instanceof ConsoleRunnerConfiguration) {
+            ConsoleRunnerConfiguration consoleRunnerConfiguration = (ConsoleRunnerConfiguration) configuration;
+            consoleRunnerConfiguration.setShellArgumentsLine(getShellArgumentsLine());
+            consoleRunnerConfiguration.setShellWorkingDir(getShellWorkingDir());
+        }
         configuration.setConnectOnIdeStartup(isAutoConnect());
     }
 

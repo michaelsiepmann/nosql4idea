@@ -18,7 +18,7 @@ package org.codinjutsu.tools.nosql.couchbase.view
 
 import com.intellij.openapi.command.impl.DummyProject
 import org.codinjutsu.tools.nosql.DatabaseVendor
-import org.codinjutsu.tools.nosql.ServerConfigurationImpl
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel
@@ -36,7 +36,7 @@ import org.mockito.Mockito
 internal class ServerConfigurationPanelTest {
 
     private var configurationPanel: ServerConfigurationPanel? = null
-    private lateinit var databaseClientMock: DatabaseClient<*, *, *>
+    private lateinit var databaseClientMock: DatabaseClient<*, *>
 
     private lateinit var frameFixture: FrameFixture
 

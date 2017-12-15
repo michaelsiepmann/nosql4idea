@@ -18,7 +18,6 @@ internal abstract class AbstractElasticsearchCommand : ElasticsearchCommand {
         } finally {
             method.releaseConnection()
         }
-        return JsonObject()
     }
 
     protected open fun createMethod(url: String): HttpMethod = GetMethod(url)

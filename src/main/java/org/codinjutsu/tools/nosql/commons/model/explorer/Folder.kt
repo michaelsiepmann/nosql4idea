@@ -18,12 +18,12 @@ interface Folder<out T> {
 
     val children: Collection<Folder<*>>
 
-    val databaseServer: DatabaseServer<*>
+    val databaseServer: DatabaseServer
 
     val database: Database?
         get() = null
 
-    fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile<*>?
+    fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile?
 
     fun canCreateChild(folderType: FolderType): Boolean = false
 

@@ -9,7 +9,6 @@ import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType.ELASTICSEARC
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType.ELASTICSEARCH_TYPE
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
-import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchServerConfiguration
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchType
 import javax.swing.JOptionPane
 
@@ -17,13 +16,13 @@ internal class ElasticsearchIndexFolder(override val data: ElasticsearchDatabase
     override val children: Collection<Folder<*>>
         get() = data.getTypes().map { ElasticsearchTypeFolder(it, this) }
 
-    override val databaseServer: DatabaseServer<ElasticsearchServerConfiguration>
+    override val databaseServer: DatabaseServer
         get() = parent.data
 
     override val database: ElasticsearchDatabase?
         get() = data
 
-    override fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile<*>? = null
+    override fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile? = null
 
     override fun canBeDeleted(folderType: FolderType) = folderType == ELASTICSEARCH_INDEX
 

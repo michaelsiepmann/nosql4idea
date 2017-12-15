@@ -18,12 +18,13 @@ package org.codinjutsu.tools.nosql.mongo.view.editor;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
+import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.jetbrains.annotations.NotNull;
 
-public class MongoObjectFile extends NoSqlDatabaseObjectFile<ServerConfiguration> {
+public class MongoObjectFile extends NoSqlDatabaseObjectFile {
 
     private MongoCollection collection;
 

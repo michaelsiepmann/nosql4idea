@@ -18,7 +18,7 @@ internal class MongoCollectionFolder(override val data: MongoCollection, overrid
     override val children: Collection<Folder<*>>
         get() = emptyList()
 
-    override val databaseServer: DatabaseServer<*>
+    override val databaseServer: DatabaseServer
         get() = parent.databaseServer
 
     override val database: MongoDatabase?

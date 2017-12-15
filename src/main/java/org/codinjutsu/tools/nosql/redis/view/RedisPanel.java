@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperationsImpl;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
@@ -40,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class RedisPanel extends DatabasePanel<ServerConfiguration, RedisClient, RedisContext, RedisResult, Object> {
+public class RedisPanel extends DatabasePanel<RedisClient, RedisContext, RedisResult, Object> {
 
     private JBTextField filterField;
     private boolean groupData;

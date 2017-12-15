@@ -37,6 +37,7 @@ import com.intellij.ui.TableUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanelFactory;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -166,15 +167,13 @@ public class NoSqlConfigurable extends BaseConfigurable {
                             );
                             dialog.setTitle("Add a NoSql Server");
                             dialog.show();
-                            if (!dialog.isOK()) {
-                                return;
+                            if (dialog.isOK()) {
+                                configurations.add(serverConfiguration);
+                                int index = configurations.size() - 1;
+                                tableModel.fireTableRowsInserted(index, index);
+                                table.getSelectionModel().setSelectionInterval(index, index);
+                                table.scrollRectToVisible(table.getCellRect(index, 0, true));
                             }
-
-                            configurations.add(serverConfiguration);
-                            int index = configurations.size() - 1;
-                            tableModel.fireTableRowsInserted(index, index);
-                            table.getSelectionModel().setSelectionInterval(index, index);
-                            table.scrollRectToVisible(table.getCellRect(index, 0, true));
                         })
                         .setAddActionName("addServer")
                         .setEditAction(button -> {
@@ -185,7 +184,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                                 return;
                             }
                             ServerConfiguration sourceConfiguration = configurations.get(selectedIndex);
-                            ServerConfiguration copiedConfiguration = sourceConfiguration.cloneConfiguration();
+                            ServerConfiguration copiedConfiguration = sourceConfiguration.copy();
 
                             ConfigurationDialog dialog = new ConfigurationDialog(
                                     mainPanel,
@@ -194,23 +193,19 @@ public class NoSqlConfigurable extends BaseConfigurable {
                             );
                             dialog.setTitle("Edit a NoSql Server");
                             dialog.show();
-                            if (!dialog.isOK()) {
-                                return;
+                            if (dialog.isOK()) {
+                                configurations.set(selectedIndex, copiedConfiguration);
+                                tableModel.fireTableRowsUpdated(selectedIndex, selectedIndex);
+                                table.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
                             }
-
-                            configurations.set(selectedIndex, copiedConfiguration);
-                            tableModel.fireTableRowsUpdated(selectedIndex, selectedIndex);
-                            table.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
                         })
                         .setEditActionName("editServer")
                         .setRemoveAction(button -> {
                             stopEditing();
-
                             int selectedIndex = table.getSelectedRow();
-                            if (selectedIndex < 0 || selectedIndex >= tableModel.getRowCount()) {
-                                return;
+                            if (selectedIndex >= 0 && selectedIndex < tableModel.getRowCount()) {
+                                TableUtil.removeSelectedItems(table);
                             }
-                            TableUtil.removeSelectedItems(table);
                         })
                         .setRemoveActionName("removeServer")
                         .disableUpDownActions().createPanel();
@@ -254,18 +249,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
 
     private boolean areConfigurationsModified() {
         List<ServerConfiguration> existingConfigurations = NoSqlConfiguration.getInstance(project).getServerConfigurations();
-
-        if (configurations.size() != existingConfigurations.size()) {
-            return true;
-        }
-
-        for (ServerConfiguration existingConfiguration : existingConfigurations) {
-            if (!configurations.contains(existingConfiguration)) {
-                return true;
-            }
-        }
-
-        return false;
+        return configurations.size() != existingConfigurations.size() || existingConfigurations.stream().anyMatch(existingConfiguration -> !configurations.contains(existingConfiguration));
     }
 
     @Override
@@ -331,7 +315,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
             }
         }
 
-        public ProcessOutput checkShellPath(DatabaseVendor databaseVendor, String shellPath) throws ExecutionException, TimeoutException {
+        ProcessOutput checkShellPath(DatabaseVendor databaseVendor, String shellPath) throws ExecutionException, TimeoutException {
             if (isBlank(shellPath)) {
                 return null;
             }
@@ -341,13 +325,13 @@ public class NoSqlConfigurable extends BaseConfigurable {
             if (testParameter != null) {
                 commandLine.addParameter(testParameter);
             }
-            CapturingProcessHandler handler = new CapturingProcessHandler(commandLine.createProcess(), CharsetToolkit.getDefaultSystemCharset());
+            CapturingProcessHandler handler = new CapturingProcessHandler(commandLine.createProcess(), CharsetToolkit.getDefaultSystemCharset(), "");
             ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
             ProcessOutput result = indicator == null ?
                     handler.runProcess(TIMEOUT_MS) :
                     handler.runProcessWithProgressIndicator(indicator);
             if (result.isTimeout()) {
-                throw new TimeoutException("Couldn't check " + databaseVendor.name + " CLI executable - stopped by timeout.");
+                throw new TimeoutException(String.format("Couldn't check %s CLI executable - stopped by timeout.", databaseVendor.name));
             } else if (result.isCancelled()) {
                 throw new ProcessCanceledException();
             } else if (result.getExitCode() != 0 || !result.getStderr().isEmpty()) {
@@ -359,8 +343,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
             return result;
         }
 
-
-        public String getShellPath() {
+        String getShellPath() {
             String shellPath = shellPathField.getComponent().getText();
             if (StringUtils.isNotBlank(shellPath)) {
                 return shellPath;
@@ -369,7 +352,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
             return null;
         }
 
-        public boolean isShellPathModified(String shellPath) {
+        boolean isShellPathModified(String shellPath) {
             return !StringUtils.equals(shellPath, getShellPath());
         }
 

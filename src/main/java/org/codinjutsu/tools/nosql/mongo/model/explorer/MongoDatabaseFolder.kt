@@ -17,13 +17,13 @@ internal class MongoDatabaseFolder(override val data: MongoDatabase, override va
     override val children: Collection<Folder<*>>
         get() = data.getCollections().map { MongoCollectionFolder(it, this) }
 
-    override val databaseServer: DatabaseServer<*>
+    override val databaseServer: DatabaseServer
         get() = parent.data
 
     override val database: MongoDatabase?
         get() = data
 
-    override fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile<*>? = null
+    override fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile? = null
 
     override fun canBeDeleted(folderType: FolderType) = folderType == MONGO_DATABASE
 

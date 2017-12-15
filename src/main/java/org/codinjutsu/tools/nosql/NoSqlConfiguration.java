@@ -23,7 +23,9 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializer;
-import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration;
 import org.jdom.Element;
 
 import java.util.HashMap;

@@ -16,7 +16,7 @@
 
 package org.codinjutsu.tools.nosql.commons.logic;
 
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState;
@@ -25,17 +25,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends ServerConfiguration> {
+public interface DatabaseClient<CONTEXT, DOCUMENT> {
 
-    void connect(SERVERCONFIGURATION serverConfiguration);
+    void connect(ServerConfiguration serverConfiguration);
 
-    void loadServer(DatabaseServer<SERVERCONFIGURATION> databaseServer);
+    void loadServer(DatabaseServer databaseServer);
 
     void cleanUpServers();
 
-    void registerServer(DatabaseServer<SERVERCONFIGURATION> databaseServer);
+    void registerServer(DatabaseServer databaseServer);
 
-    SERVERCONFIGURATION defaultConfiguration();
+    ServerConfiguration defaultConfiguration();
 
     @Nullable
     DOCUMENT findDocument(CONTEXT context, @NotNull Object _id);
@@ -49,14 +49,14 @@ public interface DatabaseClient<CONTEXT, DOCUMENT, SERVERCONFIGURATION extends S
     }
 
     @Nullable
-    default Object createFolder(SERVERCONFIGURATION serverconfiguration, String parentFolderName, String folderName) {
+    default Object createFolder(ServerConfiguration serverconfiguration, String parentFolderName, String folderName) {
         return null;
     }
 
-    default void dropFolder(SERVERCONFIGURATION serverconfiguration, Object folder) {
+    default void dropFolder(ServerConfiguration serverconfiguration, Object folder) {
     }
 
-    default void dropDatabase(SERVERCONFIGURATION serverconfiguration, Database database) {
+    default void dropDatabase(ServerConfiguration serverconfiguration, Database database) {
     }
 
     default ImportResultState importFile(CONTEXT context, File file) {

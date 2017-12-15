@@ -31,6 +31,7 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
@@ -110,7 +111,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         databaseTree.setModel(new DefaultTreeModel(rootNode));
 
         for (ServerConfiguration serverConfiguration : serverConfigurations) {
-            DatabaseServer databaseServer = new DatabaseServer<>(serverConfiguration);
+            DatabaseServer databaseServer = new DatabaseServer(serverConfiguration);
             databaseVendorClientManager.registerServer(databaseServer);
             DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(createDatabaseServerFolder(databaseServer));
             rootNode.add(serverNode);
@@ -336,7 +337,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
     public void loadRecords() {
-        NoSqlDatabaseObjectFile<ServerConfiguration> noSqlObjectFile = createNoSqlObjectFile();
+        NoSqlDatabaseObjectFile noSqlObjectFile = createNoSqlObjectFile();
         if (noSqlObjectFile != null) {
             NoSqlDatabaseFileSystem.getInstance().openEditor(noSqlObjectFile);
         }
@@ -389,7 +390,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
     @Nullable
-    private NoSqlDatabaseObjectFile<ServerConfiguration> createNoSqlObjectFile() {
+    private NoSqlDatabaseObjectFile createNoSqlObjectFile() {
         Folder folder = getSelectedFolder();
         return folder != null ? folder.createNoSqlObjectFile(project) : null;
     }

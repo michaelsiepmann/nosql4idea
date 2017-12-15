@@ -17,27 +17,24 @@
 package org.codinjutsu.tools.nosql.mongo
 
 import com.intellij.openapi.project.Project
-import org.codinjutsu.tools.nosql.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.DatabaseUI
-import org.codinjutsu.tools.nosql.commons.view.AuthenticationView
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient
 import org.codinjutsu.tools.nosql.mongo.view.MongoAuthenticationPanel
-import org.codinjutsu.tools.nosql.mongo.view.MongoPanel
 import org.codinjutsu.tools.nosql.mongo.view.MongoContext
+import org.codinjutsu.tools.nosql.mongo.view.MongoPanel
 import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile
 
-class MongoUI : DatabaseUI<ServerConfiguration> {
+class MongoUI : DatabaseUI {
 
     override fun createAythenticationView() = MongoAuthenticationPanel()
 
-    override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile<ServerConfiguration>): NoSqlResultView {
-        val mongoObjectFile = objectFile as MongoObjectFile
+    override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView {
         return MongoPanel(project,
                 MongoContext(MongoClient.getInstance(project),
-                        mongoObjectFile.configuration,
-                        mongoObjectFile.collection)
+                        objectFile.configuration,
+                        (objectFile as MongoObjectFile).collection)
         )
     }
 }

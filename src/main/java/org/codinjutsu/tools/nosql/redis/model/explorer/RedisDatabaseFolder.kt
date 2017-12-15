@@ -9,13 +9,13 @@ import org.codinjutsu.tools.nosql.redis.view.editor.RedisObjectFile
 
 internal class RedisDatabaseFolder(override val data: RedisDatabase, override val parent: RedisDatabaseServerFolder) : DatabaseFolder(data) {
 
-    override val databaseServer: DatabaseServer<*>
+    override val databaseServer: DatabaseServer
         get() = parent.data
 
     override val database: RedisDatabase?
         get() = data
 
-    override fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile<*>? {
+    override fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile? {
         return RedisObjectFile(project, databaseServer.configuration, data)
     }
 

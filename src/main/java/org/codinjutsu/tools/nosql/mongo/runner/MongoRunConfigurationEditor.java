@@ -25,9 +25,9 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.RawCommandLineEditor;
 import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +86,7 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
 
 
         serverConfigurationCombobox.addItemListener(itemEvent -> {
-            DatabaseServer<ServerConfiguration> selectedServer = (DatabaseServer) serverConfigurationCombobox.getSelectedItem();
+            DatabaseServer selectedServer = (DatabaseServer) serverConfigurationCombobox.getSelectedItem();
             if (selectedServer == null) {
                 return;
             }
@@ -135,9 +135,9 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
         return shellParametersField.getText();
     }
 
-    private ServerConfiguration getSelectedConfiguration() {
+    private MongoServerConfiguration getSelectedConfiguration() {
         DatabaseServer selectedServer = (DatabaseServer) serverConfigurationCombobox.getSelectedItem();
-        return selectedServer == null ? null : selectedServer.getConfiguration();
+        return selectedServer == null ? null : (MongoServerConfiguration) selectedServer.getConfiguration();
     }
 
     public MongoDatabase getSelectedDatabase() {

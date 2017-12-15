@@ -12,7 +12,7 @@ internal class CouchbaseDatabaseFolder(override val data: CouchbaseDatabase, ove
     override val database: CouchbaseDatabase?
         get() = data
 
-    override val databaseServer: DatabaseServer<*>
+    override val databaseServer: DatabaseServer
         get() = parent.data
 
     override fun createNoSqlObjectFile(project: Project) =

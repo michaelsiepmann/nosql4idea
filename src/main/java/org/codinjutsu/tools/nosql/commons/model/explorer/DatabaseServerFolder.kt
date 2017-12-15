@@ -2,18 +2,18 @@ package org.codinjutsu.tools.nosql.commons.model.explorer
 
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.JBColor
-import org.codinjutsu.tools.nosql.ServerConfiguration
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 
-abstract class DatabaseServerFolder<SERVERCONFIGURATION : ServerConfiguration> constructor(override val data: DatabaseServer<SERVERCONFIGURATION>) : Folder<DatabaseServer<SERVERCONFIGURATION>> {
+abstract class DatabaseServerFolder constructor(override val data: DatabaseServer) : Folder<DatabaseServer> {
     override val name: String?
         get() = data.label
 
-    val configuration: SERVERCONFIGURATION
+    val configuration: ServerConfiguration
         get() = data.configuration
 
-    override val databaseServer: DatabaseServer<*>
+    override val databaseServer: DatabaseServer
         get() = data
 
     open val isDatabaseWithCollections: Boolean

@@ -20,21 +20,21 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.LocalTimeCounter;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public abstract class NoSqlDatabaseObjectFile<SERVERCONFIGURATION extends ServerConfiguration> extends VirtualFile {
+public abstract class NoSqlDatabaseObjectFile extends VirtualFile {
 
     private final Project project;
-    private final SERVERCONFIGURATION configuration;
+    private final ServerConfiguration configuration;
     private final String name;
     private final long myModStamp;
 
-    protected NoSqlDatabaseObjectFile(Project project, SERVERCONFIGURATION configuration, String name) {
+    protected NoSqlDatabaseObjectFile(Project project, ServerConfiguration configuration, String name) {
         this.project = project;
         this.configuration = configuration;
         this.name = name;
@@ -74,7 +74,7 @@ public abstract class NoSqlDatabaseObjectFile<SERVERCONFIGURATION extends Server
         return false;
     }
 
-    public SERVERCONFIGURATION getConfiguration() {
+    public ServerConfiguration getConfiguration() {
         return configuration;
     }
 

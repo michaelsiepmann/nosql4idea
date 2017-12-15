@@ -19,7 +19,7 @@ package org.codinjutsu.tools.nosql.commons.view.console;
 import com.intellij.execution.console.LanguageConsoleImpl;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 
 public class NoSqlConsoleView extends LanguageConsoleImpl {
     public NoSqlConsoleView(Project project, String title, ServerConfiguration configuration) {

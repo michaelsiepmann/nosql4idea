@@ -19,8 +19,8 @@ package org.codinjutsu.tools.nosql.couchbase.logic;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.cluster.BucketSettings;
 import com.couchbase.client.java.cluster.ClusterManager;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
@@ -58,7 +58,7 @@ class CouchbaseClientTest {
     @Test
     void loadServersWithoutUserDatabase() {
         CouchbaseClient couchbaseClient = new CouchbaseClientStub();
-        DatabaseServer databaseServer = new DatabaseServer<>(configuration);
+        DatabaseServer databaseServer = new DatabaseServer(configuration);
         couchbaseClient.loadServer(databaseServer);
         verify(couchbaseCluster).disconnect();
         List<Database> databases = databaseServer.getDatabases();
@@ -71,7 +71,7 @@ class CouchbaseClientTest {
     void loadServersWithUserDatabase() {
         configuration.setUserDatabase("usertest");
         CouchbaseClient couchbaseClient = new CouchbaseClientStub();
-        DatabaseServer databaseServer = new DatabaseServer<>(configuration);
+        DatabaseServer databaseServer = new DatabaseServer(configuration);
         couchbaseClient.loadServer(databaseServer);
         verify(couchbaseCluster).disconnect();
         List<Database> databases = databaseServer.getDatabases();

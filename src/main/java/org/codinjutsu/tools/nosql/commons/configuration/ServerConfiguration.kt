@@ -1,17 +1,16 @@
-package org.codinjutsu.tools.nosql
+package org.codinjutsu.tools.nosql.commons.configuration
 
+import org.codinjutsu.tools.nosql.DatabaseVendor
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 
-interface ServerConfiguration : Cloneable {
+interface ServerConfiguration {
     var label: String?
     var databaseVendor: DatabaseVendor
     var serverUrl: String?
     var userDatabase: String?
     var isConnectOnIdeStartup: Boolean
-    var shellArgumentsLine: String?
-    var shellWorkingDir: String?
     var authenticationSettings: AuthenticationSettings
     val isSingleServer: Boolean
 
-    fun cloneConfiguration() : ServerConfiguration = clone() as ServerConfiguration
+    fun copy() : ServerConfiguration
 }

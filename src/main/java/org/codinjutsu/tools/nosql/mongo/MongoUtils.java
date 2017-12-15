@@ -16,7 +16,7 @@
 
 package org.codinjutsu.tools.nosql.mongo;
 
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 
 public class MongoUtils {

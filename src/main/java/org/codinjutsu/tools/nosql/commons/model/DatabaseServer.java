@@ -17,12 +17,12 @@
 package org.codinjutsu.tools.nosql.commons.model;
 
 import org.codinjutsu.tools.nosql.DatabaseVendor;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class DatabaseServer<SERVERCONFIGURATION extends ServerConfiguration> {
+public class DatabaseServer {
 
     public enum Status {
         OK, LOADING, ERROR
@@ -30,11 +30,11 @@ public class DatabaseServer<SERVERCONFIGURATION extends ServerConfiguration> {
 
     private List<Database> databases = new LinkedList<Database>();
 
-    private final SERVERCONFIGURATION configuration;
+    private final ServerConfiguration configuration;
 
     private Status status = Status.OK;
 
-    public DatabaseServer(SERVERCONFIGURATION configuration) {
+    public DatabaseServer(ServerConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -66,7 +66,7 @@ public class DatabaseServer<SERVERCONFIGURATION extends ServerConfiguration> {
         this.status = status;
     }
 
-    public SERVERCONFIGURATION getConfiguration() {
+    public ServerConfiguration getConfiguration() {
         return configuration;
     }
 

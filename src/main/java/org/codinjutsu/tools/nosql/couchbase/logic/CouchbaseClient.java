@@ -29,8 +29,8 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
@@ -51,7 +51,7 @@ import static com.couchbase.client.java.query.Select.select;
 import static com.couchbase.client.java.query.dsl.Expression.i;
 import static java.util.Collections.singletonList;
 
-public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext, CouchbaseResult, JsonObject, ServerConfiguration> {
+public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext, CouchbaseResult, JsonObject> {
 
     public static CouchbaseClient getInstance(Project project) {
         return ServiceManager.getService(project, CouchbaseClient.class);
@@ -101,9 +101,9 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
         }
 
         return clusterManager.getBuckets()
-                             .stream()
-                             .map(bucketSettings -> new CouchbaseDatabase(bucketSettings.name()))
-                             .collect(Collectors.toList());
+                .stream()
+                .map(bucketSettings -> new CouchbaseDatabase(bucketSettings.name()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -117,8 +117,8 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
     }
 
     @Override
-    public ServerConfigurationImpl defaultConfiguration() {
-        return ServerConfigurationImpl.Companion.create(DatabaseVendor.COUCHBASE, "localhost");
+    public ServerConfiguration defaultConfiguration() {
+        return ServerConfigurationImpl.Companion.create(DatabaseVendor.COUCHBASE);
     }
 
     @Override

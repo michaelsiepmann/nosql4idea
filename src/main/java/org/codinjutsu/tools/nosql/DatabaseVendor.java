@@ -17,6 +17,7 @@
 package org.codinjutsu.tools.nosql;
 
 import com.intellij.openapi.project.Project;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.explorer.DatabaseServerFolder;
@@ -66,7 +67,7 @@ public enum DatabaseVendor {
             return new CouchbaseDatabaseServerFolder(databaseServer);
         }
     },
-    ELASTICSEARCH("Elasticsearch", ElasticsearchFakeFileType.INSTANCE.getIcon(), "localhost:9200", "format: http://host:port.", false) {
+    ELASTICSEARCH("Elasticsearch", ElasticsearchFakeFileType.INSTANCE.getIcon(), "http://localhost:9200", "format: http://host:port.", false) {
         @Override
         public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager) {
             return new ElasticsearchDatabaseServerFolder(databaseServer, databaseVendorClientManager);

@@ -8,7 +8,7 @@ import org.codinjutsu.tools.nosql.commons.model.explorer.Folder
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType.ELASTICSEARCH_TYPE
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
-import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchServerConfiguration
+import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchType
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion
 import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchObjectFile
@@ -21,7 +21,7 @@ internal class ElasticsearchTypeFolder(override val data: ElasticsearchType, ove
     override val children: Collection<Folder<*>>
         get() = emptyList()
 
-    override val databaseServer: DatabaseServer<ElasticsearchServerConfiguration>
+    override val databaseServer: DatabaseServer
         get() = parent.databaseServer
 
     override val database: ElasticsearchDatabase?
@@ -30,7 +30,7 @@ internal class ElasticsearchTypeFolder(override val data: ElasticsearchType, ove
     override fun createNoSqlObjectFile(project: Project) =
             ElasticsearchObjectFile(project, databaseServer.configuration, parent.data, data)
 
-    override fun canBeDeleted(folderType: FolderType) = folderType == ELASTICSEARCH_TYPE && databaseServer.configuration.version >= ElasticsearchVersion.VERSION_20
+    override fun canBeDeleted(folderType: FolderType) = folderType == ELASTICSEARCH_TYPE && (databaseServer.configuration as ElasticsearchServerConfiguration).version >= ElasticsearchVersion.VERSION_20
 
     override fun isViewableContent() = true
 

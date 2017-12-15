@@ -1,6 +1,6 @@
 package org.codinjutsu.tools.nosql.redis
 
-import org.codinjutsu.tools.nosql.ServerConfiguration
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient
 import redis.clients.jedis.Jedis
 

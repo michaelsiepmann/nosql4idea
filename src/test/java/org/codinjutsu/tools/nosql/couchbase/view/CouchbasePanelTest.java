@@ -18,7 +18,7 @@ package org.codinjutsu.tools.nosql.couchbase.view;
 
 import com.couchbase.client.java.document.json.JsonObject;
 import com.intellij.openapi.command.impl.DummyProject;
-import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
@@ -31,7 +31,6 @@ import org.fest.swing.fixture.FrameFixture;
 import org.fest.swing.fixture.JTableFixture;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

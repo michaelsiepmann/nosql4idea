@@ -29,14 +29,14 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoIterable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codinjutsu.tools.nosql.DatabaseVendor;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
-import org.codinjutsu.tools.nosql.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
@@ -50,7 +50,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class MongoClient implements DatabaseClient<MongoContext, DBObject, ServerConfiguration> {
+import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
+
+public class MongoClient implements DatabaseClient<MongoContext, DBObject> {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
@@ -85,11 +87,8 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject, Serve
     }
 
     @Override
-    public ServerConfiguration defaultConfiguration() {
-        ServerConfigurationImpl serverConfiguration = new ServerConfigurationImpl();
-        serverConfiguration.setDatabaseVendor(DatabaseVendor.MONGO);
-        serverConfiguration.setServerUrl(DatabaseVendor.MONGO.defaultUrl);
-        return serverConfiguration;
+    public MongoServerConfiguration defaultConfiguration() {
+        return (MongoServerConfiguration) ServerConfigurationImpl.Companion.create(MONGO);
     }
 
     public List<DatabaseServer> getServers() {

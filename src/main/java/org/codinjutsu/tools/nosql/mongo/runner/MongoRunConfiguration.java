@@ -40,7 +40,8 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.NoSqlConfiguration;
-import org.codinjutsu.tools.nosql.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -144,7 +145,7 @@ class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationMod
         return serverConfiguration;
     }
 
-    public void setServerConfiguration(ServerConfiguration serverConfiguration) {
+    public void setServerConfiguration(MongoServerConfiguration serverConfiguration) {
         this.serverConfiguration = serverConfiguration;
     }
 

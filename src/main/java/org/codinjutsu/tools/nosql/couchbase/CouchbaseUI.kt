@@ -17,9 +17,7 @@
 package org.codinjutsu.tools.nosql.couchbase
 
 import com.intellij.openapi.project.Project
-import org.codinjutsu.tools.nosql.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.DatabaseUI
-import org.codinjutsu.tools.nosql.commons.view.AuthenticationView
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient
@@ -28,10 +26,10 @@ import org.codinjutsu.tools.nosql.couchbase.view.CouchbaseContext
 import org.codinjutsu.tools.nosql.couchbase.view.CouchbasePanel
 import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile
 
-class CouchbaseUI : DatabaseUI<ServerConfiguration> {
+class CouchbaseUI : DatabaseUI {
     override fun createAythenticationView() = CouchbaseAuthenticationPanel()
 
-    override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile<ServerConfiguration>): NoSqlResultView {
+    override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView {
         val couchbaseObjectFile = objectFile as CouchbaseObjectFile
         return CouchbasePanel(project, CouchbaseContext(CouchbaseClient.getInstance(project), couchbaseObjectFile.configuration, couchbaseObjectFile.database))
     }

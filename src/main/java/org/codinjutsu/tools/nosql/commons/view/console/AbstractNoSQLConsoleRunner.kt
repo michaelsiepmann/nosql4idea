@@ -9,10 +9,10 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import org.apache.commons.lang.StringUtils
 import org.codinjutsu.tools.nosql.DatabaseVendor
 import org.codinjutsu.tools.nosql.NoSqlConfiguration
-import org.codinjutsu.tools.nosql.ServerConfiguration
+import org.codinjutsu.tools.nosql.commons.configuration.ConsoleRunnerConfiguration
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 
 internal abstract class AbstractNoSQLConsoleRunner(project: Project, consoleTitle: String, workingDir: String, val serverConfiguration: ServerConfiguration) :
         AbstractConsoleRunnerWithHistory<NoSqlConsoleView>(project, consoleTitle, workingDir) {
@@ -62,23 +62,27 @@ internal abstract class AbstractNoSQLConsoleRunner(project: Project, consoleTitl
     protected abstract fun createProcess(commandLine: GeneralCommandLine, serverConfiguration: ServerConfiguration): Process
 
     protected fun addCommandlineParameter(commandLine: GeneralCommandLine, parameterKey: String, parameterValue: String) {
-        if (StringUtils.isNotBlank(parameterValue)) {
+        if (parameterValue.isNotBlank()) {
             commandLine.addParameter(parameterKey)
             commandLine.addParameter(parameterValue)
         }
     }
 
     protected fun setWorkingDirectory(commandLine: GeneralCommandLine, serverConfiguration: ServerConfiguration) {
-        val shellWorkingDir = serverConfiguration.shellWorkingDir
-        if (StringUtils.isNotBlank(shellWorkingDir)) {
-            commandLine.withWorkDirectory(shellWorkingDir)
+        if (serverConfiguration is ConsoleRunnerConfiguration) {
+            val shellWorkingDir = serverConfiguration.shellWorkingDir
+            if (shellWorkingDir?.isNotBlank() == true) {
+                commandLine.withWorkDirectory(shellWorkingDir)
+            }
         }
     }
 
     protected fun addShellArguments(commandLine: GeneralCommandLine, serverConfiguration: ServerConfiguration) {
-        val shellArgumentsLine = serverConfiguration.shellArgumentsLine
-        if (StringUtils.isNotBlank(shellArgumentsLine)) {
-            commandLine.addParameters(*shellArgumentsLine!!.split((" ").toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray())
+        if (serverConfiguration is ConsoleRunnerConfiguration) {
+            val shellArgumentsLine = serverConfiguration.shellArgumentsLine
+            if (shellArgumentsLine?.isNotBlank() == true) {
+                commandLine.addParameters(*shellArgumentsLine.split((" ").toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray())
+            }
         }
     }
 }
