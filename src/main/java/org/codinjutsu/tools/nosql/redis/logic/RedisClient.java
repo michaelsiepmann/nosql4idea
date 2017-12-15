@@ -19,14 +19,13 @@ package org.codinjutsu.tools.nosql.redis.logic;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.redis.RedisContext;
+import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
@@ -87,7 +86,7 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisRe
 
     @Override
     public ServerConfiguration defaultConfiguration() {
-        return ServerConfigurationImpl.Companion.create(DatabaseVendor.REDIS);
+        return new RedisServerConfiguration();
     }
 
     @Override

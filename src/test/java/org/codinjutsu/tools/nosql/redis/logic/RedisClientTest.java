@@ -16,12 +16,11 @@
 
 package org.codinjutsu.tools.nosql.redis.logic;
 
-import org.codinjutsu.tools.nosql.DatabaseVendor;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.redis.RedisClientStub;
 import org.codinjutsu.tools.nosql.redis.RedisContext;
+import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
@@ -46,9 +45,8 @@ class RedisClientTest {
     @Test
     void loadWithEmptyFilter() {
         RedisClient redisClient = new RedisClientStub(jedis);
-        ServerConfiguration serverConfiguration = new ServerConfigurationImpl();
-        serverConfiguration.setDatabaseVendor(DatabaseVendor.REDIS);
-        serverConfiguration.setServerUrl("localhost:6379");
+        WriteableServerConfiguration serverConfiguration = new RedisServerConfiguration();
+        serverConfiguration.set(null, "localhost:6379");
 
         QueryOptionsImpl queryOptions = new QueryOptionsImpl();
         queryOptions.setFilter("*");

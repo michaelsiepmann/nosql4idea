@@ -18,7 +18,8 @@ package org.codinjutsu.tools.nosql.couchbase.view
 
 import com.intellij.openapi.command.impl.DummyProject
 import org.codinjutsu.tools.nosql.DatabaseVendor
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration
+import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel
@@ -77,9 +78,9 @@ internal class ServerConfigurationPanelTest {
             checkBox("autoConnectField").select()
         }
 
-        val configuration = ServerConfigurationImpl()
+        val configuration = CouchbaseServerConfiguration()
 
-        configurationPanel?.applyConfigurationData(configuration)
+        configurationPanel?.applyConfigurationData(configuration as WriteableServerConfiguration)
 
         assertEquals("Localhost", configuration.label)
         assertEquals(DatabaseVendor.COUCHBASE, configuration.databaseVendor)
@@ -95,10 +96,7 @@ internal class ServerConfigurationPanelTest {
 
     @Test
     fun loadCouchbaseConfiguration() {
-        val configuration = ServerConfigurationImpl()
-        configuration.label = "Localhost"
-        configuration.databaseVendor = DatabaseVendor.COUCHBASE
-        configuration.serverUrl = "localhost:25"
+        val configuration = CouchbaseServerConfiguration(label = "Localhost", serverUrl = "localhost:25")
 
         val authenticationSettings = AuthenticationSettings()
         authenticationSettings.username = "john"

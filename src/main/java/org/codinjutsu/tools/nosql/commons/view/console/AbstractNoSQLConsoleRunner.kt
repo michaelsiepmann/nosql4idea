@@ -70,18 +70,20 @@ internal abstract class AbstractNoSQLConsoleRunner(project: Project, consoleTitl
 
     protected fun setWorkingDirectory(commandLine: GeneralCommandLine, serverConfiguration: ServerConfiguration) {
         if (serverConfiguration is ConsoleRunnerConfiguration) {
-            val shellWorkingDir = serverConfiguration.shellWorkingDir
-            if (shellWorkingDir?.isNotBlank() == true) {
-                commandLine.withWorkDirectory(shellWorkingDir)
+            serverConfiguration.shellWorkingDir?.let {
+                if (it.isNotBlank()) {
+                    commandLine.withWorkDirectory(it)
+                }
             }
         }
     }
 
     protected fun addShellArguments(commandLine: GeneralCommandLine, serverConfiguration: ServerConfiguration) {
         if (serverConfiguration is ConsoleRunnerConfiguration) {
-            val shellArgumentsLine = serverConfiguration.shellArgumentsLine
-            if (shellArgumentsLine?.isNotBlank() == true) {
-                commandLine.addParameters(*shellArgumentsLine.split((" ").toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray())
+            serverConfiguration.shellArgumentsLine?.let {
+                if (it.isNotBlank()) {
+                    commandLine.addParameters(*it.split(" ").dropLastWhile({ it.isEmpty() }).toTypedArray())
+                }
             }
         }
     }

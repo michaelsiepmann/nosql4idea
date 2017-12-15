@@ -17,6 +17,7 @@
 package org.codinjutsu.tools.nosql;
 
 import com.intellij.util.ui.ItemRemovable;
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 
 import javax.swing.table.AbstractTableModel;
@@ -80,7 +81,7 @@ class NoSqlServerTableModel extends AbstractTableModel implements ItemRemovable 
     }
 
     public void setValueAt(Object value, int row, int column) {
-        ServerConfiguration configuration = mongoServerConfigurations.get(row);
+        WriteableServerConfiguration configuration = (WriteableServerConfiguration) mongoServerConfigurations.get(row);
         switch (column) {
             case 0: {
                 configuration.setLabel((String) value);

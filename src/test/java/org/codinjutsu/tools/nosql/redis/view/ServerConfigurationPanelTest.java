@@ -18,11 +18,12 @@ package org.codinjutsu.tools.nosql.redis.view;
 
 import com.intellij.openapi.command.impl.DummyProject;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel;
+import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;
@@ -76,9 +77,9 @@ class ServerConfigurationPanelTest {
         frameFixture.textBox("userDatabaseField").setText("0");
         frameFixture.checkBox("autoConnectField").select();
 
-        ServerConfiguration configuration = new ServerConfigurationImpl();
+        ServerConfiguration configuration = new RedisServerConfiguration();
 
-        configurationPanel.applyConfigurationData(configuration);
+        configurationPanel.applyConfigurationData((WriteableServerConfiguration) configuration);
 
         assertEquals("Localhost", configuration.getLabel());
         assertEquals(DatabaseVendor.REDIS, configuration.getDatabaseVendor());
@@ -93,10 +94,8 @@ class ServerConfigurationPanelTest {
 
     @Test
     void loadRedisConfiguration() {
-        ServerConfiguration configuration = new ServerConfigurationImpl();
-        configuration.setLabel("Localhost");
-        configuration.setDatabaseVendor(DatabaseVendor.REDIS);
-        configuration.setServerUrl("localhost:6379");
+        WriteableServerConfiguration configuration = new RedisServerConfiguration();
+        configuration.set("Localhost", "localhost:6379");
 
         AuthenticationSettings authenticationSettings = new AuthenticationSettings();
         authenticationSettings.setPassword("johnpassword");

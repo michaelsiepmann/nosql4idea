@@ -30,7 +30,6 @@ import com.mongodb.client.MongoIterable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
@@ -49,8 +48,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
 
 public class MongoClient implements DatabaseClient<MongoContext, DBObject> {
 
@@ -88,7 +85,7 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject> {
 
     @Override
     public MongoServerConfiguration defaultConfiguration() {
-        return (MongoServerConfiguration) ServerConfigurationImpl.Companion.create(MONGO);
+        return new MongoServerConfiguration();
     }
 
     public List<DatabaseServer> getServers() {

@@ -18,7 +18,7 @@ package org.codinjutsu.tools.nosql;
 
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanelFactory;
 import org.jetbrains.annotations.Nullable;
@@ -29,12 +29,12 @@ import java.awt.*;
 class ConfigurationDialog extends DialogWrapper {
 
     private final ServerConfigurationPanelFactory serverConfigurationPanelFactory;
-    private final ServerConfiguration configuration;
+    private final WriteableServerConfiguration configuration;
     private ServerConfigurationPanel serverConfigurationPanel;
 
     ConfigurationDialog(Component parent,
                         ServerConfigurationPanelFactory serverConfigurationPanelFactory,
-                        ServerConfiguration configuration) {
+                        WriteableServerConfiguration configuration) {
         super(parent, true);
         this.serverConfigurationPanelFactory = serverConfigurationPanelFactory;
         this.configuration = configuration;

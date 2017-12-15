@@ -38,6 +38,7 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanelFactory;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -157,8 +158,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                             }
 
                             DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
-                            ServerConfiguration serverConfiguration = databaseVendorClientManager.getClient(selectedDatabaseVendor).defaultConfiguration();
-                            serverConfiguration.setDatabaseVendor(selectedDatabaseVendor);
+                            WriteableServerConfiguration serverConfiguration = (WriteableServerConfiguration) databaseVendorClientManager.getClient(selectedDatabaseVendor).defaultConfiguration();
 
                             ConfigurationDialog dialog = new ConfigurationDialog(
                                     mainPanel,
@@ -184,7 +184,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                                 return;
                             }
                             ServerConfiguration sourceConfiguration = configurations.get(selectedIndex);
-                            ServerConfiguration copiedConfiguration = sourceConfiguration.copy();
+                            WriteableServerConfiguration copiedConfiguration = (WriteableServerConfiguration) sourceConfiguration.copy();
 
                             ConfigurationDialog dialog = new ConfigurationDialog(
                                     mainPanel,

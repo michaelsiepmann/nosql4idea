@@ -20,7 +20,7 @@ import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.cluster.BucketSettings;
 import com.couchbase.client.java.cluster.ClusterManager;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
@@ -40,12 +40,12 @@ import static org.mockito.Mockito.when;
 class CouchbaseClientTest {
 
     private CouchbaseCluster couchbaseCluster;
-    private ServerConfigurationImpl configuration;
+    private CouchbaseServerConfiguration configuration;
 
     @BeforeEach
     void setUp() {
         couchbaseCluster = mock(CouchbaseCluster.class);
-        configuration = new ServerConfigurationImpl();
+        configuration = new CouchbaseServerConfiguration();
         AuthenticationSettings authenticationSettings = new AuthenticationSettings();
         configuration.setAuthenticationSettings(authenticationSettings);
         ClusterManager clusterManager = mock(ClusterManager.class);

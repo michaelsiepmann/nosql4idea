@@ -28,9 +28,8 @@ import com.couchbase.client.java.query.N1qlQueryRow;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
@@ -118,7 +117,7 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
 
     @Override
     public ServerConfiguration defaultConfiguration() {
-        return ServerConfigurationImpl.Companion.create(DatabaseVendor.COUCHBASE);
+        return new CouchbaseServerConfiguration();
     }
 
     @Override

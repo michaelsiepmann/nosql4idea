@@ -28,17 +28,21 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Ref;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.RawCommandLineEditor;
-import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.commons.configuration.ConsoleRunnerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationFactoryKt;
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableConsoleRunnerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class ServerConfigurationPanel extends JPanel {
 
@@ -143,18 +147,17 @@ public class ServerConfigurationPanel extends JPanel {
 
     @NotNull
     private ServerConfiguration createServerConfigurationForTesting() {
-        return ServerConfigurationImpl.Companion.create(databaseVendor, getServerUrls(), authenticationView.create(), getUserDatabase());
+        return ServerConfigurationFactoryKt.create(databaseVendor, getServerUrls(), authenticationView.create(), getUserDatabase());
     }
 
-    public void applyConfigurationData(ServerConfiguration configuration) {
+    public void applyConfigurationData(WriteableServerConfiguration configuration) {
         configuration.setLabel(getLabel());
-        configuration.setDatabaseVendor(databaseVendor);
         configuration.setServerUrl(getServerUrls());
         configuration.setAuthenticationSettings(authenticationView.create());
 
         configuration.setUserDatabase(getUserDatabase());
-        if (configuration instanceof ConsoleRunnerConfiguration) {
-            ConsoleRunnerConfiguration consoleRunnerConfiguration = (ConsoleRunnerConfiguration) configuration;
+        if (configuration instanceof WriteableConsoleRunnerConfiguration) {
+            WriteableConsoleRunnerConfiguration consoleRunnerConfiguration = (WriteableConsoleRunnerConfiguration) configuration;
             consoleRunnerConfiguration.setShellArgumentsLine(getShellArgumentsLine());
             consoleRunnerConfiguration.setShellWorkingDir(getShellWorkingDir());
         }
@@ -162,11 +165,11 @@ public class ServerConfigurationPanel extends JPanel {
     }
 
     public ValidationInfo validateInputs() {
-        if (StringUtils.isEmpty(getLabel())) {
+        if (isEmpty(getLabel())) {
             return new ValidationInfo("Label should be set");
         }
         String serverUrl = getServerUrls();
-        if (serverUrl == null) {
+        if (isEmpty(serverUrl)) {
             return new ValidationInfo("URL(s) should be set");
         }
         return null;
@@ -175,7 +178,7 @@ public class ServerConfigurationPanel extends JPanel {
 
     private void validateUrls() {
         String serverUrl = getServerUrls();
-        if (serverUrl == null) {
+        if (isEmpty(serverUrl)) {
             throw new ConfigurationException("URL(s) should be set");
         }
         for (String subServerUrl : serverUrl.split(",")) {
@@ -195,23 +198,24 @@ public class ServerConfigurationPanel extends JPanel {
 
     private String getLabel() {
         String label = labelField.getText();
-        if (StringUtils.isNotBlank(label)) {
+        if (isNotBlank(label)) {
             return label;
         }
         return null;
     }
 
+    @NotNull
     private String getServerUrls() {
         String serverUrl = serverUrlField.getText();
-        if (StringUtils.isNotBlank(serverUrl)) {
+        if (isNotBlank(serverUrl)) {
             return serverUrl;
         }
-        return null;
+        return "";
     }
 
     private String getUserDatabase() {
         String userDatabase = userDatabaseField.getText();
-        if (StringUtils.isNotBlank(userDatabase)) {
+        if (isNotBlank(userDatabase)) {
             return userDatabase;
         }
         return null;
@@ -220,7 +224,7 @@ public class ServerConfigurationPanel extends JPanel {
 
     private String getShellArgumentsLine() {
         String shellArgumentsLine = shellArgumentsLineField.getText();
-        if (StringUtils.isNotBlank(shellArgumentsLine)) {
+        if (isNotBlank(shellArgumentsLine)) {
             return shellArgumentsLine;
         }
 
@@ -229,7 +233,7 @@ public class ServerConfigurationPanel extends JPanel {
 
     private String getShellWorkingDir() {
         String shellWorkingDir = shellWorkingDirField.getText();
-        if (StringUtils.isNotBlank(shellWorkingDir)) {
+        if (isNotBlank(shellWorkingDir)) {
             return shellWorkingDir;
         }
 

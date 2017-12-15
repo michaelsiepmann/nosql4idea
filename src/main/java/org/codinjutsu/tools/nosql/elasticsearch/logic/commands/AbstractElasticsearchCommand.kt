@@ -51,7 +51,7 @@ internal abstract class AbstractElasticsearchCommand : ElasticsearchCommand {
             }
 
     protected fun urlWithIndexAndType(context: ElasticsearchContext): String {
-        return context.serverConfiguration.serverUrl!!
+        return context.serverConfiguration.serverUrl
                 .addNameToPath(context.database.name)
                 .addNameToPath(context.type?.name)
     }

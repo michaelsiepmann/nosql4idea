@@ -24,9 +24,12 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
+import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration;
+import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
+import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -67,10 +70,26 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
     @Override
     public void loadState(Element element) {
         for (Element child : element.getChild("configurations").getChildren()) {
-            Class<? extends ServerConfiguration> clazz = child.getName().equalsIgnoreCase("ElasticsearchServerConfiguration") ? ElasticsearchServerConfiguration.class : ServerConfigurationImpl.class;
+            Class<? extends ServerConfiguration> clazz = getServerConfigurationClass(child.getName());
             serverConfigurations.add(XmlSerializer.deserialize(child, clazz));
         }
         shellPathByDatabaseVendor = XmlSerializer.deserialize(element.getChild("shell"), HashMap.class);
+    }
+
+    @NotNull
+    private Class<? extends ServerConfiguration> getServerConfigurationClass(String name) {
+        switch (name.toLowerCase()) {
+            case "elasticsearchserverconfiguration":
+                return ElasticsearchServerConfiguration.class;
+            case "mongoserverconfiguration":
+                return MongoServerConfiguration.class;
+            case "redisserverconfiguration":
+                return RedisServerConfiguration.class;
+            case "couchbaseserverconfiguration":
+                return CouchbaseServerConfiguration.class;
+            default:
+                return MongoServerConfiguration.class;
+        }
     }
 
     public void setServerConfigurations(List<ServerConfiguration> serverConfigurations) {

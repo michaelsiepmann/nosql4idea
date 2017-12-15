@@ -38,7 +38,7 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
     }
 
     override fun loadServer(databaseServer: DatabaseServer) {
-        val databases = GetIndices(databaseServer.configuration.serverUrl!!)
+        val databases = GetIndices(databaseServer.configuration.serverUrl)
                 .execute()
                 .entrySet()
                 .map {
@@ -61,12 +61,12 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
 
     override fun dropFolder(configuration: ServerConfiguration, type: Any) {
         if (type is ElasticsearchType) {
-            DeleteElement("${configuration.serverUrl!!}/${type.databaseName}/${type.name}").execute()
+            DeleteElement("${configuration.serverUrl}/${type.databaseName}/${type.name}").execute()
         }
     }
 
     override fun dropDatabase(configuration: ServerConfiguration, database: Database) {
-        DeleteElement("${configuration.serverUrl!!}/${database.name}").execute()
+        DeleteElement("${configuration.serverUrl}/${database.name}").execute()
     }
 
     override fun findDocument(context: ElasticsearchContext, id: Any): JsonObject? {
@@ -82,12 +82,12 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
         val database = context.database
         val type = context.type
         if (type != null) {
-            DeleteElement("${serverConfiguration.serverUrl!!}/${database.name}/${type.name}/$_id").execute()
+            DeleteElement("${serverConfiguration.serverUrl}/${database.name}/${type.name}/$_id").execute()
         }
     }
 
     private fun getTypes(configuration: ElasticsearchServerConfiguration, index: String): MutableCollection<ElasticsearchType> {
-        return GetTypes(configuration.serverUrl!!, index)
+        return GetTypes(configuration.serverUrl, index)
                 .execute()
                 .getAsJsonObject(index)
                 .getAsJsonObject("mappings")
@@ -99,12 +99,12 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
     override fun isDatabaseWithCollections() = true
 
     override fun createFolder(serverConfiguration: ServerConfiguration, parentFolderName: String, folderName: String): ElasticsearchType {
-        CreateType(serverConfiguration.serverUrl!!, parentFolderName, folderName).execute()
+        CreateType(serverConfiguration.serverUrl, parentFolderName, folderName).execute()
         return ElasticsearchType(folderName, parentFolderName, (serverConfiguration as ElasticsearchServerConfiguration).version)
     }
 
     override fun importFile(context: ElasticsearchContext, file: File): ImportResultState {
-        val result = BulkImport(context.serverConfiguration.serverUrl!!, file).execute()
+        val result = BulkImport(context.serverConfiguration.serverUrl, file).execute()
         return ImportResultState(false, "")
     }
 

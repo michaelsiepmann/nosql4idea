@@ -18,13 +18,13 @@ package org.codinjutsu.tools.nosql.mongo.view;
 
 import com.intellij.openapi.command.impl.DummyProject;
 import com.mongodb.AuthenticationMechanism;
-import org.codinjutsu.tools.nosql.DatabaseVendor;
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel;
+import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoExtraSettings;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
+import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,7 +55,7 @@ class ServerConfigurationPanelTest {
         configurationPanel = GuiActionRunner.execute(new GuiQuery<ServerConfigurationPanel>() {
             protected ServerConfigurationPanel executeInEDT() {
                 return new ServerConfigurationPanel(DummyProject.getInstance(),
-                        DatabaseVendor.MONGO,
+                        MONGO,
                         databaseClientMock,
                         new MongoAuthenticationPanel()
                 );
@@ -88,12 +89,12 @@ class ServerConfigurationPanelTest {
 
         frameFixture.checkBox("sslConnectionField").select();
         frameFixture.checkBox("autoConnectField").select();
-        ServerConfiguration configuration = new ServerConfigurationImpl();
+        ServerConfiguration configuration = new MongoServerConfiguration();
 
-        configurationPanel.applyConfigurationData(configuration);
+        configurationPanel.applyConfigurationData((WriteableServerConfiguration) configuration);
 
         assertEquals("Localhost", configuration.getLabel());
-        assertEquals(DatabaseVendor.MONGO, configuration.getDatabaseVendor());
+        assertEquals(MONGO, configuration.getDatabaseVendor());
         assertEquals("localhost:25", configuration.getServerUrl());
         AuthenticationSettings authenticationSettings = configuration.getAuthenticationSettings();
         assertEquals("john", authenticationSettings.getUsername());
@@ -109,10 +110,8 @@ class ServerConfigurationPanelTest {
 
     @Test
     void loadMongoConfiguration() {
-        ServerConfiguration configuration = new ServerConfigurationImpl();
-        configuration.setLabel("Localhost");
-        configuration.setDatabaseVendor(DatabaseVendor.MONGO);
-        configuration.setServerUrl("localhost:25");
+        WriteableServerConfiguration configuration = new MongoServerConfiguration();
+        configuration.set("Localhost", "localhost:25");
 
         AuthenticationSettings authenticationSettings = new AuthenticationSettings();
         authenticationSettings.setUsername("john");
@@ -166,7 +165,8 @@ class ServerConfigurationPanelTest {
 
         frameFixture.textBox("serverUrlField").setText("host");
 
-        configurationPanel.applyConfigurationData(new ServerConfigurationImpl());
+        final MongoServerConfiguration configuration = new MongoServerConfiguration();
+        configurationPanel.applyConfigurationData((WriteableServerConfiguration) configuration);
     }
 
     @Test
@@ -177,7 +177,8 @@ class ServerConfigurationPanelTest {
 
         frameFixture.textBox("serverUrlField").setText("host:port");
 
-        configurationPanel.applyConfigurationData(new ServerConfigurationImpl());
+        final MongoServerConfiguration configuration = new MongoServerConfiguration();
+        configurationPanel.applyConfigurationData((WriteableServerConfiguration) configuration);
     }
 
     @Test
@@ -185,19 +186,18 @@ class ServerConfigurationPanelTest {
         frameFixture.textBox("labelField").setText("Localhost");
         frameFixture.textBox("serverUrlField").setText("localhost:25, localhost:26");
 
-        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
+        ServerConfiguration configuration = new MongoServerConfiguration();
 
-        configurationPanel.applyConfigurationData(configuration);
+        configurationPanel.applyConfigurationData((WriteableServerConfiguration) configuration);
 
         assertEquals("localhost:25, localhost:26", configuration.getServerUrl());
     }
 
     @Test
     void loadFormWithReplicatSet() {
-        ServerConfigurationImpl configuration = new ServerConfigurationImpl();
+        WriteableServerConfiguration configuration = new MongoServerConfiguration();
+        configuration.set(null, "localhost:25, localhost:26");
         configuration.setAuthenticationSettings(new AuthenticationSettings());
-
-        configuration.setServerUrl("localhost:25, localhost:26");
 
         configurationPanel.loadConfigurationData(configuration);
 

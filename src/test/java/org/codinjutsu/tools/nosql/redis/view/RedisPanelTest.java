@@ -32,10 +32,10 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.impl.SettingsImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.PlatformLiteFixture;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationImpl;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.redis.RedisContext;
+import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Tuple;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -118,7 +118,7 @@ class RedisPanelTest extends PlatformLiteFixture {
 
         redisPanelWrapper = GuiActionRunner.execute(new GuiQuery<RedisPanel>() {
             protected RedisPanel executeInEDT() {
-                return new RedisPanel(dummyProject, new RedisContext(redisClientMock, new ServerConfigurationImpl(), new RedisDatabase("0"))) {
+                return new RedisPanel(dummyProject, new RedisContext(redisClientMock, new RedisServerConfiguration(), new RedisDatabase("0"))) {
                     @Override
                     protected void addActions(DefaultActionGroup actionResultGroup, AnAction expandAllAction, AnAction collapseAllAction) {
                     }
@@ -137,25 +137,25 @@ class RedisPanelTest extends PlatformLiteFixture {
         JTableFixture tableFixture = frameFixture.table("resultTreeTable");
         tableFixture.replaceCellReader(new TableCellReader());
         tableFixture.requireColumnCount(2)
-                    .requireContents(new String[][]{
-                            {"foo:bar", "john"},
-                            {"stuff:bar", "[drink, some, beer]"},
-                            {"[0]", "drink"},
-                            {"[1]", "some"},
-                            {"[2]", "beer"},
-                            {"stuff:countries", "{France, Canada, Japan}"},
-                            {"-", "France"},
-                            {"-", "Canada"},
-                            {"-", "Japan"},
-                            {"stuff:aliases", "{david=dada, mickael=mike, bruno=nono}"},
-                            {"david", "dada"},
-                            {"mickael", "mike"},
-                            {"bruno", "nono"},
-                            {"stuff:games:critics", "{(unreal, 8.0), (quake, 9.0), (half-life, 10.0)}"},
-                            {"-", "(unreal, 8.0)"},
-                            {"-", "(quake, 9.0)"},
-                            {"-", "(half-life, 10.0)"},
-                    });
+                .requireContents(new String[][]{
+                        {"foo:bar", "john"},
+                        {"stuff:bar", "[drink, some, beer]"},
+                        {"[0]", "drink"},
+                        {"[1]", "some"},
+                        {"[2]", "beer"},
+                        {"stuff:countries", "{France, Canada, Japan}"},
+                        {"-", "France"},
+                        {"-", "Canada"},
+                        {"-", "Japan"},
+                        {"stuff:aliases", "{david=dada, mickael=mike, bruno=nono}"},
+                        {"david", "dada"},
+                        {"mickael", "mike"},
+                        {"bruno", "nono"},
+                        {"stuff:games:critics", "{(unreal, 8.0), (quake, 9.0), (half-life, 10.0)}"},
+                        {"-", "(unreal, 8.0)"},
+                        {"-", "(quake, 9.0)"},
+                        {"-", "(half-life, 10.0)"},
+                });
     }
 
     @Test
@@ -166,28 +166,28 @@ class RedisPanelTest extends PlatformLiteFixture {
         JTableFixture resultTreeTable = frameFixture.table("resultTreeTable");
         resultTreeTable.replaceCellReader(new TableCellReader());
         resultTreeTable.requireColumnCount(2)
-                       .requireContents(new String[][]{
-                               {"foo", ""},
-                               {"bar", "john"},
-                               {"stuff", ""},
-                               {"bar", "[drink, some, beer]"},
-                               {"[0]", "drink"},
-                               {"[1]", "some"},
-                               {"[2]", "beer"},
-                               {"countries", "{France, Canada, Japan}"},
-                               {"-", "France"},
-                               {"-", "Canada"},
-                               {"-", "Japan"},
-                               {"aliases", "{david=dada, mickael=mike, bruno=nono}"},
-                               {"david", "dada"},
-                               {"mickael", "mike"},
-                               {"bruno", "nono"},
-                               {"games", ""},
-                               {"critics", "{(unreal, 8.0), (quake, 9.0), (half-life, 10.0)}"},
-                               {"-", "(unreal, 8.0)"},
-                               {"-", "(quake, 9.0)"},
-                               {"-", "(half-life, 10.0)"},
-                       });
+                .requireContents(new String[][]{
+                        {"foo", ""},
+                        {"bar", "john"},
+                        {"stuff", ""},
+                        {"bar", "[drink, some, beer]"},
+                        {"[0]", "drink"},
+                        {"[1]", "some"},
+                        {"[2]", "beer"},
+                        {"countries", "{France, Canada, Japan}"},
+                        {"-", "France"},
+                        {"-", "Canada"},
+                        {"-", "Japan"},
+                        {"aliases", "{david=dada, mickael=mike, bruno=nono}"},
+                        {"david", "dada"},
+                        {"mickael", "mike"},
+                        {"bruno", "nono"},
+                        {"games", ""},
+                        {"critics", "{(unreal, 8.0), (quake, 9.0), (half-life, 10.0)}"},
+                        {"-", "(unreal, 8.0)"},
+                        {"-", "(quake, 9.0)"},
+                        {"-", "(half-life, 10.0)"},
+                });
     }
 
     private RedisResult createRedisResults() {

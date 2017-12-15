@@ -22,10 +22,10 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.mongo.MongoClientStub;
+import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
@@ -169,7 +169,7 @@ class MongoClientTest {
         com.mongodb.MongoClient mongo = mock(com.mongodb.MongoClient.class);
         when(mongo.getDB(any())).thenReturn(db);
         mongoClient = new MongoClientStub(mongo);
-        ServerConfiguration serverConfiguration = mongoClient.defaultConfiguration();
+        MongoServerConfiguration serverConfiguration = mongoClient.defaultConfiguration();
         serverConfiguration.setServerUrl("localhost:27017");
         context = new MongoContext(mongoClient, serverConfiguration, new MongoCollection("dummyCollection", "test"));
     }
