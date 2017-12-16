@@ -31,7 +31,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.codinjutsu.tools.nosql.commons.utils.StringUtils.parseNumber;
+import static org.codinjutsu.tools.nosql.commons.utils.StringUtilsKt.parseNumber;
 
 public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
     private static final Map<JsonDataType, TextFieldWrapper> UI_COMPONENT_BY_JSON_DATATYPE = new HashMap<>();

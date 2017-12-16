@@ -3,7 +3,6 @@ package org.codinjutsu.tools.nosql.commons.view.nodedescriptor
 import com.intellij.ui.ColoredTableCellRenderer
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.SimpleTextAttributes
-import org.apache.commons.lang.StringUtils
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
 import java.lang.String.format
 
@@ -29,9 +28,9 @@ internal abstract class AbstractKeyValueDescriptor(val key: String, private var 
         _value = value
     }
 
-    override fun isSameKey(key: String?) = StringUtils.equals(key, this.key)
+    override fun isSameKey(key: String?) = key == this.key
 
-    override fun toString() = format(TO_STRING_TEMPLATE, key, value)
+    override fun toString(): String = format(TO_STRING_TEMPLATE, key, value)
 
     protected open class DefaultKeyNullValueDescriptor(key: String) : AbstractKeyValueDescriptor(key, null, StyleAttributesProvider.getNullAttribute()) {
         override fun getValueAndAbbreviateIfNecessary() = "null"

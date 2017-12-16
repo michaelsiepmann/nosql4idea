@@ -18,8 +18,8 @@ package org.codinjutsu.tools.nosql.couchbase.configuration
 
 import org.codinjutsu.tools.nosql.DatabaseVendor
 import org.codinjutsu.tools.nosql.DatabaseVendor.COUCHBASE
-import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 
 class CouchbaseServerConfiguration(

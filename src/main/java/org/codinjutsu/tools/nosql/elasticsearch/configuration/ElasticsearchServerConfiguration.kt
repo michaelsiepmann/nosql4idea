@@ -2,8 +2,8 @@ package org.codinjutsu.tools.nosql.elasticsearch.configuration
 
 import org.codinjutsu.tools.nosql.DatabaseVendor
 import org.codinjutsu.tools.nosql.DatabaseVendor.ELASTICSEARCH
-import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion
 

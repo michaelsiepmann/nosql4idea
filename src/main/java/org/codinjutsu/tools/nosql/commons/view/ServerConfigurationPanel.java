@@ -31,7 +31,6 @@ import com.intellij.ui.RawCommandLineEditor;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.commons.configuration.ConsoleRunnerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfigurationFactoryKt;
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableConsoleRunnerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
@@ -64,7 +63,6 @@ public class ServerConfigurationPanel extends JPanel {
     private final DatabaseClient databaseClient;
     private final DatabaseVendor databaseVendor;
     private final AuthenticationView authenticationView;
-
 
     public ServerConfigurationPanel(Project project,
                                     DatabaseVendor databaseVendor,
@@ -110,7 +108,8 @@ public class ServerConfigurationPanel extends JPanel {
             final Ref<Exception> excRef = new Ref<>();
             final ProgressManager progressManager = ProgressManager.getInstance();
             progressManager.runProcessWithProgressSynchronously(() -> {
-                ServerConfiguration configuration = createServerConfigurationForTesting();
+                ServerConfiguration configuration = databaseClient.defaultConfiguration();
+                applyConfigurationData((WriteableServerConfiguration) configuration);
 
                 final ProgressIndicator progressIndicator = progressManager.getProgressIndicator();
                 if (progressIndicator != null) {
@@ -145,16 +144,10 @@ public class ServerConfigurationPanel extends JPanel {
         authenticationView.load(configuration.getAuthenticationSettings());
     }
 
-    @NotNull
-    private ServerConfiguration createServerConfigurationForTesting() {
-        return ServerConfigurationFactoryKt.create(databaseVendor, getServerUrls(), authenticationView.create(), getUserDatabase());
-    }
-
     public void applyConfigurationData(WriteableServerConfiguration configuration) {
         configuration.setLabel(getLabel());
         configuration.setServerUrl(getServerUrls());
         configuration.setAuthenticationSettings(authenticationView.create());
-
         configuration.setUserDatabase(getUserDatabase());
         if (configuration instanceof WriteableConsoleRunnerConfiguration) {
             WriteableConsoleRunnerConfiguration consoleRunnerConfiguration = (WriteableConsoleRunnerConfiguration) configuration;
@@ -174,7 +167,6 @@ public class ServerConfigurationPanel extends JPanel {
         }
         return null;
     }
-
 
     private void validateUrls() {
         String serverUrl = getServerUrls();

@@ -1,6 +1,5 @@
 package org.codinjutsu.tools.nosql.commons.view.model
 
-import org.apache.commons.lang.StringUtils
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ResultDescriptor
@@ -13,7 +12,7 @@ fun findObjectIdNode(treeNode: NoSqlTreeNode): NoSqlTreeNode? {
     }
 
     if (descriptor is AbstractKeyValueDescriptor) {
-        if (StringUtils.equals(descriptor.key, "_id")) {
+        if (descriptor.key == "_id") {
             return treeNode
         }
     }

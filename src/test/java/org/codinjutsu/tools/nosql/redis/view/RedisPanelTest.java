@@ -45,10 +45,6 @@ import org.fest.swing.fixture.Containers;
 import org.fest.swing.fixture.FrameFixture;
 import org.fest.swing.fixture.JTableFixture;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Tuple;
 
 import javax.swing.*;
@@ -64,8 +60,8 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Disabled("Doesn't work at the moment.")
-class RedisPanelTest extends PlatformLiteFixture {
+//@Disabled("Doesn't work at the moment.")
+public class RedisPanelTest extends PlatformLiteFixture {
 
     private RedisPanel redisPanelWrapper;
 
@@ -75,15 +71,16 @@ class RedisPanelTest extends PlatformLiteFixture {
 
     private final RedisClient redisClientMock = mock(RedisClient.class);
 
+    public RedisPanelTest() {
+    }
+
     @Override
-    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         frameFixture.cleanUp();
     }
 
     @Override
-    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         initApplication();
@@ -129,8 +126,7 @@ class RedisPanelTest extends PlatformLiteFixture {
         frameFixture = Containers.showInFrame(redisPanelWrapper);
     }
 
-    @Test
-    void displayTreeWithEachSupportedKeyType() {
+    public void ignoretestDisplayTreeWithEachSupportedKeyType() {
 
         redisPanelWrapper.updateResultTableTree(createRedisResults(), false, "");
 
@@ -158,8 +154,7 @@ class RedisPanelTest extends PlatformLiteFixture {
                 });
     }
 
-    @Test
-    void testDisplayTreeWithFragmentedKey() {
+    public void ignoretestDisplayTreeWithFragmentedKey() {
         redisPanelWrapper.updateResultTableTree(createRedisResults(), true, ":");
         redisPanelWrapper.expandAll();
 

@@ -10,7 +10,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.tree.TreeUtil
-import org.apache.commons.lang.StringUtils
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
 import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView
@@ -152,12 +151,11 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
     }
 
     private fun stringifyResult(selectedResultNode: DefaultMutableTreeNode): String {
-        val stringifiedObjects = (0 until selectedResultNode.childCount)
+        return (0 until selectedResultNode.childCount)
                 .asSequence()
                 .map { selectedResultNode.getChildAt(it) as DefaultMutableTreeNode }
-                .mapTo(LinkedList<Any>()) { it.userObject }
-
-        return String.format("[ %s ]", StringUtils.join(stringifiedObjects, " , "))
+                .mapTo(LinkedList()) { it.userObject }
+                .joinToString(", ", "[ ", " ]")
     }
 
     override fun dispose() {

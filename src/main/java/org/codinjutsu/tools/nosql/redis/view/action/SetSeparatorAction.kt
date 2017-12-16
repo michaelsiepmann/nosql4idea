@@ -21,10 +21,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.ArrayUtil
-import org.apache.commons.lang.StringUtils
 import org.codinjutsu.tools.nosql.redis.view.RedisPanel
-
-import java.util.LinkedHashSet
+import java.util.*
 
 class SetSeparatorAction(private val redisPanel: RedisPanel) : AnAction(AllIcons.General.Ellipsis) {
 
@@ -41,7 +39,7 @@ class SetSeparatorAction(private val redisPanel: RedisPanel) : AnAction(AllIcons
                 Messages.getQuestionIcon(),
                 strings, current, null) ?: return
 
-        if (StringUtils.equals(redisPanel.groupSeparator, separator)) {
+        if (redisPanel.groupSeparator == separator) {
             return
         }
 

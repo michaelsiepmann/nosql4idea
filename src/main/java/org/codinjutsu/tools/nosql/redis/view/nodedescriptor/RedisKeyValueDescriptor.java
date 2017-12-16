@@ -17,11 +17,9 @@
 package org.codinjutsu.tools.nosql.redis.view.nodedescriptor;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider;
-import org.codinjutsu.tools.nosql.commons.utils.StringUtils;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.redis.RedisUtils;

@@ -16,7 +16,6 @@
 
 package org.codinjutsu.tools.nosql.redis.view;
 
-import org.codinjutsu.tools.nosql.commons.utils.StringUtils;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.FragmentedKeyNodeDescriptor;
@@ -30,6 +29,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.codinjutsu.tools.nosql.commons.utils.StringUtilsKt.explode;
 
 public class RedisFragmentedKeyTreeModel extends DefaultTreeModel {
 
@@ -135,7 +135,7 @@ public class RedisFragmentedKeyTreeModel extends DefaultTreeModel {
             DefaultMutableTreeNode originalChildNode = (DefaultMutableTreeNode) source.getChildAt(i);
             NoSqlTreeNode clonedChildNode = (NoSqlTreeNode) originalChildNode.clone();
             RedisKeyValueDescriptor descriptor = (RedisKeyValueDescriptor) clonedChildNode.getDescriptor();
-            String[] explodedKey = StringUtils.explode(descriptor.getKey(), separator);
+            String[] explodedKey = explode(descriptor.getKey(), separator);
             if (explodedKey.length == 1) {
                 addChildren(clonedChildNode, originalChildNode);
                 targetRootNode.add(clonedChildNode);
