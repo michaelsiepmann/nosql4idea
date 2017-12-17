@@ -1,4 +1,4 @@
-package org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor
+package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.json
 
 import com.google.gson.JsonObject
 import com.intellij.ui.ColoredTableCellRenderer
@@ -10,7 +10,7 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecrip
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ValueDescriptor
 import java.lang.String.format
 
-internal open class ElasticsearchValueDescriptor(private val index: Int, private var value: Any?, private val valueTextAttributes: SimpleTextAttributes) : AbstractNodeDecriptor(), ValueDescriptor, ElasticsearchDescriptor {
+internal open class JsonValueDescriptor(private val index: Int, private var value: Any?, private val valueTextAttributes: SimpleTextAttributes) : AbstractNodeDecriptor(), ValueDescriptor, JsonDescriptor {
 
     override fun renderValue(cellRenderer: ColoredTableCellRenderer, isNodeExpanded: Boolean) {
         if (!isNodeExpanded) {
@@ -38,7 +38,7 @@ internal open class ElasticsearchValueDescriptor(private val index: Int, private
 
     override fun toString() = value.toString()
 
-    private class ElasticsearchStringValueDescriptor(index: Int, value: Any?) : ElasticsearchValueDescriptor(index, value, getStringAttribute()) {
+    private class JsonStringValueDescriptor(index: Int, value: Any?) : JsonValueDescriptor(index, value, getStringAttribute()) {
 
         override fun getFormattedValue(): String = format(""""%s"""", getValueAndAbbreviateIfNecessary())
     }
@@ -46,9 +46,9 @@ internal open class ElasticsearchValueDescriptor(private val index: Int, private
     companion object {
         fun createDescriptor(index: Int, value: Any) =
                 if (value is String) {
-                    ElasticsearchStringValueDescriptor(index, value)
+                    JsonStringValueDescriptor(index, value)
                 } else {
-                    ElasticsearchValueDescriptor(index, value, getStringAttribute())
+                    JsonValueDescriptor(index, value, getStringAttribute())
                 }
     }
 }

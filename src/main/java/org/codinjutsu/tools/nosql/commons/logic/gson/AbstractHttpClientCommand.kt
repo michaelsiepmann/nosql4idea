@@ -1,15 +1,18 @@
-package org.codinjutsu.tools.nosql.elasticsearch.logic.commands
+package org.codinjutsu.tools.nosql.commons.logic.gson
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import org.apache.commons.httpclient.HttpClient
 import org.apache.commons.httpclient.HttpMethod
-import org.apache.commons.httpclient.methods.GetMethod
-import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
 import java.net.URLEncoder
 
-internal abstract class AbstractElasticsearchCommand : ElasticsearchCommand {
+internal abstract class AbstractHttpClientCommand : HttpClientCommand {
 
-    fun execute(url: String): JsonObject {
+    override fun execute() = execute(buildURL())
+
+    protected abstract fun buildURL(): String
+
+    private fun execute(url: String): JsonObject {
         val client = createClient()
         val method = createMethod(url)
         try {
@@ -20,9 +23,11 @@ internal abstract class AbstractElasticsearchCommand : ElasticsearchCommand {
         }
     }
 
-    protected open fun createMethod(url: String): HttpMethod = GetMethod(url)
+    protected abstract fun createMethod(url: String): HttpMethod
 
-    protected fun String.addNameToPath(name: String?) =
+    open protected fun createClient() = HttpClient()
+
+    internal fun String.addNameToPath(name: String?) =
             if (name?.isNotEmpty() == true) {
                 "$this/$name"
             } else {
@@ -50,11 +55,6 @@ internal abstract class AbstractElasticsearchCommand : ElasticsearchCommand {
                 ""
             }
 
-    protected fun urlWithIndexAndType(context: ElasticsearchContext): String {
-        return context.serverConfiguration.serverUrl
-                .addNameToPath(context.database.name)
-                .addNameToPath(context.type?.name)
-    }
 
     private fun String.withAmp() =
             if (isNotEmpty()) {

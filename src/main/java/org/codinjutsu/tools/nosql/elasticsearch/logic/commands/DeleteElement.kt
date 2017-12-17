@@ -1,10 +1,8 @@
 package org.codinjutsu.tools.nosql.elasticsearch.logic.commands
 
-import org.apache.commons.httpclient.methods.DeleteMethod
+import org.codinjutsu.tools.nosql.commons.logic.gson.AbstractDeleteCommand
 
-internal open class DeleteElement(private val url: String) : AbstractElasticsearchCommand() {
+internal open class DeleteElement(private val url: String) : AbstractDeleteCommand() {
 
-    override fun execute() = execute(url)
-
-    override fun createMethod(url: String) = DeleteMethod(url)
+    override fun buildURL() = url
 }

@@ -1,25 +1,21 @@
-package org.codinjutsu.tools.nosql.elasticsearch.view
+package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.json
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.process
-import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchObjectWrapper
-import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchDescriptor
-import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchKeyValueDescriptor
-import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchResultDescriptor
-import org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor.ElasticsearchValueDescriptor
+import org.codinjutsu.tools.nosql.commons.model.JsonObjectObjectWrapper
+import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 
-internal class ElasticsearchTreeModelFactory : NodeDescriptorFactory<JsonObject> {
+internal class JsonTreeModelFactory : NodeDescriptorFactory<JsonObject> {
     override fun createResultDescriptor(name: String) =
-            ElasticsearchResultDescriptor(name)
+            JsonResultDescriptor(name)
 
     override fun createKeyValueDescriptor(key: String, value: Any?) =
-            ElasticsearchKeyValueDescriptor.createDescriptor(key, value)
+            JsonKeyValueDescriptor.createDescriptor(key, value)
 
     override fun createValueDescriptor(index: Int, value: Any) =
-            ElasticsearchValueDescriptor.createDescriptor(index, value)
+            JsonValueDescriptor.createDescriptor(index, value)
 
     override fun processObject(parentNode: NoSqlTreeNode, value: Any?) {
         if (value is JsonObject) {
@@ -32,7 +28,7 @@ internal class ElasticsearchTreeModelFactory : NodeDescriptorFactory<JsonObject>
         rootNode.childTreeNodes
                 .asSequence()
                 .map {
-                    it.userObject as ElasticsearchDescriptor
+                    it.userObject as JsonDescriptor
                 }
                 .forEach {
                     it.buildObject(result)
@@ -46,5 +42,5 @@ internal class ElasticsearchTreeModelFactory : NodeDescriptorFactory<JsonObject>
 
     override fun isObject(value: Any?) = value is JsonObject
 
-    override fun createObjectWrapper(value: Any?) = ElasticsearchObjectWrapper(value as JsonObject)
+    override fun createObjectWrapper(value: Any?) = JsonObjectObjectWrapper(value as JsonObject)
 }

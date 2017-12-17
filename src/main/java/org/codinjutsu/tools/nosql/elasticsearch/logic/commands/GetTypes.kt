@@ -1,6 +1,8 @@
 package org.codinjutsu.tools.nosql.elasticsearch.logic.commands
 
-internal class GetTypes(val url: String, val index: String) : AbstractElasticsearchCommand() {
+import org.codinjutsu.tools.nosql.commons.logic.gson.AbstractGetCommand
 
-    override fun execute() = execute("$url/$index")
+internal class GetTypes(val url: String, val index: String) : AbstractGetCommand() {
+
+    override fun buildURL() = "$url/$index"
 }

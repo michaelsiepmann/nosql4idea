@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.elasticsearch.logic
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
@@ -8,6 +9,8 @@ import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
+import org.codinjutsu.tools.nosql.commons.model.JsonObjectObjectWrapper
+import org.codinjutsu.tools.nosql.commons.model.JsonSearchResult
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration
@@ -20,14 +23,13 @@ import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetTypes
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Insert
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Search
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
-import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchResult
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchType
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion.VERSION_20
 import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
 import java.io.File
 import java.net.URL
 
-internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, ElasticsearchResult, JsonObject> {
+internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, JsonSearchResult, JsonObject> {
 
     override fun connect(serverConfiguration: ServerConfiguration) {
         try {
@@ -56,8 +58,14 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
     override fun defaultConfiguration() =
             ElasticsearchServerConfiguration(VERSION_20)
 
-    override fun loadRecords(context: ElasticsearchContext, queryOptions: QueryOptions) =
-            ElasticsearchResult(context.database.name, Search(context, queryOptions).execute())
+    override fun loadRecords(context: ElasticsearchContext, queryOptions: QueryOptions): JsonSearchResult {
+        val searchResult = Search(context, queryOptions).execute()
+        val hits = searchResult.getAsJsonObject("hits")
+        val jsonArray = hits?.getAsJsonArray("hits") ?: JsonArray()
+        val objectWrappers = jsonArray.map { JsonObjectObjectWrapper(it.asJsonObject) }
+        val totalCount = hits?.get("total")?.asInt ?: 0
+        return JsonSearchResult(context.database.name, objectWrappers, totalCount)
+    }
 
     override fun dropFolder(configuration: ServerConfiguration, type: Any) {
         if (type is ElasticsearchType) {

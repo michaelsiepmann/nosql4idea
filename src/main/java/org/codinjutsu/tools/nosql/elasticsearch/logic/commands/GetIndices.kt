@@ -1,6 +1,8 @@
 package org.codinjutsu.tools.nosql.elasticsearch.logic.commands
 
-internal open class GetIndices(private val url: String) : AbstractElasticsearchCommand() {
+import org.codinjutsu.tools.nosql.commons.logic.gson.AbstractGetCommand
 
-    override fun execute() = execute("$url/_aliases")
+internal open class GetIndices(private val url: String) : AbstractGetCommand() {
+
+    override fun buildURL() = "$url/_aliases"
 }

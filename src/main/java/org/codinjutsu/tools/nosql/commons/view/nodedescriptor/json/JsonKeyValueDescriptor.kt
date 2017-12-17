@@ -1,4 +1,4 @@
-package org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor
+package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.json
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
@@ -10,8 +10,8 @@ import org.codinjutsu.tools.nosql.commons.utils.getSimpleTextAttributes
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor
 import java.lang.String.format
 
-internal open class ElasticsearchKeyValueDescriptor(key: String, _value: Any?, valueTextAttributes: SimpleTextAttributes) :
-        AbstractKeyValueDescriptor(key, _value, valueTextAttributes), ElasticsearchDescriptor {
+internal open class JsonKeyValueDescriptor(key: String, _value: Any?, valueTextAttributes: SimpleTextAttributes) :
+        AbstractKeyValueDescriptor(key, _value, valueTextAttributes), JsonDescriptor {
 
     override fun buildObject(jsonObject: JsonObject) {
         val currentValue = value
@@ -24,11 +24,11 @@ internal open class ElasticsearchKeyValueDescriptor(key: String, _value: Any?, v
         }
     }
 
-    private class ElasticsearchKeyBooleanValueDecriptor(key: String, value: Boolean) : ElasticsearchKeyValueDescriptor(key, value, getBooleanAttribute())
+    private class JsonKeyBooleanValueDecriptor(key: String, value: Boolean) : JsonKeyValueDescriptor(key, value, getBooleanAttribute())
 
-    private class ElasticsearchKeyIntegerValueDescriptor(key:String, value: Number) : ElasticsearchKeyValueDescriptor(key, value, getNumberAttribute())
+    private class JsonKeyIntegerValueDescriptor(key:String, value: Number) : JsonKeyValueDescriptor(key, value, getNumberAttribute())
 
-    private class ElasticsearchKeyStringValueDescriptor(key: String, value: String) : ElasticsearchKeyValueDescriptor(key, value, getStringAttribute()) {
+    private class JsonKeyStringValueDescriptor(key: String, value: String) : JsonKeyValueDescriptor(key, value, getStringAttribute()) {
 
         override fun getValueAndAbbreviateIfNecessary(): String {
             return format(""""%s"""", value)
@@ -43,13 +43,13 @@ internal open class ElasticsearchKeyValueDescriptor(key: String, _value: Any?, v
         fun createDescriptor(key: String, value: Any?) = when (value) {
             null -> DefaultKeyNullValueDescriptor(key)
             is JsonPrimitive -> when {
-                value.isBoolean -> ElasticsearchKeyBooleanValueDecriptor(key, value.asBoolean)
-                value.isNumber -> ElasticsearchKeyIntegerValueDescriptor(key, value.asNumber)
-                value.isString -> ElasticsearchKeyStringValueDescriptor(key, value.asString)
-                else -> ElasticsearchKeyValueDescriptor(key, value, getSimpleTextAttributes(value))
+                value.isBoolean -> JsonKeyBooleanValueDecriptor(key, value.asBoolean)
+                value.isNumber -> JsonKeyIntegerValueDescriptor(key, value.asNumber)
+                value.isString -> JsonKeyStringValueDescriptor(key, value.asString)
+                else -> JsonKeyValueDescriptor(key, value, getSimpleTextAttributes(value))
             }
-            is String -> ElasticsearchKeyStringValueDescriptor(key, value)
-            else -> ElasticsearchKeyValueDescriptor(key, value, getSimpleTextAttributes(value))
+            is String -> JsonKeyStringValueDescriptor(key, value)
+            else -> JsonKeyValueDescriptor(key, value, getSimpleTextAttributes(value))
         }
     }
 }

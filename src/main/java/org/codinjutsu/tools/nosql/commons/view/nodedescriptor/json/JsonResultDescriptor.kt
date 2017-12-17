@@ -1,4 +1,4 @@
-package org.codinjutsu.tools.nosql.elasticsearch.view.nodedescriptor
+package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.json
 
 import com.google.gson.JsonObject
 import com.intellij.ui.ColoredTableCellRenderer
@@ -6,7 +6,7 @@ import com.intellij.ui.ColoredTreeCellRenderer
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ResultDescriptor
 
-internal class ElasticsearchResultDescriptor(collectionName : String) : NodeDescriptor, ResultDescriptor, ElasticsearchDescriptor {
+internal class JsonResultDescriptor(collectionName : String) : NodeDescriptor, ResultDescriptor, JsonDescriptor {
 
     private val formattedText = String.format("results of '%s'", collectionName)
 

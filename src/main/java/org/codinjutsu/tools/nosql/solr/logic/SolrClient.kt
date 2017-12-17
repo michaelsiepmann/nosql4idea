@@ -1,31 +1,38 @@
 package org.codinjutsu.tools.nosql.solr.logic
 
+import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import org.apache.solr.client.solrj.SolrQuery
-import org.apache.solr.client.solrj.impl.HttpSolrClient
-import org.apache.solr.common.SolrDocument
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
+import org.codinjutsu.tools.nosql.commons.model.JsonObjectObjectWrapper
+import org.codinjutsu.tools.nosql.commons.model.JsonSearchResult
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.solr.configuration.SolrServerConfiguration
-import org.codinjutsu.tools.nosql.solr.model.SolrResult
+import org.codinjutsu.tools.nosql.solr.logic.commands.LoadCores
+import org.codinjutsu.tools.nosql.solr.logic.commands.Search
+import org.codinjutsu.tools.nosql.solr.model.SolrDatabase
 import org.codinjutsu.tools.nosql.solr.view.SolrContext
+import java.net.URL
 
-internal class SolrClient : LoadableDatabaseClient<SolrContext, SolrResult, SolrDocument> {
+internal class SolrClient : LoadableDatabaseClient<SolrContext, JsonSearchResult, JsonObject> {
 
     override fun connect(serverConfiguration: ServerConfiguration) {
         try {
-            createSolrClient(serverConfiguration).ping()
+            URL(serverConfiguration.serverUrl).openConnection().connect()
         } catch (e: Exception) {
             throw ConfigurationException(e)
         }
     }
 
     override fun loadServer(databaseServer: DatabaseServer) {
-        createSolrClient(databaseServer.configuration)
+        databaseServer.databases = LoadCores(databaseServer)
+                .execute()
+                .getAsJsonObject("status")
+                .keySet()
+                .map { SolrDatabase(it) }
     }
 
     override fun cleanUpServers() {
@@ -36,36 +43,26 @@ internal class SolrClient : LoadableDatabaseClient<SolrContext, SolrResult, Solr
 
     override fun defaultConfiguration() = SolrServerConfiguration()
 
-    override fun findDocument(context: SolrContext, _id: Any): SolrDocument? {
-        return createSolrClient(context.serverConfiguration).getById(_id.toString())
+    override fun findDocument(context: SolrContext, _id: Any): JsonObject? {
+        return null
+        //return createSolrClient(context.serverConfiguration).getById(_id.toString())
     }
 
-    override fun update(context: SolrContext, document: SolrDocument) {
+    override fun update(context: SolrContext, document: JsonObject) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun loadRecords(context: SolrContext, query: QueryOptions?): SolrResult {
-        val client = createSolrClient(context.serverConfiguration)
-        val solrQuery = SolrQuery()
-        solrQuery.query = query?.filter
-        val response = client.query(solrQuery)
-        val results = response.results
-        val result = SolrResult(context.solrDatabase.name)
-        results.stream()
-                .forEach { result.add(it) }
-        return result
+    override fun loadRecords(context: SolrContext, query: QueryOptions): JsonSearchResult {
+        val jsonObject = Search(context, query).execute()
+        val response = jsonObject.getAsJsonObject("response")
+        val count = response.getAsJsonPrimitive("numFound").asInt
+        val objects = response.getAsJsonArray("docs").map { JsonObjectObjectWrapper(it.asJsonObject) }
+        return JsonSearchResult(context.solrDatabase.name, objects, count)
     }
 
     override fun delete(context: SolrContext, _id: Any) {
-        createSolrClient(context.serverConfiguration).deleteById(_id.toString())
+//        createSolrClient(context.serverConfiguration).deleteById(_id.toString())
     }
-
-    private fun createSolrClient(configuration: ServerConfiguration): HttpSolrClient =
-            if (configuration is SolrServerConfiguration) {
-                HttpSolrClient.Builder(configuration.serverUrl).build()
-            } else {
-                throw IllegalStateException("Configuration must be an instance of SolrServerConfiguration")
-            }
 
     companion object {
         fun instance(project: Project): SolrClient {
