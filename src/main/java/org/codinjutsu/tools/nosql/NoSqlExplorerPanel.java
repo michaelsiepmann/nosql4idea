@@ -125,7 +125,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
     @NotNull
     private DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer) {
-        return databaseServer.getVendor().createDatabaseServerFolder(databaseServer, databaseVendorClientManager);
+        return databaseServer.getVendor().createDatabaseServerFolder(databaseServer, project);
     }
 
     private void reloadServerConfiguration(final DefaultMutableTreeNode serverNode, final boolean expandAfterLoading) {

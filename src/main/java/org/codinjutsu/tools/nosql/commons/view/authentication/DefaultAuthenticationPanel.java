@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.couchbase.view;
+package org.codinjutsu.tools.nosql.commons.view.authentication;
 
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
-import org.codinjutsu.tools.nosql.commons.view.AuthenticationView;
+import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class CouchbaseAuthenticationPanel implements AuthenticationView {
+public class DefaultAuthenticationPanel implements AuthenticationView {
 
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JPanel mainPanel;
 
-    public CouchbaseAuthenticationPanel() {
+    public DefaultAuthenticationPanel() {
         usernameField.setName("usernameField");
         passwordField.setName("passwordField");
     }

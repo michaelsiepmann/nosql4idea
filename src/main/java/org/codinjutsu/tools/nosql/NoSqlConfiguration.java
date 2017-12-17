@@ -28,6 +28,7 @@ import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfigu
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
+import org.codinjutsu.tools.nosql.solr.configuration.SolrServerConfiguration;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,6 +88,8 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
                 return RedisServerConfiguration.class;
             case "couchbaseserverconfiguration":
                 return CouchbaseServerConfiguration.class;
+            case "solrserverconfiguration":
+                return SolrServerConfiguration.class;
             default:
                 return MongoServerConfiguration.class;
         }

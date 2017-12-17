@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view;
+package org.codinjutsu.tools.nosql.mongo.view.authentication;
 
 import com.mongodb.AuthenticationMechanism;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
-import org.codinjutsu.tools.nosql.commons.view.AuthenticationView;
+import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoExtraSettings;
 import org.jetbrains.annotations.NotNull;
 

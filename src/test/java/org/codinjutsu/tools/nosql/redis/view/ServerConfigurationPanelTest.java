@@ -24,6 +24,7 @@ import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
+import org.codinjutsu.tools.nosql.redis.view.authentication.RedisAuthenticationPanel;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;

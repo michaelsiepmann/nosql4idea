@@ -54,8 +54,13 @@
 
         <projectService serviceInterface="org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient"
                         serviceImplementation="org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient"/>
-        <projectService serviceInterface="org.codinjutsu.tools.nosql.elasticsearch.ElasticSearchUI"
-                        serviceImplementation="org.codinjutsu.tools.nosql.elasticsearch.ElasticSearchUI"/>
+        <projectService serviceInterface="org.codinjutsu.tools.nosql.elasticsearch.ElasticsearchUI"
+                        serviceImplementation="org.codinjutsu.tools.nosql.elasticsearch.ElasticsearchUI"/>
+
+        <projectService serviceInterface="org.codinjutsu.tools.nosql.solr.logic.SolrClient"
+                        serviceImplementation="org.codinjutsu.tools.nosql.solr.logic.SolrClient"/>
+        <projectService serviceInterface="org.codinjutsu.tools.nosql.solr.SolrUI"
+                        serviceImplementation="org.codinjutsu.tools.nosql.solr.SolrUI"/>
 
         <projectConfigurable instance="org.codinjutsu.tools.nosql.NoSqlConfigurable"
                              id="preferences.mongoOptions"/>

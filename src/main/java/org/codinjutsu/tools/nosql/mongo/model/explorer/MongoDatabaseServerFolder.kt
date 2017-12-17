@@ -2,7 +2,6 @@ package org.codinjutsu.tools.nosql.mongo.model.explorer
 
 import com.intellij.openapi.project.Project
 import com.mongodb.DBObject
-import org.codinjutsu.tools.nosql.DatabaseVendorClientManager
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.explorer.Folder
@@ -10,8 +9,8 @@ import org.codinjutsu.tools.nosql.commons.model.explorer.FolderDatabaseServerFol
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase
 
-internal class MongoDatabaseServerFolder(databaseserver: DatabaseServer, databaseVendorClientManager: DatabaseVendorClientManager)
-    : FolderDatabaseServerFolder<DBObject>(databaseserver, databaseVendorClientManager) {
+internal class MongoDatabaseServerFolder(databaseserver: DatabaseServer, project: Project)
+    : FolderDatabaseServerFolder<DBObject>(databaseserver, project) {
     override fun createDatabaseFolder(database: Database) =
             MongoDatabaseFolder(database as MongoDatabase, this)
 

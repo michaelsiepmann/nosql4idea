@@ -21,24 +21,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.codinjutsu.tools.nosql.commons.DatabaseUI;
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile;
-import org.codinjutsu.tools.nosql.couchbase.CouchbaseUI;
-import org.codinjutsu.tools.nosql.elasticsearch.ElasticSearchUI;
-import org.codinjutsu.tools.nosql.mongo.MongoUI;
-import org.codinjutsu.tools.nosql.redis.RedisUI;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DatabaseVendorUIManager {
-
-    private static final Map<DatabaseVendor, Class<? extends DatabaseUI>> databaseUIByVendor = new HashMap<>();
-
-    static {
-        databaseUIByVendor.put(DatabaseVendor.MONGO, MongoUI.class);
-        databaseUIByVendor.put(DatabaseVendor.REDIS, RedisUI.class);
-        databaseUIByVendor.put(DatabaseVendor.COUCHBASE, CouchbaseUI.class);
-        databaseUIByVendor.put(DatabaseVendor.ELASTICSEARCH, ElasticSearchUI.class);
-    }
 
     private final Project project;
 
@@ -51,7 +35,7 @@ public class DatabaseVendorUIManager {
     }
 
     public DatabaseUI get(DatabaseVendor databaseVendor) {
-        return ServiceManager.getService(project, databaseUIByVendor.get(databaseVendor));
+        return ServiceManager.getService(project, databaseVendor.getDatabaseUIClass());
     }
 
     public boolean accept(VirtualFile file) {

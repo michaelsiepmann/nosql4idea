@@ -74,13 +74,17 @@ public class RedisKeyValueDescriptor extends AbstractKeyValueDescriptor {
     @NotNull
     @Override
     public String getFormattedValue() {
+        Object value = getValue();
+        if (value == null) {
+            return "";
+        }
         if (RedisKeyType.ZSET.equals(keyType)) {
-            return getValueAndAbbreviateIfNecessary(RedisUtils.stringifySortedSet((Set<Tuple>) getValue()));
+            return getValueAndAbbreviateIfNecessary(RedisUtils.stringifySortedSet((Set<Tuple>) value));
         }
         if (RedisKeyType.SET.equals(keyType)) {
-            return getValueAndAbbreviateIfNecessary(RedisUtils.stringifySet((Set) getValue()));
+            return getValueAndAbbreviateIfNecessary(RedisUtils.stringifySet((Set) value));
         }
-        return getValueAndAbbreviateIfNecessary(getValue().toString());
+        return getValueAndAbbreviateIfNecessary(value.toString());
     }
 
     @Override

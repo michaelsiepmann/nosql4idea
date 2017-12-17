@@ -26,6 +26,7 @@ import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel;
 import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoExtraSettings;
+import org.codinjutsu.tools.nosql.mongo.view.authentication.MongoAuthenticationPanel;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;

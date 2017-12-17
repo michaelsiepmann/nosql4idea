@@ -21,14 +21,14 @@ import org.codinjutsu.tools.nosql.commons.DatabaseUI
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient
-import org.codinjutsu.tools.nosql.mongo.view.MongoAuthenticationPanel
+import org.codinjutsu.tools.nosql.mongo.view.authentication.MongoAuthenticationPanel
 import org.codinjutsu.tools.nosql.mongo.view.MongoContext
 import org.codinjutsu.tools.nosql.mongo.view.MongoPanel
 import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile
 
 class MongoUI : DatabaseUI {
 
-    override fun createAythenticationView() = MongoAuthenticationPanel()
+    override fun createAuthenticationView() = MongoAuthenticationPanel()
 
     override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView {
         return MongoPanel(project,

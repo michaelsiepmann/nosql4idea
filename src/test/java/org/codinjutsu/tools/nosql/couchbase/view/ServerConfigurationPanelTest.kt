@@ -19,10 +19,11 @@ package org.codinjutsu.tools.nosql.couchbase.view
 import com.intellij.openapi.command.impl.DummyProject
 import org.codinjutsu.tools.nosql.DatabaseVendor
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration
-import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
+import org.codinjutsu.tools.nosql.commons.view.authentication.DefaultAuthenticationPanel
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel
+import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration
 import org.fest.swing.edt.GuiActionRunner
 import org.fest.swing.edt.GuiQuery
 import org.fest.swing.fixture.Containers
@@ -49,7 +50,7 @@ internal class ServerConfigurationPanelTest {
                 return ServerConfigurationPanel(DummyProject.getInstance(),
                         DatabaseVendor.COUCHBASE,
                         databaseClientMock,
-                        CouchbaseAuthenticationPanel()
+                        DefaultAuthenticationPanel()
                 )
             }
         })

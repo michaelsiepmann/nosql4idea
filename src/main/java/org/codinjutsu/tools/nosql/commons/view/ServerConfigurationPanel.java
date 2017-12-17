@@ -35,6 +35,7 @@ import org.codinjutsu.tools.nosql.commons.configuration.WriteableConsoleRunnerCo
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
+import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

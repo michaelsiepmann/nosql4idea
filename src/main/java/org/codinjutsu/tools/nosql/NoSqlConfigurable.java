@@ -62,7 +62,6 @@ public class NoSqlConfigurable extends BaseConfigurable {
 
     private final List<ServerConfiguration> configurations;
     private final ServerConfigurationPanelFactory serverConfigurationPanelFactory;
-    private final DatabaseVendorClientManager databaseVendorClientManager;
 
     private JPanel mainPanel;
     private JBTable table;
@@ -73,10 +72,8 @@ public class NoSqlConfigurable extends BaseConfigurable {
     public NoSqlConfigurable(Project project) {
         this.project = project;
         this.configuration = NoSqlConfiguration.getInstance(project);
-        databaseVendorClientManager = DatabaseVendorClientManager.getInstance(project);
         this.serverConfigurationPanelFactory = new ServerConfigurationPanelFactory(
                 project,
-                databaseVendorClientManager,
                 DatabaseVendorUIManager.getInstance(project)
         );
         configurations = new LinkedList<>(this.configuration.getServerConfigurations());
@@ -158,7 +155,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                             }
 
                             DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
-                            WriteableServerConfiguration serverConfiguration = (WriteableServerConfiguration) databaseVendorClientManager.getClient(selectedDatabaseVendor).defaultConfiguration();
+                            WriteableServerConfiguration serverConfiguration = (WriteableServerConfiguration) selectedDatabaseVendor.getClient(project).defaultConfiguration();
 
                             ConfigurationDialog dialog = new ConfigurationDialog(
                                     mainPanel,

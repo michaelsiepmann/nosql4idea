@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.commons.view
+package org.codinjutsu.tools.nosql.commons.view.authentication
 
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 

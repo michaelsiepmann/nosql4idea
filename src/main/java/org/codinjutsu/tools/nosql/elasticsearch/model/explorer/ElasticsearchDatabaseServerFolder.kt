@@ -1,7 +1,6 @@
 package org.codinjutsu.tools.nosql.elasticsearch.model.explorer
 
 import com.intellij.openapi.project.Project
-import org.codinjutsu.tools.nosql.DatabaseVendorClientManager
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.explorer.Folder
@@ -10,8 +9,8 @@ import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchType
 
-internal class ElasticsearchDatabaseServerFolder(databaseserver: DatabaseServer, databaseVendorClientManager: DatabaseVendorClientManager) :
-        FolderDatabaseServerFolder<ElasticsearchType>(databaseserver, databaseVendorClientManager) {
+internal class ElasticsearchDatabaseServerFolder(databaseserver: DatabaseServer, project: Project) :
+        FolderDatabaseServerFolder<ElasticsearchType>(databaseserver, project) {
     override fun createDatabaseFolder(database: Database) =
             ElasticsearchIndexFolder(database as ElasticsearchDatabase, this)
 

@@ -17,13 +17,12 @@
 package org.codinjutsu.tools.nosql.commons
 
 import com.intellij.openapi.project.Project
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
-import org.codinjutsu.tools.nosql.commons.view.AuthenticationView
+import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 
 interface DatabaseUI {
-    fun createAythenticationView(): AuthenticationView
+    fun createAuthenticationView(): AuthenticationView
 
     fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView
 }

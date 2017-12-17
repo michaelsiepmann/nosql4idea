@@ -16,61 +16,132 @@
 
 package org.codinjutsu.tools.nosql;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import org.codinjutsu.tools.nosql.commons.DatabaseUI;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.explorer.DatabaseServerFolder;
 import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
+import org.codinjutsu.tools.nosql.couchbase.CouchbaseUI;
+import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
 import org.codinjutsu.tools.nosql.couchbase.model.explorer.CouchbaseDatabaseServerFolder;
-import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseFakeFileType;
+import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile;
+import org.codinjutsu.tools.nosql.elasticsearch.ElasticsearchUI;
+import org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient;
 import org.codinjutsu.tools.nosql.elasticsearch.model.explorer.ElasticsearchDatabaseServerFolder;
-import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchFakeFileType;
+import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchObjectFile;
+import org.codinjutsu.tools.nosql.mongo.MongoUI;
+import org.codinjutsu.tools.nosql.mongo.logic.MongoClient;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.model.explorer.MongoDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.mongo.view.console.MongoConsoleRunner;
-import org.codinjutsu.tools.nosql.mongo.view.editor.MongoFakeFileType;
+import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile;
+import org.codinjutsu.tools.nosql.redis.RedisUI;
+import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.explorer.RedisDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.redis.view.console.RedisConsoleRunner;
-import org.codinjutsu.tools.nosql.redis.view.editor.RedisFakeFileType;
+import org.codinjutsu.tools.nosql.redis.view.editor.RedisObjectFile;
+import org.codinjutsu.tools.nosql.solr.SolrUI;
+import org.codinjutsu.tools.nosql.solr.logic.SolrClient;
+import org.codinjutsu.tools.nosql.solr.model.explorer.SolrDatabaseServerFolder;
+import org.codinjutsu.tools.nosql.solr.view.editor.SolrObjectFile;
 
 import javax.swing.*;
 
 public enum DatabaseVendor {
 
-    MONGO("MongoDB", MongoFakeFileType.INSTANCE.getIcon(), "localhost:27017", "format: host:port. If replicat set: host:port1,host:port2,...", true) {
+    MONGO("MongoDB", MongoObjectFile.Companion.getIcon(), "localhost:27017", "format: host:port. If replicat set: host:port1,host:port2,...", true) {
         @Override
         public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
             return new MongoConsoleRunner(project, configuration, (MongoDatabase) database);
         }
 
         @Override
-        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager) {
-            return new MongoDatabaseServerFolder(databaseServer, databaseVendorClientManager);
+        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, Project project) {
+            return new MongoDatabaseServerFolder(databaseServer, project);
+        }
+
+        @Override
+        protected Class<? extends DatabaseClient> getDatabaseClientClass() {
+            return MongoClient.class;
+        }
+
+        @Override
+        public Class<? extends DatabaseUI> getDatabaseUIClass() {
+            return MongoUI.class;
         }
     },
-    REDIS("RedisDB", RedisFakeFileType.REDIS_ICON, "localhost:6379", "format: host:port. If cluster: host:port1,host:port2,...", true) {
+    REDIS("RedisDB", RedisObjectFile.Companion.getIcon(), "localhost:6379", "format: host:port. If cluster: host:port1,host:port2,...", true) {
         @Override
         public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
             return new RedisConsoleRunner(project, configuration, (RedisDatabase) database);
         }
 
         @Override
-        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager) {
+        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, Project project) {
             return new RedisDatabaseServerFolder(databaseServer);
         }
-    },
-    COUCHBASE("Couchbase", CouchbaseFakeFileType.INSTANCE.getIcon(), "localhost", "format: host:port. If cluster: host:port1,host:port2,...", false) {
+
         @Override
-        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager) {
-            return new CouchbaseDatabaseServerFolder(databaseServer);
+        protected Class<? extends DatabaseClient> getDatabaseClientClass() {
+            return RedisClient.class;
+        }
+
+        @Override
+        public Class<? extends DatabaseUI> getDatabaseUIClass() {
+            return RedisUI.class;
         }
     },
-    ELASTICSEARCH("Elasticsearch", ElasticsearchFakeFileType.INSTANCE.getIcon(), "http://localhost:9200", "format: http://host:port.", false) {
+    COUCHBASE("Couchbase", CouchbaseObjectFile.Companion.getIcon(), "localhost", "format: host:port. If cluster: host:port1,host:port2,...", false) {
         @Override
-        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager) {
-            return new ElasticsearchDatabaseServerFolder(databaseServer, databaseVendorClientManager);
+        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, Project project) {
+            return new CouchbaseDatabaseServerFolder(databaseServer);
+        }
+
+        @Override
+        protected Class<? extends DatabaseClient> getDatabaseClientClass() {
+            return CouchbaseClient.class;
+        }
+
+        @Override
+        public Class<? extends DatabaseUI> getDatabaseUIClass() {
+            return CouchbaseUI.class;
+        }
+    },
+    ELASTICSEARCH("Elasticsearch", ElasticsearchObjectFile.Companion.getIcon(), "http://localhost:9200", "format: http://host:port.", false) {
+        @Override
+        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, Project project) {
+            return new ElasticsearchDatabaseServerFolder(databaseServer, project);
+        }
+
+        @Override
+        protected Class<? extends DatabaseClient> getDatabaseClientClass() {
+            return ElasticsearchClient.class;
+        }
+
+        @Override
+        public Class<? extends DatabaseUI> getDatabaseUIClass() {
+            return ElasticsearchUI.class;
+        }
+    },
+    SOLR("Solr", SolrObjectFile.Companion.getIcon(), "http://localhost:8983", "format: http://host:port.", false) {
+        @Override
+        public DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, Project project) {
+            return new SolrDatabaseServerFolder(databaseServer);
+        }
+
+        @Override
+        protected Class<? extends DatabaseClient> getDatabaseClientClass() {
+            return SolrClient.class;
+        }
+
+        @Override
+        public Class<? extends DatabaseUI> getDatabaseUIClass() {
+            return SolrUI.class;
         }
     };
 
@@ -97,5 +168,13 @@ public enum DatabaseVendor {
         return "DatabaseVendor{name='" + name + "'}";
     }
 
-    public abstract DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, DatabaseVendorClientManager databaseVendorClientManager);
+    public abstract DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, Project project);
+
+    public DatabaseClient getClient(Project project) {
+        return ServiceManager.getService(project, getDatabaseClientClass());
+    }
+
+    protected abstract Class<? extends DatabaseClient> getDatabaseClientClass();
+
+    public abstract Class<? extends DatabaseUI> getDatabaseUIClass();
 }

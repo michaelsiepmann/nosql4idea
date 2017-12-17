@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.redis.view;
+package org.codinjutsu.tools.nosql.redis.view.authentication;
 
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
-import org.codinjutsu.tools.nosql.commons.view.AuthenticationView;
+import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
