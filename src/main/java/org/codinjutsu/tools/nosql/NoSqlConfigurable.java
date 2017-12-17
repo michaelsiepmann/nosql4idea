@@ -68,6 +68,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
     private final NoSqlServerTableModel tableModel;
     private ShellPathPanel mongoShellPanel;
     private ShellPathPanel redisShellPanel;
+    private ShellPathPanel solrShellPanel;
 
     public NoSqlConfigurable(Project project) {
         this.project = project;
@@ -102,114 +103,12 @@ public class NoSqlConfigurable extends BaseConfigurable {
         databaseVendorShellOptionsPanel.add(mongoShellPanel);
         redisShellPanel = new ShellPathPanel(DatabaseVendor.REDIS, "--version");
         databaseVendorShellOptionsPanel.add(redisShellPanel);
+        solrShellPanel = new ShellPathPanel(DatabaseVendor.SOLR, "-V");
+        databaseVendorShellOptionsPanel.add(solrShellPanel);
 
         mainPanel.add(databaseVendorShellOptionsPanel, BorderLayout.NORTH);
 
-
-        PanelWithButtons panelWithButtons = new PanelWithButtons() {
-
-            {
-                initPanel();
-            }
-
-            @NotNull
-            @Override
-            protected String getLabelText() {
-                return "Servers";
-            }
-
-            @Override
-            protected JButton[] createButtons() {
-                return new JButton[]{};
-            }
-
-            @Override
-            protected JComponent createMainComponent() {
-                table = new JBTable(tableModel);
-                table.getEmptyText().setText("No server configuration set");
-                table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                table.setDefaultRenderer(DatabaseVendor.class, new ColoredTableCellRenderer() {
-                    @Override
-                    protected void customizeCellRenderer(JTable jTable, Object value, boolean b, boolean b1, int i, int i1) {
-                        DatabaseVendor databaseVendor = (DatabaseVendor) value;
-                        this.setIcon(databaseVendor.icon);
-                        this.append(databaseVendor.name);
-                    }
-                });
-
-                TableColumn autoConnectColumn = table.getColumnModel().getColumn(3);
-                int autoConnectColumnWidth = table.getFontMetrics(table.getFont()).stringWidth(table.getColumnName(3)) + 10;
-                autoConnectColumn.setPreferredWidth(autoConnectColumnWidth);
-                autoConnectColumn.setMaxWidth(autoConnectColumnWidth);
-                autoConnectColumn.setMinWidth(autoConnectColumnWidth);
-
-                return ToolbarDecorator.createDecorator(table)
-                        .setAddAction(button -> {
-                            stopEditing();
-
-                            SelectDatabaseVendorDialog databaseVendorDialog = new SelectDatabaseVendorDialog(mainPanel);
-                            databaseVendorDialog.setTitle("Add a NoSql Server");
-                            databaseVendorDialog.show();
-                            if (!databaseVendorDialog.isOK()) {
-                                return;
-                            }
-
-                            DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
-                            WriteableServerConfiguration serverConfiguration = (WriteableServerConfiguration) selectedDatabaseVendor.getClient(project).defaultConfiguration();
-
-                            ConfigurationDialog dialog = new ConfigurationDialog(
-                                    mainPanel,
-                                    serverConfigurationPanelFactory,
-                                    serverConfiguration
-                            );
-                            dialog.setTitle("Add a NoSql Server");
-                            dialog.show();
-                            if (dialog.isOK()) {
-                                configurations.add(serverConfiguration);
-                                int index = configurations.size() - 1;
-                                tableModel.fireTableRowsInserted(index, index);
-                                table.getSelectionModel().setSelectionInterval(index, index);
-                                table.scrollRectToVisible(table.getCellRect(index, 0, true));
-                            }
-                        })
-                        .setAddActionName("addServer")
-                        .setEditAction(button -> {
-                            stopEditing();
-
-                            int selectedIndex = table.getSelectedRow();
-                            if (selectedIndex < 0 || selectedIndex >= tableModel.getRowCount()) {
-                                return;
-                            }
-                            ServerConfiguration sourceConfiguration = configurations.get(selectedIndex);
-                            WriteableServerConfiguration copiedConfiguration = (WriteableServerConfiguration) sourceConfiguration.copy();
-
-                            ConfigurationDialog dialog = new ConfigurationDialog(
-                                    mainPanel,
-                                    serverConfigurationPanelFactory,
-                                    copiedConfiguration
-                            );
-                            dialog.setTitle("Edit a NoSql Server");
-                            dialog.show();
-                            if (dialog.isOK()) {
-                                configurations.set(selectedIndex, copiedConfiguration);
-                                tableModel.fireTableRowsUpdated(selectedIndex, selectedIndex);
-                                table.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
-                            }
-                        })
-                        .setEditActionName("editServer")
-                        .setRemoveAction(button -> {
-                            stopEditing();
-                            int selectedIndex = table.getSelectedRow();
-                            if (selectedIndex >= 0 && selectedIndex < tableModel.getRowCount()) {
-                                TableUtil.removeSelectedItems(table);
-                            }
-                        })
-                        .setRemoveActionName("removeServer")
-                        .disableUpDownActions().createPanel();
-            }
-        };
-
-        mainPanel.add(panelWithButtons, BorderLayout.CENTER);
+        mainPanel.add(new TablePanel(), BorderLayout.CENTER);
 
         return mainPanel;
     }
@@ -233,6 +132,10 @@ public class NoSqlConfigurable extends BaseConfigurable {
             configuration.setShellPath(DatabaseVendor.REDIS, redisShellPanel.getShellPath());
         }
 
+        if (isSolrShellPathModified()) {
+            configuration.setShellPath(DatabaseVendor.SOLR, solrShellPanel.getShellPath());
+        }
+
         NoSqlWindowManager.getInstance(project).apply();
     }
 
@@ -242,6 +145,10 @@ public class NoSqlConfigurable extends BaseConfigurable {
 
     private boolean isRedisShellPathModified() {
         return redisShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(DatabaseVendor.REDIS));
+    }
+
+    private boolean isSolrShellPathModified() {
+        return solrShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(DatabaseVendor.SOLR));
     }
 
     private boolean areConfigurationsModified() {
@@ -259,6 +166,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
         tableModel.removeTableModelListener(table);
         mongoShellPanel.dispose();
         redisShellPanel.dispose();
+        solrShellPanel.dispose();
         table = null;
     }
 
@@ -271,11 +179,72 @@ public class NoSqlConfigurable extends BaseConfigurable {
         }
     }
 
+    private void onAddAction() {
+        stopEditing();
+
+        SelectDatabaseVendorDialog databaseVendorDialog = new SelectDatabaseVendorDialog(mainPanel);
+        databaseVendorDialog.setTitle("Add a NoSql Server");
+        databaseVendorDialog.show();
+        if (!databaseVendorDialog.isOK()) {
+            return;
+        }
+
+        DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
+        WriteableServerConfiguration serverConfiguration = (WriteableServerConfiguration) selectedDatabaseVendor.getClient(project).defaultConfiguration();
+
+        ConfigurationDialog dialog = new ConfigurationDialog(
+                mainPanel,
+                serverConfigurationPanelFactory,
+                serverConfiguration
+        );
+        dialog.setTitle("Add a NoSql Server");
+        dialog.show();
+        if (dialog.isOK()) {
+            configurations.add(serverConfiguration);
+            int index = configurations.size() - 1;
+            tableModel.fireTableRowsInserted(index, index);
+            table.getSelectionModel().setSelectionInterval(index, index);
+            table.scrollRectToVisible(table.getCellRect(index, 0, true));
+        }
+    }
+
+    private void onEditAction() {
+        stopEditing();
+
+        int selectedIndex = table.getSelectedRow();
+        if (selectedIndex < 0 || selectedIndex >= tableModel.getRowCount()) {
+            return;
+        }
+        ServerConfiguration sourceConfiguration = configurations.get(selectedIndex);
+        WriteableServerConfiguration copiedConfiguration = (WriteableServerConfiguration) sourceConfiguration.copy();
+
+        ConfigurationDialog dialog = new ConfigurationDialog(
+                mainPanel,
+                serverConfigurationPanelFactory,
+                copiedConfiguration
+        );
+        dialog.setTitle("Edit a NoSql Server");
+        dialog.show();
+        if (dialog.isOK()) {
+            configurations.set(selectedIndex, copiedConfiguration);
+            tableModel.fireTableRowsUpdated(selectedIndex, selectedIndex);
+            table.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
+        }
+    }
+
+    private void onRemoveAction() {
+        stopEditing();
+        int selectedIndex = table.getSelectedRow();
+        if (selectedIndex >= 0 && selectedIndex < tableModel.getRowCount()) {
+            TableUtil.removeSelectedItems(table);
+        }
+    }
 
     private class ShellPathPanel extends JPanel implements Disposable {
 
         private static final int TIMEOUT_MS = 60 * 1000;
         private final String testParameter;
+
         private LabeledComponent<TextFieldWithBrowseButton> shellPathField;
 
         private ShellPathPanel(DatabaseVendor databaseVendor, String testParameter) {
@@ -329,9 +298,11 @@ public class NoSqlConfigurable extends BaseConfigurable {
                     handler.runProcessWithProgressIndicator(indicator);
             if (result.isTimeout()) {
                 throw new TimeoutException(String.format("Couldn't check %s CLI executable - stopped by timeout.", databaseVendor.name));
-            } else if (result.isCancelled()) {
+            }
+            if (result.isCancelled()) {
                 throw new ProcessCanceledException();
-            } else if (result.getExitCode() != 0 || !result.getStderr().isEmpty()) {
+            }
+            if (result.getExitCode() != 0 || !result.getStderr().isEmpty()) {
                 throw new ExecutionException(String.format("Errors while executing %s. exitCode=%s errors: %s",
                         commandLine.toString(),
                         result.getExitCode(),
@@ -369,6 +340,56 @@ public class NoSqlConfigurable extends BaseConfigurable {
         @Override
         public void dispose() {
             shellPathField = null;
+        }
+
+    }
+
+    private class TablePanel extends PanelWithButtons {
+
+        private TablePanel() {
+            initPanel();
+        }
+
+        @NotNull
+        @Override
+        protected String getLabelText() {
+            return "Servers";
+        }
+
+        @Override
+        protected JButton[] createButtons() {
+            return new JButton[]{};
+        }
+
+        @Override
+        protected JComponent createMainComponent() {
+            table = new JBTable(tableModel);
+            table.getEmptyText().setText("No server configuration set");
+            table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            table.setDefaultRenderer(DatabaseVendor.class, new ColoredTableCellRenderer() {
+                @Override
+                protected void customizeCellRenderer(JTable jTable, Object value, boolean b, boolean b1, int i, int i1) {
+                    DatabaseVendor databaseVendor = (DatabaseVendor) value;
+                    this.setIcon(databaseVendor.icon);
+                    this.append(databaseVendor.name);
+                }
+            });
+
+            TableColumn autoConnectColumn = table.getColumnModel().getColumn(3);
+            int autoConnectColumnWidth = table.getFontMetrics(table.getFont()).stringWidth(table.getColumnName(3)) + 10;
+            autoConnectColumn.setPreferredWidth(autoConnectColumnWidth);
+            autoConnectColumn.setMaxWidth(autoConnectColumnWidth);
+            autoConnectColumn.setMinWidth(autoConnectColumnWidth);
+
+            return ToolbarDecorator.createDecorator(table)
+                    .setAddAction(button -> onAddAction())
+                    .setAddActionName("addServer")
+                    .setEditAction(button -> onEditAction())
+                    .setEditActionName("editServer")
+                    .setRemoveAction(button -> onRemoveAction())
+                    .setRemoveActionName("removeServer")
+                    .disableUpDownActions()
+                    .createPanel();
         }
     }
 }

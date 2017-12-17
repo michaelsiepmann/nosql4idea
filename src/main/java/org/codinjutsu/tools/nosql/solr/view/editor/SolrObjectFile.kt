@@ -14,7 +14,7 @@ internal class SolrObjectFile(project: Project, serverConfiguration: ServerConfi
     override fun getFileType() = FILE_TYPE
 
     companion object {
-        val icon: Icon = GuiUtils.loadIcon("couchbase.png")
+        val icon: Icon = GuiUtils.loadIcon("solr.png")
         private val FILE_TYPE = NoSQLFakeFileType("SOLR", icon)
     }
 }
