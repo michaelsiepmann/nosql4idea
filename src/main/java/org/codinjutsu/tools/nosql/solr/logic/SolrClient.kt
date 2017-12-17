@@ -9,12 +9,16 @@ import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.JsonObjectObjectWrapper
 import org.codinjutsu.tools.nosql.commons.model.JsonSearchResult
+import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.solr.configuration.SolrServerConfiguration
+import org.codinjutsu.tools.nosql.solr.logic.commands.GetDocument
+import org.codinjutsu.tools.nosql.solr.logic.commands.ImportData
 import org.codinjutsu.tools.nosql.solr.logic.commands.LoadCores
 import org.codinjutsu.tools.nosql.solr.logic.commands.Search
 import org.codinjutsu.tools.nosql.solr.model.SolrDatabase
 import org.codinjutsu.tools.nosql.solr.view.SolrContext
+import java.io.File
 import java.net.URL
 
 internal class SolrClient : LoadableDatabaseClient<SolrContext, JsonSearchResult, JsonObject> {
@@ -44,8 +48,7 @@ internal class SolrClient : LoadableDatabaseClient<SolrContext, JsonSearchResult
     override fun defaultConfiguration() = SolrServerConfiguration()
 
     override fun findDocument(context: SolrContext, _id: Any): JsonObject? {
-        return null
-        //return createSolrClient(context.serverConfiguration).getById(_id.toString())
+        return GetDocument(context, _id.toString()).execute()
     }
 
     override fun update(context: SolrContext, document: JsonObject) {
@@ -62,6 +65,11 @@ internal class SolrClient : LoadableDatabaseClient<SolrContext, JsonSearchResult
 
     override fun delete(context: SolrContext, _id: Any) {
 //        createSolrClient(context.serverConfiguration).deleteById(_id.toString())
+    }
+
+    override fun importFile(context: SolrContext, file: File): ImportResultState {
+        val jsonObject = ImportData(context, file).execute()
+        return ImportResultState(false, "")
     }
 
     companion object {

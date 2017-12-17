@@ -11,7 +11,7 @@ import org.codinjutsu.tools.nosql.solr.logic.SolrClient
 
 internal class SolrPanel(project: Project, context: SolrContext) : DatabasePanel<SolrClient, SolrContext, JsonSearchResult, JsonObject>(project, context) {
     override fun createResultPanel(project: Project, context: SolrContext?) =
-            JsonResultPanel(project, NoSQLResultPanelDocumentOperationsImpl<SolrClient, SolrContext, JsonSearchResult, JsonObject>(this))
+            JsonResultPanel(project, NoSQLResultPanelDocumentOperationsImpl<SolrClient, SolrContext, JsonSearchResult, JsonObject>(this), "id")
 
     override fun getSearchResult(context: SolrContext, queryOptions: QueryOptions) =
             context.client.loadRecords(context, queryOptions)

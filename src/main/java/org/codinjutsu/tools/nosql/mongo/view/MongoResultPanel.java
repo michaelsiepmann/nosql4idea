@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoResult, DBObject> {
 
     MongoResultPanel(Project project, NoSQLResultPanelDocumentOperations<DBObject> noSQLResultPanelDocumentOperations) {
-        super(project, noSQLResultPanelDocumentOperations, new MongoTreeModelFactory());
+        super(project, noSQLResultPanelDocumentOperations, new MongoTreeModelFactory(), "_id");
     }
 
     @Nullable

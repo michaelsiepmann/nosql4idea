@@ -13,9 +13,8 @@ internal class ElasticsearchContext(client: ElasticsearchClient,
                                     val database: ElasticsearchDatabase) :
         DatabaseContext<ElasticsearchClient>(client, serverConfiguration) {
 
-    override fun getImportPanelSettings(): ImportPanelSettings? {
-        return object : ImportPanelSettings {
-            override fun getExtensions() = arrayOf(".json")
-        }
-    }
+    override fun getImportPanelSettings() =
+            object : ImportPanelSettings {
+                override fun getExtensions() = arrayOf(".json")
+            }
 }

@@ -19,7 +19,7 @@ public class RedisResultPanel extends AbstractNoSQLResultPanel<RedisResult, Obje
     private String separator;
 
     RedisResultPanel(@NotNull Project project, @NotNull NoSQLResultPanelDocumentOperations<Object> documentOperations) {
-        super(project, documentOperations, new RedisTreeModelFactory());
+        super(project, documentOperations, new RedisTreeModelFactory(), "_id");
     }
 
     @Nullable

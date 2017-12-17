@@ -11,14 +11,18 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDe
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.json.JsonTreeModelFactory
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel
 
-internal class JsonResultPanel(project: Project, documentOPerations: NoSQLResultPanelDocumentOperations<JsonObject>) :
-        AbstractNoSQLResultPanel<JsonSearchResult, JsonObject>(project, documentOPerations, JsonTreeModelFactory()) {
+internal class JsonResultPanel(
+        project: Project,
+        documentOPerations: NoSQLResultPanelDocumentOperations<JsonObject>,
+        private val idDescriptorKey: String
+) :
+        AbstractNoSQLResultPanel<JsonSearchResult, JsonObject>(project, documentOPerations, JsonTreeModelFactory(), idDescriptorKey) {
 
     override fun createEditionPanel(): EditionPanel<JsonObject>? {
-        val elasticsearchEditionPanel = EditionPanel<JsonObject>(JsonTreeModelFactory(), object : WriteableColumnInfoDecider {
+        val editionPanel = EditionPanel<JsonObject>(JsonTreeModelFactory(), object : WriteableColumnInfoDecider {
             override fun isNodeWriteable(treeNode: NoSqlTreeNode) = treeNode.descriptor.value is JsonObject
         })
-        elasticsearchEditionPanel.init(documentOperations, object : ActionCallback {
+        editionPanel.init(documentOperations, object : ActionCallback {
             override fun onOperationSuccess(message: String) {
                 hideEditionPanel()
                 GuiUtils.showNotification(resultTreePanel, MessageType.INFO, message, Balloon.Position.above)
@@ -32,11 +36,11 @@ internal class JsonResultPanel(project: Project, documentOPerations: NoSQLResult
                 hideEditionPanel()
             }
         })
-        return elasticsearchEditionPanel
+        return editionPanel
     }
 
     override fun isSelectedNodeId(treeNode: NoSqlTreeNode): Boolean {
         val descriptor = treeNode.descriptor
-        return descriptor is AbstractKeyValueDescriptor && descriptor.key == "_id"
+        return descriptor is AbstractKeyValueDescriptor && descriptor.key == idDescriptorKey
     }
 }

@@ -20,7 +20,7 @@ public class ElasticsearchPanel extends DatabasePanel<ElasticsearchClient, Elast
 
     @Override
     protected AbstractNoSQLResultPanel<JsonSearchResult, JsonObject> createResultPanel(Project project, ElasticsearchContext context) {
-        return new JsonResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this));
+        return new JsonResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this), "_id");
     }
 
     @Override

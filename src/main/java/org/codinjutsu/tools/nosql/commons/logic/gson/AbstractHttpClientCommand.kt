@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.logic.gson
 
 import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.apache.commons.httpclient.HttpClient
 import org.apache.commons.httpclient.HttpMethod
@@ -17,7 +18,13 @@ internal abstract class AbstractHttpClientCommand : HttpClientCommand {
         val method = createMethod(url)
         try {
             client.executeMethod(method)
-            return Gson().fromJson<JsonObject>(method.responseBodyAsString, JsonObject::class.java)
+            val result = Gson().fromJson<JsonElement>(method.responseBodyAsString, JsonElement::class.java)
+            if (result is JsonObject) {
+                return result
+            }
+            val jsonObject = JsonObject()
+            jsonObject.add("result", result)
+            return jsonObject
         } finally {
             method.releaseConnection()
         }

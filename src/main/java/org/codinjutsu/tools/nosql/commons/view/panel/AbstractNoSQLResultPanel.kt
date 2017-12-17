@@ -28,7 +28,12 @@ import java.util.*
 import javax.swing.JPanel
 import javax.swing.tree.DefaultMutableTreeNode
 
-internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUMENT>(project: Project, protected val documentOperations: NoSQLResultPanelDocumentOperations<DOCUMENT>, private val treeModelFactory: NodeDescriptorFactory<DOCUMENT>) : JPanel(), Disposable {
+internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUMENT>(
+        project: Project,
+        protected val documentOperations: NoSQLResultPanelDocumentOperations<DOCUMENT>,
+        private val treeModelFactory: NodeDescriptorFactory<DOCUMENT>,
+        private val idDescriptorKey: String
+) : JPanel(), Disposable {
 
     private val splitter: Splitter
     protected val resultTreePanel = JPanel(BorderLayout())
@@ -108,7 +113,7 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
 
         val descriptor = treeNode.descriptor
         if (descriptor is AbstractKeyValueDescriptor) {
-            if (descriptor.key == "_id") {
+            if (descriptor.key == idDescriptorKey) {
                 return documentOperations.getDocument(descriptor.value!!)
             }
         }

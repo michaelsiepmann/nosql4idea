@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public class CouchbaseResultPanel extends AbstractNoSQLResultPanel<CouchbaseResult, JsonObject> {
 
     public CouchbaseResultPanel(@NotNull Project project, @NotNull NoSQLResultPanelDocumentOperations<JsonObject> documentOperations) {
-        super(project, documentOperations, new CouchbaseTreeModelFactory());
+        super(project, documentOperations, new CouchbaseTreeModelFactory(), "_id");
     }
 
     @Nullable
