@@ -7,6 +7,7 @@ import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperation
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
 
 public class CouchbasePanel extends DatabasePanel<CouchbaseClient, CouchbaseContext, CouchbaseResult, JsonObject> {

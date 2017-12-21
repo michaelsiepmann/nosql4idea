@@ -6,6 +6,7 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFact
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.process
 import org.codinjutsu.tools.nosql.commons.model.JsonObjectObjectWrapper
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor
 
 internal class JsonTreeModelFactory : NodeDescriptorFactory<JsonObject> {
     override fun createResultDescriptor(name: String) =

@@ -1,7 +1,7 @@
-package org.codinjutsu.tools.nosql.couchbase.view;
+package org.codinjutsu.tools.nosql.couchbase.model;
 
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.view.DatabaseContext;
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.jetbrains.annotations.NotNull;

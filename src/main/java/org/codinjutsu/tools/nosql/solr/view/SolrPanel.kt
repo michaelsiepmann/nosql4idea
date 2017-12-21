@@ -8,6 +8,7 @@ import org.codinjutsu.tools.nosql.commons.view.JsonResultPanel
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperationsImpl
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.solr.logic.SolrClient
+import org.codinjutsu.tools.nosql.solr.model.SolrContext
 
 internal class SolrPanel(project: Project, context: SolrContext) : DatabasePanel<SolrClient, SolrContext, JsonSearchResult, JsonObject>(project, context) {
     override fun createResultPanel(project: Project, context: SolrContext?) =

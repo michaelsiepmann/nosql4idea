@@ -18,6 +18,7 @@ import com.intellij.ui.NumberDocument;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.action.AddDocumentAction;

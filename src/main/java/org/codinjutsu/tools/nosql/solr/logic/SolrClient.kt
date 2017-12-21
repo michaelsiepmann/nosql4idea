@@ -17,7 +17,7 @@ import org.codinjutsu.tools.nosql.solr.logic.commands.ImportData
 import org.codinjutsu.tools.nosql.solr.logic.commands.LoadCores
 import org.codinjutsu.tools.nosql.solr.logic.commands.Search
 import org.codinjutsu.tools.nosql.solr.model.SolrDatabase
-import org.codinjutsu.tools.nosql.solr.view.SolrContext
+import org.codinjutsu.tools.nosql.solr.model.SolrContext
 import java.io.File
 import java.net.URL
 

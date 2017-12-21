@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.authentication.NoAuthenticationView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient
-import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchContext
 import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchPanel
 import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchObjectFile
 

@@ -1,7 +1,7 @@
-package org.codinjutsu.tools.nosql.mongo.view
+package org.codinjutsu.tools.nosql.mongo.model
 
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
-import org.codinjutsu.tools.nosql.commons.view.DatabaseContext
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection
 

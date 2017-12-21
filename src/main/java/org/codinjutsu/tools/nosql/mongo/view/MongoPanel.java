@@ -7,6 +7,7 @@ import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperation
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient;
+import org.codinjutsu.tools.nosql.mongo.model.MongoContext;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
 import org.codinjutsu.tools.nosql.mongo.view.panel.query.MongoQueryPanel;

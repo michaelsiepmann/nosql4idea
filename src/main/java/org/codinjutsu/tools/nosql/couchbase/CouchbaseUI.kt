@@ -22,7 +22,7 @@ import org.codinjutsu.tools.nosql.commons.view.authentication.DefaultAuthenticat
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient
-import org.codinjutsu.tools.nosql.couchbase.view.CouchbaseContext
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext
 import org.codinjutsu.tools.nosql.couchbase.view.CouchbasePanel
 import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile
 

@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 
-abstract class DatabaseServerFolder constructor(override val data: DatabaseServer) : Folder<DatabaseServer> {
+abstract class DatabaseServerFolder<DATABASE : Database> constructor(override val data: DatabaseServer) : Folder<DatabaseServer, DATABASE> {
     override val name: String?
         get() = data.label
 
@@ -23,10 +23,10 @@ abstract class DatabaseServerFolder constructor(override val data: DatabaseServe
 
     open fun createCollection(selectedDatabase: Database): Any? = null
 
-    override val children: Collection<Folder<*>>
+    override val children: Collection<Folder<*, DATABASE>>
         get() = data.databases.map { createDatabaseFolder(it) }
 
-    internal abstract fun createDatabaseFolder(database: Database): DatabaseFolder
+    internal abstract fun createDatabaseFolder(database: Database): DatabaseFolder<DATABASE>
 
     override fun updateTreeCell(renderer: ColoredTreeCellRenderer) {
         renderer.apply {

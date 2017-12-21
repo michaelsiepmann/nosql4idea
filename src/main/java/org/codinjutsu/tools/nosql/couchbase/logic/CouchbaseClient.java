@@ -38,7 +38,7 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
-import org.codinjutsu.tools.nosql.couchbase.view.CouchbaseContext;
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -16,4 +16,4 @@
 
 package org.codinjutsu.tools.nosql.commons.model
 
-open class Database(open val name: String)
+open class Database(override val name: String) : NamedObject

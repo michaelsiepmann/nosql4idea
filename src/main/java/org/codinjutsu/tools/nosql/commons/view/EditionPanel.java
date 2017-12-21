@@ -66,7 +66,7 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    documentOperations.updateDocument(buildMongoDocument());
+                    documentOperations.updateDocument(buildEditedDocument());
                     actionCallback.onOperationSuccess("Document saved...");
                 } catch (Exception exception) {
                     actionCallback.onOperationFailure(exception);
@@ -96,7 +96,7 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
         return ((NoSqlTreeNode) rootNode.getChildAt(0));//TODO crappy
     }
 
-    private DOCUMENT buildMongoDocument() {
+    private DOCUMENT buildEditedDocument() {
         NoSqlTreeNode rootNode = (NoSqlTreeNode) editTableView.getTree().getModel().getRoot();
         return nodeDescriptorFactory.buildDBObject(rootNode);
     }

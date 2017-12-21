@@ -29,7 +29,7 @@ import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
-import org.codinjutsu.tools.nosql.mongo.view.MongoContext;
+import org.codinjutsu.tools.nosql.mongo.model.MongoContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

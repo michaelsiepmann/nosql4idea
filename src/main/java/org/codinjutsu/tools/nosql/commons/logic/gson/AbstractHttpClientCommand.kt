@@ -5,7 +5,6 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.apache.commons.httpclient.HttpClient
 import org.apache.commons.httpclient.HttpMethod
-import org.slf4j.LoggerFactory
 import java.net.URLEncoder
 
 internal abstract class AbstractHttpClientCommand : HttpClientCommand {
@@ -28,7 +27,7 @@ internal abstract class AbstractHttpClientCommand : HttpClientCommand {
             return jsonObject
         } catch (e: Exception) {
             val message = "Error while fetching from URL $url with method ${method.name}."
-            log.error(message, e)
+//            log.error(message, e)
             throw ClientCommandException(message, e)
         } finally {
             method.releaseConnection()
@@ -80,6 +79,6 @@ internal abstract class AbstractHttpClientCommand : HttpClientCommand {
     private fun String.removeLineBreaks() = this.replace("\n", "").replace("\r", "")
 
     companion object {
-        private val log = LoggerFactory.getLogger(AbstractHttpClientCommand::class.java)
+//        private val log = getLog(AbstractHttpClientCommand::class.java)
     }
 }

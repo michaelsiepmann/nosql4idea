@@ -29,7 +29,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
-import org.codinjutsu.tools.nosql.redis.RedisContext;
+import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
 import org.codinjutsu.tools.nosql.redis.view.action.EnableGroupingAction;

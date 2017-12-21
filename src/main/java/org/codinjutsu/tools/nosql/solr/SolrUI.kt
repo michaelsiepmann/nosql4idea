@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.commons.view.authentication.DefaultAuthenticat
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.solr.logic.SolrClient
-import org.codinjutsu.tools.nosql.solr.view.SolrContext
+import org.codinjutsu.tools.nosql.solr.model.SolrContext
 import org.codinjutsu.tools.nosql.solr.view.SolrPanel
 import org.codinjutsu.tools.nosql.solr.view.editor.SolrObjectFile
 

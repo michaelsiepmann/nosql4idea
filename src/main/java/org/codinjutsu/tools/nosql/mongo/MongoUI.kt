@@ -22,7 +22,7 @@ import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient
 import org.codinjutsu.tools.nosql.mongo.view.authentication.MongoAuthenticationPanel
-import org.codinjutsu.tools.nosql.mongo.view.MongoContext
+import org.codinjutsu.tools.nosql.mongo.model.MongoContext
 import org.codinjutsu.tools.nosql.mongo.view.MongoPanel
 import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile
 

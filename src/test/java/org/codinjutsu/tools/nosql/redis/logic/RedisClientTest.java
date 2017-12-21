@@ -19,7 +19,7 @@ package org.codinjutsu.tools.nosql.redis.logic;
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.redis.RedisClientStub;
-import org.codinjutsu.tools.nosql.redis.RedisContext;
+import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;

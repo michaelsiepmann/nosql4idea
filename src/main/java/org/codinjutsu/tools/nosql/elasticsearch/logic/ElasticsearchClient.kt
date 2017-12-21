@@ -22,10 +22,10 @@ import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetIndices
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetTypes
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Insert
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Search
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchContext
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchType
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion.VERSION_20
-import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchContext
 import java.io.File
 import java.net.URL
 
@@ -82,7 +82,9 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
     }
 
     override fun update(context: ElasticsearchContext, document: JsonObject) {
-        Insert(context, document).execute()
+        val id = document.getAsJsonPrimitive("_id").asString
+        val source = document.getAsJsonObject("_source")
+        val result = Insert(context, if (source != null) source else document, id).execute()
     }
 
     override fun delete(context: ElasticsearchContext, _id: Any) {

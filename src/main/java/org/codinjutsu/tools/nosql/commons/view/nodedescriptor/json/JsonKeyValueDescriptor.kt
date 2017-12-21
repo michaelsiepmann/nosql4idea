@@ -26,7 +26,7 @@ internal open class JsonKeyValueDescriptor(key: String, _value: Any?, valueTextA
 
     private class JsonKeyBooleanValueDecriptor(key: String, value: Boolean) : JsonKeyValueDescriptor(key, value, getBooleanAttribute())
 
-    private class JsonKeyIntegerValueDescriptor(key:String, value: Number) : JsonKeyValueDescriptor(key, value, getNumberAttribute())
+    private class JsonKeyIntegerValueDescriptor(key: String, value: Number) : JsonKeyValueDescriptor(key, value, getNumberAttribute())
 
     private class JsonKeyStringValueDescriptor(key: String, value: String) : JsonKeyValueDescriptor(key, value, getStringAttribute()) {
 

@@ -24,7 +24,7 @@ import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
-import org.codinjutsu.tools.nosql.redis.RedisContext;
+import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;

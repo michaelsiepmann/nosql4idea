@@ -1,6 +1,8 @@
 package org.codinjutsu.tools.nosql.elasticsearch.model
 
-internal class ElasticsearchType(val name: String, val databaseName: String, val version: ElasticsearchVersion) : Comparable<ElasticsearchType> {
+import org.codinjutsu.tools.nosql.commons.model.NamedObject
+
+internal class ElasticsearchType(override val name: String, val databaseName: String, val version: ElasticsearchVersion) : NamedObject, Comparable<ElasticsearchType> {
 
     override fun toString() = name
 

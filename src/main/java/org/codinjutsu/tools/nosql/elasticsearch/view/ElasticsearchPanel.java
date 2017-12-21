@@ -10,6 +10,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.Pageable;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient;
+import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchContext;
 import org.codinjutsu.tools.nosql.elasticsearch.view.panel.query.ElasticsearchQueryPanel;
 
 public class ElasticsearchPanel extends DatabasePanel<ElasticsearchClient, ElasticsearchContext, JsonSearchResult, JsonObject> implements Pageable {

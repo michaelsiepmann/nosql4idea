@@ -68,7 +68,7 @@ import static org.codinjutsu.tools.nosql.commons.utils.GuiUtils.showNotification
 
 public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
-    private static final URL pluginSettingsUrl = GuiUtils.isUnderDarcula() ? GuiUtils.getIconResource("pluginSettings_dark.png") : GuiUtils.getIconResource("pluginSettings.png");
+    private static final URL pluginSettingsUrl = GuiUtils.isUnderDarcula() ? GuiUtils.getIconResource("pluginSettings_dark.png") : GuiUtils.getIconResource("pluginSettings.png"); //NON-NLS
 
     private JPanel rootPanel;
     private JPanel treePanel;
@@ -86,7 +86,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
         databaseTree = createTree();
         databaseTree.setCellRenderer(new NoSqlTreeRenderer());
-        databaseTree.setName("databaseTree");
+        databaseTree.setName("databaseTree"); //NON-NLS
 
         setLayout(new BorderLayout());
         treePanel.add(new JBScrollPane(databaseTree), BorderLayout.CENTER);
@@ -166,7 +166,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
     private void addDatabasesIfAny(Folder databaseServerFolder, DefaultMutableTreeNode serverNode) {
-        Collection<Folder<?>> children = databaseServerFolder.getChildren();
+        Collection<Folder<?, ?>> children = databaseServerFolder.getChildren();
         for (Folder child : children) {
             DefaultMutableTreeNode databaseNode = new DefaultMutableTreeNode(child);
             addDatabasesIfAny(child, databaseNode);

@@ -22,6 +22,7 @@ import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfigu
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
 import org.fest.swing.edt.GuiActionRunner;

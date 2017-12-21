@@ -1,7 +1,7 @@
-package org.codinjutsu.tools.nosql.redis;
+package org.codinjutsu.tools.nosql.redis.model;
 
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.view.DatabaseContext;
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.jetbrains.annotations.NotNull;

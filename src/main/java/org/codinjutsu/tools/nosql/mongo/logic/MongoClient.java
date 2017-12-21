@@ -40,7 +40,7 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
-import org.codinjutsu.tools.nosql.mongo.view.MongoContext;
+import org.codinjutsu.tools.nosql.mongo.model.MongoContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

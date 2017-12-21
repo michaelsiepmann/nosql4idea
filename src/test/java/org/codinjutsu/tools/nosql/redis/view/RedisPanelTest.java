@@ -34,7 +34,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.PlatformLiteFixture;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
-import org.codinjutsu.tools.nosql.redis.RedisContext;
+import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
