@@ -17,4 +17,9 @@ internal class StringUtilsKtTest {
         assertEquals(1.000000000001, "1.000000000001".parseNumber())
         assertEquals(1000000000000000L, "1000000000000000".parseNumber())
     }
+
+    @Test
+    fun urlEncode() {
+        assertEquals("test%2Ftest2", "test/test2".urlEncode())
+    }
 }

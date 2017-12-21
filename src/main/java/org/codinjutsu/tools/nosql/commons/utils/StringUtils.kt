@@ -1,5 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.utils
 
+import java.net.URLEncoder
+
 private const val ELLIPSIS = "..."
 
 fun String.abbreviateInCenter(length: Int): String {
@@ -28,3 +30,5 @@ fun String.parseNumber(): Number {
 fun explode(key: String?, separator: String): Array<String> {
     return key?.split(separator)?.dropLastWhile { it.isEmpty() }?.toTypedArray() ?: emptyArray()
 }
+
+fun String.urlEncode()  = URLEncoder.encode(this, "utf-8")
