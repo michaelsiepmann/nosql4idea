@@ -16,14 +16,17 @@
 
 package org.codinjutsu.tools.nosql.commons.view.renderer
 
-import com.intellij.ui.ColoredTreeCellRenderer
+import com.intellij.ui.ColoredTableCellRenderer
+import com.intellij.ui.treeStructure.treetable.TreeTable
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
-import javax.swing.JTree
+import javax.swing.JTable
 
-class KeyCellRenderer : ColoredTreeCellRenderer() {
+class ValueCellRenderer : ColoredTableCellRenderer() {
 
-    override fun customizeCellRenderer(tree: JTree, value: Any, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean) {
-        val descriptor = (value as NoSqlTreeNode).descriptor
-        descriptor.renderNode(this)
+    override fun customizeCellRenderer(table: JTable, value: Any?, selected: Boolean, hasFocus: Boolean, row: Int, column: Int) {
+        val tree = (table as TreeTable).tree
+        val pathForRow = tree.getPathForRow(row)
+        val node = pathForRow.lastPathComponent as NoSqlTreeNode
+        node.descriptor.renderValue(this, tree.isExpanded(pathForRow))
     }
 }
