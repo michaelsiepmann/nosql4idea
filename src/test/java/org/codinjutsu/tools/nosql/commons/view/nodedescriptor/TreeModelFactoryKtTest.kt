@@ -6,8 +6,8 @@ import com.mongodb.BasicDBObject
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.json.JsonKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.json.JsonTreeModelFactory
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor
 import org.codinjutsu.tools.nosql.mongo.view.model.MongoTreeModelFactory
-import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoKeyValueDescriptor
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -39,12 +39,12 @@ internal class TreeModelFactoryKtTest {
         assertEquals(2, currentValueNode.childCount)
         val children = currentValueNode.children()
         var element = (children.nextElement() as NoSqlTreeNode).userObject
-        assertTrue(element is MongoKeyValueDescriptor) {
-            "First element should be a MongoKeyValueDescriptor"
+        assertTrue(element is TypedKeyValueDescriptor<*>) {
+            "First element should be a TypedKeyValueDescriptor"
         }
         element = (children.nextElement() as NoSqlTreeNode).userObject
-        assertTrue(element is MongoKeyValueDescriptor) {
-            "Second element should be a MongoKeyValueDescriptor"
+        assertTrue(element is TypedKeyValueDescriptor<*>) {
+            "Second element should be a TypedKeyValueDescriptor"
         }
     }
 
@@ -58,11 +58,11 @@ internal class TreeModelFactoryKtTest {
         assertEquals(2, currentValueNode.childCount)
         val children = currentValueNode.children()
         var element = (children.nextElement() as NoSqlTreeNode).userObject
-        assertTrue(element is JsonKeyValueDescriptor) {
+        assertTrue(element is JsonKeyValueDescriptor<*>) {
             "First element should be a JsonKeyValueDescriptor"
         }
         element = (children.nextElement() as NoSqlTreeNode).userObject
-        assertTrue(element is JsonKeyValueDescriptor) {
+        assertTrue(element is JsonKeyValueDescriptor<*>) {
             "Second element should be a JsonKeyValueDescriptor"
         }
     }

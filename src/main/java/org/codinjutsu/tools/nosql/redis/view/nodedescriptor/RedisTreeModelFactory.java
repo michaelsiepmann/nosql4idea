@@ -3,6 +3,10 @@ package org.codinjutsu.tools.nosql.redis.view.nodedescriptor;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.NullResultDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.ResultDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.ValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,25 +17,24 @@ public class RedisTreeModelFactory implements NodeDescriptorFactory<Object> {
 
     @NotNull
     @Override
-    public NodeDescriptor createResultDescriptor(@NotNull String name) {
-        return new RedisResultDescriptor();
+    public ResultDescriptor<?> createResultDescriptor(@NotNull String name) {
+        return new NullResultDescriptor();
     }
 
     @NotNull
     @Override
-    public NodeDescriptor createKeyValueDescriptor(@NotNull String key, @Nullable Object value) {
+    public KeyValueDescriptor<?> createKeyValueDescriptor(@NotNull String key, @Nullable Object value) {
         return RedisKeyValueDescriptor.createDescriptor(key, value.toString());
     }
 
     @NotNull
     @Override
-    public NodeDescriptor createValueDescriptor(int index, @NotNull Object value) {
+    public ValueDescriptor<?> createValueDescriptor(int index, @NotNull Object value) {
         return RedisValueDescriptor.createDescriptor(index, value);
     }
 
     @Override
     public void processObject(@NotNull NoSqlTreeNode parentNode, @Nullable Object value) {
-
     }
 
     @Override

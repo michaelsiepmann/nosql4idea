@@ -13,10 +13,10 @@ import org.codinjutsu.tools.nosql.commons.view.action.edition.AddValueAction;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.DeleteKeyAction;
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WritableColumnInfo;
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.ValueDescriptor;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -49,9 +49,9 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
         add(mainPanel);
         editionTreePanel.setLayout(new BorderLayout());
 
-        saveButton.setName("saveButton");
-        cancelButton.setName("cancelButton");
-        deleteButton.setName("deleteButton");
+        saveButton.setName("saveButton"); //NON-NLS
+        cancelButton.setName("cancelButton"); //NON-NLS
+        deleteButton.setName("deleteButton"); //NON-NLS
     }
 
     public void init(NoSQLResultPanelDocumentOperations<DOCUMENT> documentOperations, ActionCallback actionCallback) {
@@ -109,7 +109,7 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
 
         mainPanel.setBorder(IdeBorderFactory.createTitledBorder(panelTitle, true));
         editTableView = new JsonTreeTableView(buildJsonTree(document), JsonTreeTableView.KEY, new WritableColumnInfo(writeableColumnInfoDecider));
-        editTableView.setName("editionTreeTable");
+        editTableView.setName("editionTreeTable"); //NON-NLS
 
         editionTreePanel.invalidate();
         editionTreePanel.removeAll();
@@ -172,14 +172,14 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
     }
 
     protected void buildPopupMenu() {
-        DefaultActionGroup actionPopupGroup = new DefaultActionGroup("AbstractEditorPopupGroup", true);
+        DefaultActionGroup actionPopupGroup = new DefaultActionGroup("AbstractEditorPopupGroup", true); //NON-NLS
         if (ApplicationManager.getApplication() != null) {
             actionPopupGroup.add(new AddKeyAction<>(this));
             actionPopupGroup.add(new AddValueAction<>(this));
             actionPopupGroup.add(new DeleteKeyAction(this));
         }
 
-        PopupHandler.installPopupHandler(editTableView, actionPopupGroup, "POPUP", ActionManager.getInstance());
+        PopupHandler.installPopupHandler(editTableView, actionPopupGroup, "POPUP", ActionManager.getInstance()); //NON-NLS
     }
 
     public void addValue(Object value) {
@@ -201,7 +201,7 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
 
     public boolean canAddKey() {
         NoSqlTreeNode selectedNode = getSelectedNode();
-        return selectedNode != null && selectedNode.getDescriptor() instanceof AbstractKeyValueDescriptor;
+        return selectedNode != null && selectedNode.getDescriptor() instanceof TypedKeyValueDescriptor;
     }
 
     public boolean canAddValue() {

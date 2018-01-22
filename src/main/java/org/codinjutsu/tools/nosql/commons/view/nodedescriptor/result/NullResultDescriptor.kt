@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.commons.view.nodedescriptor;
+package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result
 
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.ColoredTableCellRenderer
+import com.intellij.ui.ColoredTreeCellRenderer
 
-public interface NodeDescriptor<VALUE> {
+class NullResultDescriptor : ResultDescriptor<Any> {
+    override fun renderValue(cellRenderer: ColoredTableCellRenderer, isNodeExpanded: Boolean) {}
 
-    int MAX_LENGTH = 150;
+    override fun renderNode(cellRenderer: ColoredTreeCellRenderer) {}
 
-    void renderValue(ColoredTableCellRenderer cellRenderer, boolean isNodeExpanded);
+    override fun getFormattedKey() = null
 
-    void renderNode(ColoredTreeCellRenderer cellRenderer);
+    override fun getFormattedValue() = null
 
-    String getFormattedKey();
+    override fun getValue() = null
 
-    String getFormattedValue();
-
-    VALUE getValue();
-
-    void setValue(Object value);
-
-    default boolean isSameKey(String key) {
-        return false;
-    }
+    override fun setValue(value: Any) {}
 }

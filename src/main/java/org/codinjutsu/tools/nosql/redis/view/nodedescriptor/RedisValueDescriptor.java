@@ -19,27 +19,28 @@ package org.codinjutsu.tools.nosql.redis.view.nodedescriptor;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecriptor;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.ValueDescriptor;
 import redis.clients.jedis.Tuple;
 
-public class RedisValueDescriptor extends AbstractNodeDecriptor implements ValueDescriptor {
+import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getIndexAttribute;
+import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getStringAttribute;
+
+public class RedisValueDescriptor extends AbstractNodeDecriptor<Object> implements ValueDescriptor<Object> {
 
     private final int index;
     protected Object value;
     private final SimpleTextAttributes valueTextAttributes;
 
-    public static RedisValueDescriptor createDescriptor(int index, Object value) {
-        return new RedisValueDescriptor(index, value, StyleAttributesProvider.getStringAttribute());
+    public static ValueDescriptor<?> createDescriptor(int index, Object value) {
+        return new RedisValueDescriptor(index, value, getStringAttribute());
     }
 
     public static RedisValueDescriptor createUnindexedDescriptor(Object value) {
-        return new RedisUnindexedValueDescriptor(value, StyleAttributesProvider.getStringAttribute());
+        return new RedisUnindexedValueDescriptor(value, getStringAttribute());
     }
 
     private RedisValueDescriptor(int index, Object value, SimpleTextAttributes valueTextAttributes) {
-
         this.index = index;
         this.value = value;
         this.valueTextAttributes = valueTextAttributes;
@@ -54,7 +55,7 @@ public class RedisValueDescriptor extends AbstractNodeDecriptor implements Value
 
     @Override
     public void renderNode(ColoredTreeCellRenderer cellRenderer) {
-        cellRenderer.append(getFormattedKey(), StyleAttributesProvider.getIndexAttribute());
+        cellRenderer.append(getFormattedKey(), getIndexAttribute());
     }
 
     @Override
@@ -64,11 +65,11 @@ public class RedisValueDescriptor extends AbstractNodeDecriptor implements Value
 
     @Override
     public String getFormattedValue() {
-        if (getValue() instanceof Tuple) {
-            Tuple tupleValue = (Tuple) getValue();
+        if (value instanceof Tuple) {
+            Tuple tupleValue = (Tuple) value;
             return String.format("(%s, %s)", tupleValue.getElement(), tupleValue.getScore());
         }
-        return String.valueOf(getValue());
+        return String.valueOf(value);
     }
 
     @Override
@@ -78,7 +79,6 @@ public class RedisValueDescriptor extends AbstractNodeDecriptor implements Value
 
     @Override
     public void setValue(Object value) {
-
     }
 
     private static class RedisUnindexedValueDescriptor extends RedisValueDescriptor {

@@ -21,7 +21,7 @@ import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisRecord;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisKeyValueDescriptor;
-import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisResultDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.NullResultDescriptor;
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisValueDescriptor;
 
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class RedisTreeModel {
     public static NoSqlTreeNode buildTree(RedisResult redisResult) {
-        NoSqlTreeNode rootNode = new NoSqlTreeNode(new RedisResultDescriptor());
+        NoSqlTreeNode rootNode = new NoSqlTreeNode(new NullResultDescriptor());
 
         if (redisResult != null) {
             for (RedisRecord redisRecord : redisResult.getResults()) {

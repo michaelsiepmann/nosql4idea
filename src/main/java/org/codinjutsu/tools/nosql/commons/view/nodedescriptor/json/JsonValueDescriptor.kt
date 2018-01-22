@@ -7,10 +7,14 @@ import com.intellij.ui.SimpleTextAttributes
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getStringAttribute
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecriptor
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ValueDescriptor
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.ValueDescriptor
 import java.lang.String.format
 
-internal open class JsonValueDescriptor(private val index: Int, private var value: Any?, private val valueTextAttributes: SimpleTextAttributes) : AbstractNodeDecriptor(), ValueDescriptor, JsonDescriptor {
+internal open class JsonValueDescriptor(
+        private val index: Int,
+        private var value: Any?,
+        private val valueTextAttributes: SimpleTextAttributes
+) : AbstractNodeDecriptor<Any?>(), ValueDescriptor<Any?>, JsonDescriptor {
 
     override fun renderValue(cellRenderer: ColoredTableCellRenderer, isNodeExpanded: Boolean) {
         if (!isNodeExpanded) {

@@ -16,21 +16,17 @@
 
 package org.codinjutsu.tools.nosql.mongo.view.model;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.commons.io.IOUtils;
-import org.bson.BSONObject;
 import org.bson.types.ObjectId;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
-import org.codinjutsu.tools.nosql.commons.view.model.TreeModelUtilityKt;
-import org.codinjutsu.tools.nosql.mongo.view.nodedescriptor.MongoResultDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.StandardResultDescriptor;
 import org.junit.Test;
 
 import java.nio.charset.Charset;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class MongoTreeModelFactoryTest {
 
@@ -98,29 +94,10 @@ public class MongoTreeModelFactoryTest {
         NoSqlTreeNode treeNode = buildJsonTree(jsonObject);
         NoSqlTreeNode objectIdNode = (NoSqlTreeNode) treeNode.getChildAt(0);
         assertEquals("_id", objectIdNode.getDescriptor().getFormattedKey());
-
-        assertNull(TreeModelUtilityKt.findObjectIdNode(treeNode));
-        assertEquals(objectIdNode, TreeModelUtilityKt.findObjectIdNode((NoSqlTreeNode) treeNode.getChildAt(0)));
-
-    }
-
-    @Test
-    public void findDocumentFromANode() throws Exception {
-        BasicDBList dbList = (BasicDBList) JSON.parse(IOUtils.toString(getClass().getResourceAsStream("arrayOfDocuments.json"), Charset.defaultCharset()));
-
-        BSONObject first = (BSONObject) dbList.get(0);
-        first.put("_id", new ObjectId(String.valueOf(first.get("_id"))));
-
-        BSONObject second = (BSONObject) dbList.get(1);
-        second.put("_id", new ObjectId(String.valueOf(second.get("_id"))));
-
-        NoSqlTreeNode treeNode = buildJsonTree(dbList);
-
-        assertEquals(first, TreeModelUtilityKt.findDocument((NoSqlTreeNode) treeNode.getChildAt(0)));
     }
 
     private NoSqlTreeNode buildJsonTree(DBObject mongoObject) {
-        NoSqlTreeNode rootNode = new NoSqlTreeNode(new MongoResultDescriptor());//TODO crappy
+        NoSqlTreeNode rootNode = new NoSqlTreeNode(new StandardResultDescriptor());//TODO crappy
         new MongoTreeModelFactory().processDbObject(rootNode, mongoObject);
         return rootNode;
     }

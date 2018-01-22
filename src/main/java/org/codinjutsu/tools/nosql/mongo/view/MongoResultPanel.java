@@ -26,7 +26,7 @@ import org.codinjutsu.tools.nosql.commons.view.ActionCallback;
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
 import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoResult, DBObject> {
 
     MongoResultPanel(Project project, NoSQLResultPanelDocumentOperations<DBObject> noSQLResultPanelDocumentOperations) {
-        super(project, noSQLResultPanelDocumentOperations, new MongoTreeModelFactory(), "_id");
+        super(project, noSQLResultPanelDocumentOperations, new MongoTreeModelFactory(), "_id"); //NON-NLS
     }
 
     @Nullable
@@ -67,6 +67,6 @@ public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoResult, DBOb
     @Override
     protected boolean isSelectedNodeId(@NotNull NoSqlTreeNode treeNode) {
         NodeDescriptor descriptor = treeNode.getDescriptor();
-        return descriptor instanceof AbstractKeyValueDescriptor && StringUtils.equals(((AbstractKeyValueDescriptor) descriptor).getKey(), "_id");
+        return descriptor instanceof TypedKeyValueDescriptor && StringUtils.equals(((TypedKeyValueDescriptor) descriptor).getKey(), "_id");
     }
 }

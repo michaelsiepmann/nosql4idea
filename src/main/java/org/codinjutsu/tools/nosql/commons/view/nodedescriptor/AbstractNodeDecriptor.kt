@@ -2,10 +2,12 @@ package org.codinjutsu.tools.nosql.commons.view.nodedescriptor
 
 import org.codinjutsu.tools.nosql.commons.utils.abbreviateInCenter
 
-internal abstract class AbstractNodeDecriptor : NodeDescriptor {
+abstract class AbstractNodeDecriptor<out VALUE> {
+
+    protected abstract fun getValue() : VALUE
 
     protected open fun getValueAndAbbreviateIfNecessary() =
-            getValueAndAbbreviateIfNecessary(value.toString())
+            getValueAndAbbreviateIfNecessary(getValue().toString())
 
     protected fun getValueAndAbbreviateIfNecessary(stringifiedValue: String?) =
             when {

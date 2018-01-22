@@ -7,8 +7,8 @@ import com.intellij.openapi.ui.popup.Balloon
 import org.codinjutsu.tools.nosql.commons.model.JsonSearchResult
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.json.JsonTreeModelFactory
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel
 
 internal class JsonResultPanel(
@@ -41,6 +41,6 @@ internal class JsonResultPanel(
 
     override fun isSelectedNodeId(treeNode: NoSqlTreeNode): Boolean {
         val descriptor = treeNode.descriptor
-        return descriptor is AbstractKeyValueDescriptor && descriptor.key == idDescriptorKey
+        return descriptor is KeyValueDescriptor && descriptor.key == idDescriptorKey
     }
 }

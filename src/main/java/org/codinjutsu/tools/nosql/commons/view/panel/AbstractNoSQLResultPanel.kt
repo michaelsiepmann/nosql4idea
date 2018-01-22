@@ -17,10 +17,11 @@ import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperation
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction
 import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.ResultDescriptor
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.ResultDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.buildTree
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor
 import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -112,7 +113,7 @@ internal abstract class AbstractNoSQLResultPanel<in RESULT : SearchResult, DOCUM
         val treeNode = tree?.lastSelectedPathComponent as NoSqlTreeNode
 
         val descriptor = treeNode.descriptor
-        if (descriptor is AbstractKeyValueDescriptor) {
+        if (descriptor is KeyValueDescriptor) {
             if (descriptor.key == idDescriptorKey) {
                 return documentOperations.getDocument(descriptor.value!!)
             }

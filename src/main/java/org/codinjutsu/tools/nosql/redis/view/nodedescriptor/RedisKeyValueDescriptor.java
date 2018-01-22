@@ -16,13 +16,10 @@
 
 package org.codinjutsu.tools.nosql.redis.view.nodedescriptor;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractKeyValueDescriptor;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
-import org.codinjutsu.tools.nosql.redis.RedisUtils;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Tuple;
@@ -32,43 +29,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisKeyValueDescriptor extends AbstractKeyValueDescriptor {
+import static com.intellij.icons.AllIcons.Json.Property_braces;
+import static com.intellij.icons.AllIcons.Json.Property_brackets;
+import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getIndexAttribute;
+import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getStringAttribute;
+import static org.codinjutsu.tools.nosql.redis.RedisUtils.stringifySet;
+import static org.codinjutsu.tools.nosql.redis.RedisUtils.stringifySortedSet;
+
+public class RedisKeyValueDescriptor extends TypedKeyValueDescriptor<Object> {
 
     private final RedisKeyType keyType;
-    private final Icon icon;
 
-    public static NodeDescriptor createDescriptor(String key, String value) {
+    public static KeyValueDescriptor<?> createDescriptor(String key, String value) {
         return createDescriptor(null, key, value);
     }
 
     public static RedisKeyValueDescriptor createDescriptor(RedisKeyType keyType, String key, Object value) {
-        return new RedisKeyValueDescriptor(keyType, key, value, StyleAttributesProvider.getStringAttribute());
+        return new RedisKeyValueDescriptor(keyType, key, value, getStringAttribute(), findIcon(value));
     }
 
-    private RedisKeyValueDescriptor(RedisKeyType keyType, String key, Object value, SimpleTextAttributes valueTextAttributes) {
-        super(key, value, valueTextAttributes);
-        this.keyType = keyType;
-        this.icon = findIcon(value);
-    }
-
-    private Icon findIcon(Object object) {
+    private static Icon findIcon(Object object) {
         if (object instanceof List) {
-            return AllIcons.Json.Property_brackets;
+            return Property_brackets;
         }
         if (object instanceof Set || object instanceof Map) {
-            return AllIcons.Json.Property_braces;
+            return Property_braces;
         }
         return null;
     }
 
+    private RedisKeyValueDescriptor(RedisKeyType keyType, String key, Object value, SimpleTextAttributes valueTextAttributes, Icon icon) {
+        super(key, value, valueTextAttributes, icon);
+        this.keyType = keyType;
+    }
+
     @Override
     public void renderNode(@NotNull ColoredTreeCellRenderer cellRenderer) {
-        cellRenderer.setIcon(icon);
         if (keyType != null) {
-            cellRenderer.append(keyType.name(), StyleAttributesProvider.getIndexAttribute());
+            cellRenderer.append(keyType.name(), getIndexAttribute());
             cellRenderer.append(" ");
         }
-        cellRenderer.append(getFormattedKey(), StyleAttributesProvider.getKeyValueAttribute());
+        super.renderNode(cellRenderer);
     }
 
     @NotNull
@@ -79,12 +80,12 @@ public class RedisKeyValueDescriptor extends AbstractKeyValueDescriptor {
             return "";
         }
         if (RedisKeyType.ZSET.equals(keyType)) {
-            return getValueAndAbbreviateIfNecessary(RedisUtils.stringifySortedSet((Set<Tuple>) value));
+            return getValueAndAbbreviateIfNecessary(stringifySortedSet((Set<Tuple>) value));
         }
         if (RedisKeyType.SET.equals(keyType)) {
-            return getValueAndAbbreviateIfNecessary(RedisUtils.stringifySet((Set) value));
+            return getValueAndAbbreviateIfNecessary(stringifySet((Set) value));
         }
-        return getValueAndAbbreviateIfNecessary(value.toString());
+        return super.getFormattedValue();
     }
 
     @Override

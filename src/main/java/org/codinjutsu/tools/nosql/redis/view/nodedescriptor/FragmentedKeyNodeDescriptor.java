@@ -20,21 +20,22 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 
-public class FragmentedKeyNodeDescriptor implements NodeDescriptor {
+import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getKeyValueAttribute;
+
+public class FragmentedKeyNodeDescriptor implements NodeDescriptor<Object> {
 
     private final String keyFragment;
     private final SimpleTextAttributes keyAttribute;
 
-    public FragmentedKeyNodeDescriptor(String keyFragment, SimpleTextAttributes keyAttribute) {
+    private FragmentedKeyNodeDescriptor(String keyFragment, SimpleTextAttributes keyAttribute) {
         this.keyFragment = keyFragment;
         this.keyAttribute = keyAttribute;
     }
 
     public static FragmentedKeyNodeDescriptor createDescriptor(String key) {
-        return new FragmentedKeyNodeDescriptor(key, StyleAttributesProvider.getKeyValueAttribute());
+        return new FragmentedKeyNodeDescriptor(key, getKeyValueAttribute());
     }
 
     public String getKeyFragment() {
