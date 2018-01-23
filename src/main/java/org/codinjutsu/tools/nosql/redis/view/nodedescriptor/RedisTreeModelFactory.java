@@ -1,7 +1,6 @@
 package org.codinjutsu.tools.nosql.redis.view.nodedescriptor;
 
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.NullResultDescriptor;

@@ -4,7 +4,6 @@ import com.mongodb.BasicDBList
 import com.mongodb.BasicDBObject
 import com.mongodb.DBObject
 import org.bson.types.ObjectId
-import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getBooleanAttribute
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getNumberAttribute
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getObjectAttribute

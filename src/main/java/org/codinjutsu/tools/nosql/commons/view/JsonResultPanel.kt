@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.commons.view
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
@@ -20,7 +21,7 @@ internal class JsonResultPanel(
 
     override fun createEditionPanel(): EditionPanel<JsonObject>? {
         val editionPanel = EditionPanel<JsonObject>(JsonTreeModelFactory(), object : WriteableColumnInfoDecider {
-            override fun isNodeWriteable(treeNode: NoSqlTreeNode) = treeNode.descriptor.value is JsonObject
+            override fun isNodeWriteable(treeNode: NoSqlTreeNode) = treeNode.descriptor.value !is JsonObject && treeNode.descriptor.value !is JsonArray
         })
         editionPanel.init(documentOperations, object : ActionCallback {
             override fun onOperationSuccess(message: String) {
