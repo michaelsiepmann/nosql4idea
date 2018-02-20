@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public interface DatabaseClient<CONTEXT, DOCUMENT> {
 
@@ -62,4 +64,14 @@ public interface DatabaseClient<CONTEXT, DOCUMENT> {
     default ImportResultState importFile(CONTEXT context, File file) {
         return null;
     }
+
+    @NotNull
+    Collection<DatabaseServer> getServers();
+
+    default Collection<DatabaseServer> filterAvailableServers() {
+        return getServers().stream()
+                .filter(DatabaseServer::hasDatabases)
+                .collect(Collectors.toList());
+    }
+
 }

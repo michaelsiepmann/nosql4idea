@@ -34,12 +34,15 @@ import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Tuple;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisResult, Object> {
+
+    private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
     public static RedisClient getInstance(Project project) {
         return ServiceManager.getService(project, RedisClient.class);
@@ -74,14 +77,18 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisRe
         databaseServer.setDatabases(databases);
     }
 
-    @Override
     public void cleanUpServers() {
+        databaseServers.clear();
+    }
 
+    public void registerServer(DatabaseServer databaseServer) {
+        databaseServers.add(databaseServer);
     }
 
     @Override
-    public void registerServer(DatabaseServer databaseServer) {
-
+    @NotNull
+    public Collection<DatabaseServer> getServers() {
+        return databaseServers;
     }
 
     @Override

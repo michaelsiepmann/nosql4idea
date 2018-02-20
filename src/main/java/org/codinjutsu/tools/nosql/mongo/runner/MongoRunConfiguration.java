@@ -38,7 +38,6 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.NoSqlConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
@@ -47,8 +46,10 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Collection;
+
+import static java.util.Arrays.asList;
+import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
 
 class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> {
 
@@ -61,7 +62,7 @@ class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationMod
 
     MongoRunConfiguration(RunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
         super("Mongo Script", runConfigurationModule, factory);
-        mongoShell = NoSqlConfiguration.getInstance(getProject()).getShellPath(DatabaseVendor.MONGO);
+        mongoShell = NoSqlConfiguration.getInstance(getProject()).getShellPath(MONGO);
     }
 
     @NotNull
@@ -72,8 +73,7 @@ class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationMod
 
     @Override
     public Collection<Module> getValidModules() {
-        Module[] allModules = ModuleManager.getInstance(getProject()).getModules();
-        return Arrays.asList(allModules);
+        return asList(ModuleManager.getInstance(getProject()).getModules());
     }
 
     @Override

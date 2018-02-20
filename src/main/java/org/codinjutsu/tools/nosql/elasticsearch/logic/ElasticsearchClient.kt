@@ -31,6 +31,8 @@ import java.net.URL
 
 internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, JsonSearchResult, JsonObject> {
 
+    private val databaseServers = mutableListOf<DatabaseServer>()
+
     override fun connect(serverConfiguration: ServerConfiguration) {
         try {
             URL(serverConfiguration.serverUrl).openConnection().connect()
@@ -50,10 +52,14 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
     }
 
     override fun cleanUpServers() {
+        databaseServers.clear()
     }
 
-    override fun registerServer(databaseServer: DatabaseServer?) {
+    override fun registerServer(databaseServer: DatabaseServer) {
+        databaseServers.add(databaseServer)
     }
+
+    override fun getServers()  = databaseServers
 
     override fun defaultConfiguration() =
             ElasticsearchServerConfiguration(VERSION_20)

@@ -23,6 +23,8 @@ import java.net.URL
 
 internal class SolrClient : LoadableDatabaseClient<SolrContext, JsonSearchResult, JsonObject> {
 
+    private val databaseServers = mutableListOf<DatabaseServer>()
+
     override fun connect(serverConfiguration: ServerConfiguration) {
         try {
             URL(serverConfiguration.serverUrl).openConnection().connect()
@@ -40,10 +42,14 @@ internal class SolrClient : LoadableDatabaseClient<SolrContext, JsonSearchResult
     }
 
     override fun cleanUpServers() {
+        databaseServers.clear()
     }
 
-    override fun registerServer(databaseServer: DatabaseServer?) {
+    override fun registerServer(databaseServer: DatabaseServer) {
+        databaseServers.add(databaseServer)
     }
+
+    override fun getServers()  = databaseServers
 
     override fun defaultConfiguration() = SolrServerConfiguration()
 

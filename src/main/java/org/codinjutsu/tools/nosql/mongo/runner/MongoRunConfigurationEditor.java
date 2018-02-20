@@ -24,7 +24,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.RawCommandLineEditor;
-import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
@@ -33,9 +32,10 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Vector;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfiguration> {
 
@@ -54,7 +54,7 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
 
         shellParametersField.setDialogCaption("Mongo arguments");
 
-        Vector<DatabaseServer> mongoServers = getAvailableMongoServers(project);
+        Collection<DatabaseServer> mongoServers = MongoClient.getInstance(project).filterAvailableServers();
 
         if (mongoServers.isEmpty()) {
             serverConfigurationCombobox.setEnabled(false);
@@ -62,7 +62,7 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
             return;
         }
 
-        serverConfigurationCombobox.setModel(new DefaultComboBoxModel<>(mongoServers));
+        serverConfigurationCombobox.setModel(new DefaultComboBoxModel<>(new Vector<>(mongoServers)));
 
         serverConfigurationCombobox.setRenderer(new ColoredListCellRenderer() {
             @Override
@@ -100,26 +100,15 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
         serverConfigurationCombobox.setSelectedIndex(0);
     }
 
-    private Vector<DatabaseServer> getAvailableMongoServers(Project project) {
-        List<DatabaseServer> mongoServers = MongoClient.getInstance(project).getServers();
-        List<DatabaseServer> availableMongoServers = new LinkedList<>();
-        for (DatabaseServer mongoServer : mongoServers) {
-            if (mongoServer.hasDatabases()) {
-                availableMongoServers.add(mongoServer);
-            }
-        }
-        return new Vector<>(availableMongoServers);
-    }
-
     @Override
-    protected void resetEditorFrom(MongoRunConfiguration configuration) {
+    protected void resetEditorFrom(@NotNull MongoRunConfiguration configuration) {
         scriptPathField.setText(configuration.getScriptPath() != null ? configuration.getScriptPath().getPath() : null);
         shellParametersField.setText(configuration.getShellParameters());
         shellWorkingDirField.setText(configuration.getShellWorkingDir());
     }
 
     @Override
-    protected void applyEditorTo(MongoRunConfiguration configuration) {
+    protected void applyEditorTo(@NotNull MongoRunConfiguration configuration) {
         configuration.setScriptPath(getScriptPath());
         configuration.setServerConfiguration(getSelectedConfiguration());
         configuration.setDatabase(getSelectedDatabase());
@@ -146,7 +135,7 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
 
     private String getShellWorkingDir() {
         String shellWorkingDir = shellWorkingDirField.getText();
-        if (StringUtils.isNotBlank(shellWorkingDir)) {
+        if (isNotBlank(shellWorkingDir)) {
             return shellWorkingDir;
         }
 

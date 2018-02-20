@@ -42,6 +42,8 @@ import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -51,6 +53,8 @@ import static com.couchbase.client.java.query.dsl.Expression.i;
 import static java.util.Collections.singletonList;
 
 public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext, CouchbaseResult, JsonObject> {
+
+    private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
     public static CouchbaseClient getInstance(Project project) {
         return ServiceManager.getService(project, CouchbaseClient.class);
@@ -105,14 +109,18 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
                 .collect(Collectors.toList());
     }
 
-    @Override
     public void cleanUpServers() {
+        databaseServers.clear();
+    }
 
+    public void registerServer(DatabaseServer databaseServer) {
+        databaseServers.add(databaseServer);
     }
 
     @Override
-    public void registerServer(DatabaseServer databaseServer) {
-
+    @NotNull
+    public Collection<DatabaseServer> getServers() {
+        return databaseServers;
     }
 
     @Override

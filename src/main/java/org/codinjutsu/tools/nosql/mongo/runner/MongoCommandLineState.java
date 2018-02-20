@@ -24,12 +24,10 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.mongo.MongoUtils;
-import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.jetbrains.annotations.NotNull;
+
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.codinjutsu.tools.nosql.mongo.MongoUtils.buildMongoUrl;
 
 class MongoCommandLineState extends CommandLineState {
 
@@ -52,19 +50,12 @@ class MongoCommandLineState extends CommandLineState {
     private GeneralCommandLine generateCommandLine() {
         final GeneralCommandLine commandLine = new GeneralCommandLine();
 
-        String exePath = mongoRunConfiguration.getMongoShell();
-        commandLine.setExePath(exePath);
-
-        ServerConfiguration serverConfiguration = mongoRunConfiguration.getServerConfiguration();
-        MongoDatabase database = mongoRunConfiguration.getDatabase();
-        commandLine.addParameter(MongoUtils.buildMongoUrl(serverConfiguration, database));
-
-        VirtualFile scriptPath = mongoRunConfiguration.getScriptPath();
-        commandLine.addParameter(scriptPath.getPath());
-
+        commandLine.setExePath(mongoRunConfiguration.getMongoShell());
+        commandLine.addParameter(buildMongoUrl(mongoRunConfiguration.getServerConfiguration(), mongoRunConfiguration.getDatabase()));
+        commandLine.addParameter(mongoRunConfiguration.getScriptPath().getPath());
 
         String shellWorkingDir = mongoRunConfiguration.getShellWorkingDir();
-        if (StringUtils.isNotEmpty(shellWorkingDir)) {
+        if (isNotEmpty(shellWorkingDir)) {
             commandLine.setWorkDirectory(shellWorkingDir);
         }
         return commandLine;
