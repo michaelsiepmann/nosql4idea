@@ -17,11 +17,10 @@ import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperation
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction
 import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.ResultDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.buildTree
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.ResultDescriptor
 import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent

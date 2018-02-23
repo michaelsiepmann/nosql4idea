@@ -5,6 +5,6 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 
 public interface LoadableDatabaseClient<CONTEXT extends DatabaseContext, RESULT extends SearchResult, DOCUMENT> extends
-        DatabaseClient<CONTEXT, DOCUMENT> {
+        DatabaseClient<CONTEXT, RESULT, DOCUMENT> {
     RESULT loadRecords(CONTEXT context, QueryOptions query);
 }

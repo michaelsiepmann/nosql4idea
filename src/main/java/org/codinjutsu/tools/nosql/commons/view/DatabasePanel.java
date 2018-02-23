@@ -7,6 +7,8 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -14,6 +16,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.NumberDocument;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +31,7 @@ import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
 import org.codinjutsu.tools.nosql.commons.view.action.ImportAction;
 import org.codinjutsu.tools.nosql.commons.view.action.OpenFindAction;
+import org.codinjutsu.tools.nosql.commons.view.action.RunScriptAction;
 import org.codinjutsu.tools.nosql.commons.view.action.paging.FirstPageAction;
 import org.codinjutsu.tools.nosql.commons.view.action.paging.LastPageAction;
 import org.codinjutsu.tools.nosql.commons.view.action.paging.NextPageAction;
@@ -41,11 +45,13 @@ import org.codinjutsu.tools.nosql.commons.view.panel.query.Page;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel;
+import org.codinjutsu.tools.nosql.commons.view.scripting.JavascriptExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.function.Function;
 
 public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT extends DatabaseContext<CLIENT>, RESULT extends SearchResult, DOCUMENT> extends NoSqlResultView {
@@ -79,7 +85,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
             queryPanel.setVisible(false);
         }
 
-        resultPanel = createResultPanel(project, context);
+        resultPanel = createResultPanel(project);
 
         loadingDecorator = new LoadingDecorator(resultPanel, this, 0);
 
@@ -93,7 +99,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
         initToolBar();
     }
 
-    protected abstract AbstractNoSQLResultPanel<RESULT, DOCUMENT> createResultPanel(Project project, CONTEXT context);
+    protected abstract AbstractNoSQLResultPanel<RESULT, DOCUMENT> createResultPanel(Project project);
 
     protected JPanel initToolBar() {
         toolBar.setLayout(new BorderLayout());
@@ -124,6 +130,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
                 actionResultGroup.add(new AddDocumentAction(resultPanel));
                 actionResultGroup.add(new EditDocumentAction<>(resultPanel));
                 actionResultGroup.add(new ImportAction(this));
+                actionResultGroup.add(new RunScriptAction(this));
             }
 
             actionResultGroup.add(new CopyResultAction<>(resultPanel));
@@ -333,4 +340,22 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
             }
         }
     }
+
+    public void runScript() {
+        VirtualFile chooseFile = FileChooser.chooseFile(new FileChooserDescriptor(true, false, false, false, false, false), project, null);
+        if (chooseFile == null) {
+            return;
+        }
+        GuiUtils.runInSwingThread(() -> {
+            try {
+                String content = new String(chooseFile.contentsToByteArray());
+                createJavascriptExecutor(content, project, context).execute();
+            } catch (IOException e) {
+                updateErrorPanel(e);
+            }
+        });
+    }
+
+    @NotNull
+    protected abstract JavascriptExecutor<CONTEXT, DatabaseClient<CONTEXT, RESULT, DOCUMENT>> createJavascriptExecutor(String content, Project project, CONTEXT context);
 }

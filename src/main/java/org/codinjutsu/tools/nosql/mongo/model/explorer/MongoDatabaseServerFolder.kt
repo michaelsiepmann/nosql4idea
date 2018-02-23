@@ -8,9 +8,10 @@ import org.codinjutsu.tools.nosql.commons.model.explorer.Folder
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderDatabaseServerFolder
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase
+import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult
 
 internal class MongoDatabaseServerFolder(databaseserver: DatabaseServer, project: Project)
-    : FolderDatabaseServerFolder<DBObject, MongoDatabase>(databaseserver, project) {
+    : FolderDatabaseServerFolder<DBObject, MongoSearchResult, MongoDatabase>(databaseserver, project) {
     override fun createDatabaseFolder(database: Database) =
             MongoDatabaseFolder(database as MongoDatabase, this)
 

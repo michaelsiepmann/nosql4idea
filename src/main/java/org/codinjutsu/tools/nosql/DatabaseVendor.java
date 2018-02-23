@@ -49,6 +49,7 @@ import org.codinjutsu.tools.nosql.solr.SolrUI;
 import org.codinjutsu.tools.nosql.solr.logic.SolrClient;
 import org.codinjutsu.tools.nosql.solr.model.explorer.SolrDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.solr.view.editor.SolrObjectFile;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -170,6 +171,7 @@ public enum DatabaseVendor {
 
     public abstract DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, Project project);
 
+    @NotNull
     public DatabaseClient getClient(Project project) {
         return ServiceManager.getService(project, getDatabaseClientClass());
     }

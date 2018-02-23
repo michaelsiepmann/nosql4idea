@@ -5,7 +5,6 @@ import org.codinjutsu.tools.nosql.commons.DatabaseUI
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.authentication.NoAuthenticationView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
-import org.codinjutsu.tools.nosql.elasticsearch.logic.ElasticsearchClient
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchContext
 import org.codinjutsu.tools.nosql.elasticsearch.view.ElasticsearchPanel
 import org.codinjutsu.tools.nosql.elasticsearch.view.editor.ElasticsearchObjectFile
@@ -16,6 +15,6 @@ internal class ElasticsearchUI : DatabaseUI {
 
     override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView {
         val elasticSearchObjectFile = objectFile as ElasticsearchObjectFile
-        return ElasticsearchPanel(project, ElasticsearchContext(ElasticsearchClient.getInstance(project), elasticSearchObjectFile.configuration, elasticSearchObjectFile.type, elasticSearchObjectFile.database))
+        return ElasticsearchPanel(project, ElasticsearchContext.create(project, elasticSearchObjectFile.configuration, elasticSearchObjectFile.type, elasticSearchObjectFile.database))
     }
 }

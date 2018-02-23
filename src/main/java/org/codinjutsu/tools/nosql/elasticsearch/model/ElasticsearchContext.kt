@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.elasticsearch.model
 
+import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportPanelSettings
@@ -15,4 +16,10 @@ internal class ElasticsearchContext(client: ElasticsearchClient,
             object : ImportPanelSettings {
                 override fun getExtensions() = arrayOf(".json")
             }
+
+    companion object {
+        internal fun create(project: Project, serverConfiguration: ServerConfiguration, type: ElasticsearchType?, database: ElasticsearchDatabase) =
+                ElasticsearchContext(ElasticsearchClient.getInstance(project), serverConfiguration, type, database)
+
+    }
 }

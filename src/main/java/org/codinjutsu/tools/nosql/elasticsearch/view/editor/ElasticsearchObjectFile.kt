@@ -9,8 +9,13 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchType
 import javax.swing.Icon
 
-internal class ElasticsearchObjectFile(project: Project, configuration: ServerConfiguration, val database: ElasticsearchDatabase, val type: ElasticsearchType?) :
-        NoSqlDatabaseObjectFile(project, configuration, String.format("%s/%s/%s", configuration.label, database.name, type?.name)) {
+internal class ElasticsearchObjectFile(
+        project: Project,
+        configuration: ServerConfiguration,
+        val database: ElasticsearchDatabase,
+        val type: ElasticsearchType?
+) :
+        NoSqlDatabaseObjectFile(project, configuration, "${configuration.label}/${database.name}/${type?.name}") {
 
     override fun getFileType() = FILE_TYPE
 

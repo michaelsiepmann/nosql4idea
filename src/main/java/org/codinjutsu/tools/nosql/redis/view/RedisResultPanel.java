@@ -6,14 +6,14 @@ import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
-import org.codinjutsu.tools.nosql.redis.model.RedisResult;
+import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisTreeModelFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-public class RedisResultPanel extends AbstractNoSQLResultPanel<RedisResult, Object> {
+public class RedisResultPanel extends AbstractNoSQLResultPanel<RedisSearchResult, Object> {
 
     private boolean groupByPrefix;
     private String separator;
@@ -35,7 +35,7 @@ public class RedisResultPanel extends AbstractNoSQLResultPanel<RedisResult, Obje
 
     @NotNull
     @Override
-    protected JsonTreeTableView createTableView(@NotNull RedisResult searchResult) {
+    protected JsonTreeTableView createTableView(@NotNull RedisSearchResult searchResult) {
         DefaultMutableTreeNode rootNode = RedisTreeModel.buildTree(searchResult);
         DefaultMutableTreeNode renderedNode = rootNode;
         if (groupByPrefix && StringUtils.isNotBlank(separator)) {

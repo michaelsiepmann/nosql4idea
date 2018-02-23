@@ -29,16 +29,16 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
+import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseSearchResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +52,7 @@ import static com.couchbase.client.java.query.Select.select;
 import static com.couchbase.client.java.query.dsl.Expression.i;
 import static java.util.Collections.singletonList;
 
-public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext, CouchbaseResult, JsonObject> {
+public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext, CouchbaseSearchResult, JsonObject> {
 
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
@@ -129,7 +129,7 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
     }
 
     @Override
-    public CouchbaseResult loadRecords(CouchbaseContext context, QueryOptions queryOptions) {
+    public CouchbaseSearchResult loadRecords(CouchbaseContext context, QueryOptions queryOptions) {
         ServerConfiguration configuration = context.getServerConfiguration();
         CouchbaseDatabase database = context.getDatabase();
         Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment.builder().build(), configuration.getServerUrl());
@@ -140,7 +140,7 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
         N1qlQueryResult queryResult = bucket.query(N1qlQuery.simple(select("*").from(i(database.getName())).limit(queryOptions.getResultLimit())));
 
 //TODO dirty zone :(
-        CouchbaseResult result = new CouchbaseResult(database.getName());
+        CouchbaseSearchResult result = new CouchbaseSearchResult(database.getName());
         List<JsonObject> errors = queryResult.errors();
         if (!errors.isEmpty()) {
             cluster.disconnect();
@@ -153,6 +153,19 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
         }
         cluster.disconnect();
         return result;
+    }
+
+    @NotNull
+    @Override
+    public CouchbaseSearchResult findAll(CouchbaseContext context) {
+/*
+        todo
+        ServerConfiguration configuration = context.getServerConfiguration();
+        CouchbaseDatabase database = context.getDatabase();
+        Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment.builder().build(), configuration.getServerUrl());
+        Bucket bucket = cluster.openBucket(database.getName(), 10, TimeUnit.SECONDS);
+*/
+        return new CouchbaseSearchResult(context.getDatabase().getName());
     }
 
     @Nullable

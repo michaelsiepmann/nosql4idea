@@ -24,11 +24,11 @@ import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
-import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
+import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
-import org.codinjutsu.tools.nosql.redis.model.RedisResult;
+import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisResult, Object> {
+public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisSearchResult, Object> {
 
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
@@ -97,10 +97,10 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisRe
     }
 
     @Override
-    public RedisResult loadRecords(RedisContext context, QueryOptions query) {
+    public RedisSearchResult loadRecords(RedisContext context, QueryOptions query) {
         Jedis jedis = createJedis(context.getServerConfiguration());
         jedis.connect();
-        RedisResult redisResult = new RedisResult();
+        RedisSearchResult redisSearchResult = new RedisSearchResult();
         int index = Integer.parseInt(context.getDatabase().getName());
         jedis.select(index);
 
@@ -109,22 +109,22 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisRe
             RedisKeyType keyType = RedisKeyType.getKeyType(jedis.type(key));
             if (RedisKeyType.LIST.equals(keyType)) {
                 List<String> values = jedis.lrange(key, 0, -1);
-                redisResult.addList(key, values);
+                redisSearchResult.addList(key, values);
             } else if (RedisKeyType.SET.equals(keyType)) {
                 Set<String> values = jedis.smembers(key);
-                redisResult.addSet(key, values);
+                redisSearchResult.addSet(key, values);
             } else if (RedisKeyType.HASH.equals(keyType)) {
                 Map<String, String> values = jedis.hgetAll(key);
-                redisResult.addHash(key, values);
+                redisSearchResult.addHash(key, values);
             } else if (RedisKeyType.ZSET.equals(keyType)) {
                 Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf", "+inf");
-                redisResult.addSortedSet(key, valuesWithScores);
+                redisSearchResult.addSortedSet(key, valuesWithScores);
             } else if (RedisKeyType.STRING.equals(keyType)) {
                 String value = jedis.get(key);
-                redisResult.addString(key, value);
+                redisSearchResult.addString(key, value);
             }
         }
-        return redisResult;
+        return redisSearchResult;
     }
 
     protected Jedis createJedis(ServerConfiguration serverConfiguration) {
@@ -135,6 +135,12 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisRe
         }
         redisUri += serverConfiguration.getServerUrl();
         return new Jedis(redisUri);
+    }
+
+    @NotNull
+    @Override
+    public RedisSearchResult findAll(RedisContext redisContext) {
+        return new RedisSearchResult(); // todo
     }
 
     @Nullable

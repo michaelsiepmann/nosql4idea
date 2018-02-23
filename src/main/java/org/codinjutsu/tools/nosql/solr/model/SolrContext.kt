@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.solr.model
 
+import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportPanelSettings
@@ -13,4 +14,9 @@ internal class SolrContext(solrClient: SolrClient, serverConfiguration: ServerCo
             object : ImportPanelSettings {
                 override fun getExtensions() = arrayOf(".csv", ".json", ".xml")
             }
+
+    companion object {
+        internal fun create(project: Project, serverConfiguration: ServerConfiguration, database: SolrDatabase) =
+                SolrContext(SolrClient.instance(project), serverConfiguration, database)
+    }
 }

@@ -4,7 +4,9 @@ import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 
-class NoSQLResultPanelDocumentOperationsImpl<out CLIENT : DatabaseClient<CONTEXT, DOCUMENT>, CONTEXT : DatabaseContext<CLIENT>, RESULT : SearchResult, DOCUMENT>(private val panel: DatabasePanel<CLIENT, CONTEXT, RESULT, DOCUMENT>) : NoSQLResultPanelDocumentOperations<DOCUMENT> {
+class NoSQLResultPanelDocumentOperationsImpl<out CLIENT : DatabaseClient<CONTEXT, RESULT, DOCUMENT>, CONTEXT : DatabaseContext<CLIENT>, RESULT : SearchResult, DOCUMENT>(
+        private val panel: DatabasePanel<CLIENT, CONTEXT, RESULT, DOCUMENT>
+) : NoSQLResultPanelDocumentOperations<DOCUMENT> {
 
     override fun getDocument(_id: Any): DOCUMENT? = panel.context.client.findDocument(panel.context, _id)
 

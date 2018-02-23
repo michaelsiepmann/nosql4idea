@@ -19,6 +19,7 @@ package org.codinjutsu.tools.nosql.commons.logic;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public interface DatabaseClient<CONTEXT, DOCUMENT> {
+public interface DatabaseClient<CONTEXT, RESULT extends SearchResult, DOCUMENT> {
 
     void connect(ServerConfiguration serverConfiguration);
 
@@ -38,6 +39,9 @@ public interface DatabaseClient<CONTEXT, DOCUMENT> {
     void registerServer(DatabaseServer databaseServer);
 
     ServerConfiguration defaultConfiguration();
+
+    @NotNull
+    RESULT findAll(CONTEXT context);
 
     @Nullable
     DOCUMENT findDocument(CONTEXT context, @NotNull Object _id);

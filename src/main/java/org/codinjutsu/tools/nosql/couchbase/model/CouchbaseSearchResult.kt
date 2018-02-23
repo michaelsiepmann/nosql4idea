@@ -19,10 +19,9 @@ package org.codinjutsu.tools.nosql.couchbase.model
 import com.couchbase.client.java.document.json.JsonObject
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
+import java.util.*
 
-import java.util.LinkedList
-
-class CouchbaseResult(override val name: String) : SearchResult {
+class CouchbaseSearchResult(override val name: String) : SearchResult {
     private val jsonObjects = LinkedList<ObjectWrapper>()
     private val errors = LinkedList<JsonObject>()
 

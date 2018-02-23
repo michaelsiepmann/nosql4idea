@@ -19,7 +19,7 @@ package org.codinjutsu.tools.nosql.redis.view;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisRecord;
-import org.codinjutsu.tools.nosql.redis.model.RedisResult;
+import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.NullResultDescriptor;
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisValueDescriptor;
@@ -29,11 +29,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class RedisTreeModel {
-    public static NoSqlTreeNode buildTree(RedisResult redisResult) {
+    public static NoSqlTreeNode buildTree(RedisSearchResult redisSearchResult) {
         NoSqlTreeNode rootNode = new NoSqlTreeNode(new NullResultDescriptor());
 
-        if (redisResult != null) {
-            for (RedisRecord redisRecord : redisResult.getResults()) {
+        if (redisSearchResult != null) {
+            for (RedisRecord redisRecord : redisSearchResult.getResults()) {
                 processRecord(rootNode, redisRecord);
             }
         }

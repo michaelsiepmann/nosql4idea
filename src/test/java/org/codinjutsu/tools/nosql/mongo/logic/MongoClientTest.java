@@ -28,7 +28,7 @@ import org.codinjutsu.tools.nosql.mongo.MongoClientStub;
 import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
-import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
+import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult;
 import org.codinjutsu.tools.nosql.mongo.model.MongoContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -147,14 +147,14 @@ class MongoClientTest {
         BasicDBObject basicDBObject2 = new BasicDBObject();
         when(aggregationOutput.results()).thenReturn(Arrays.asList(basicDBObject1, basicDBObject2));
 
-        MongoResult mongoResult = mongoClient.loadCollectionValues(context, mongoQueryOptions);
-        assertNotNull(mongoResult);
+        MongoSearchResult mongoSearchResult = mongoClient.loadCollectionValues(context, mongoQueryOptions);
+        assertNotNull(mongoSearchResult);
 
         verify(dbCollection, times(1)).aggregate(any());
         verify(dbCollection, never()).find(any());
         verify(dbCollection, never()).find(any(), (DBObject) any());
 
-        List<DBObject> mongoObjects = mongoResult.getMongoObjects();
+        List<DBObject> mongoObjects = mongoSearchResult.getMongoObjects();
 
         assertEquals(2, mongoObjects.size());
         assertEquals(basicDBObject1, mongoObjects.get(0));

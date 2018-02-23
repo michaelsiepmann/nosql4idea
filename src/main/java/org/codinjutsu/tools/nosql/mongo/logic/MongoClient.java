@@ -40,7 +40,7 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoContext;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
-import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
+import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -50,7 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class MongoClient implements DatabaseClient<MongoContext, DBObject> {
+public class MongoClient implements DatabaseClient<MongoContext, MongoSearchResult, DBObject> {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
@@ -177,19 +177,34 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject> {
         }
     }
 
-    public MongoResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
+    public MongoSearchResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
             String databaseName = context.getMongoCollection().getDatabaseName();
 
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(context.getMongoCollection().getName());
 
-            MongoResult mongoResult = new MongoResult(context.getMongoCollection().getName());
+            MongoSearchResult mongoSearchResult = new MongoSearchResult(context.getMongoCollection().getName());
             if (mongoQueryOptions.isAggregate()) {
-                return aggregate(mongoQueryOptions, mongoResult, collection);
+                return aggregate(mongoQueryOptions, mongoSearchResult, collection);
             }
 
-            return find(mongoQueryOptions, mongoResult, collection);
+            return find(mongoQueryOptions, mongoSearchResult, collection);
+        }
+    }
+
+    @NotNull
+    @Override
+    public MongoSearchResult findAll(MongoContext context) {
+        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+            String databaseName = context.getMongoCollection().getDatabaseName();
+            DB database = mongo.getDB(databaseName);
+            MongoSearchResult mongoSearchResult = new MongoSearchResult(context.getMongoCollection().getName());
+            database.getCollection(context.getMongoCollection().getName())
+                    .find()
+                    .toArray()
+                    .forEach(mongoSearchResult::add);
+            return mongoSearchResult;
         }
     }
 
@@ -202,17 +217,17 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject> {
         }
     }
 
-    private MongoResult aggregate(MongoQueryOptions mongoQueryOptions, MongoResult mongoResult, DBCollection collection) {
+    private MongoSearchResult aggregate(MongoQueryOptions mongoQueryOptions, MongoSearchResult mongoSearchResult, DBCollection collection) {
         AggregationOutput aggregate = collection.aggregate(mongoQueryOptions.getOperations());
         int index = 0;
         Iterator<DBObject> iterator = aggregate.results().iterator();
         while (iterator.hasNext() && index < mongoQueryOptions.getResultLimit()) {
-            mongoResult.add(iterator.next());
+            mongoSearchResult.add(iterator.next());
         }
-        return mongoResult;
+        return mongoSearchResult;
     }
 
-    private MongoResult find(MongoQueryOptions mongoQueryOptions, MongoResult mongoResult, DBCollection collection) {
+    private MongoSearchResult find(MongoQueryOptions mongoQueryOptions, MongoSearchResult mongoSearchResult, DBCollection collection) {
         DBObject filter = mongoQueryOptions.getFilter();
         DBObject projection = mongoQueryOptions.getProjection();
         DBObject sort = mongoQueryOptions.getSort();
@@ -231,13 +246,13 @@ public class MongoClient implements DatabaseClient<MongoContext, DBObject> {
         try {
             int index = 0;
             while (cursor.hasNext() && index < mongoQueryOptions.getResultLimit()) {
-                mongoResult.add(cursor.next());
+                mongoSearchResult.add(cursor.next());
                 index++;
             }
         } finally {
             cursor.close();
         }
-        return mongoResult;
+        return mongoSearchResult;
     }
 
     protected com.mongodb.MongoClient createMongoClient(ServerConfiguration configuration) {

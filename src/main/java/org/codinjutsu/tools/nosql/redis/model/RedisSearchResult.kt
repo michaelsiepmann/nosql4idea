@@ -19,12 +19,9 @@ package org.codinjutsu.tools.nosql.redis.model
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 import redis.clients.jedis.Tuple
+import java.util.*
 
-import java.util.LinkedList
-import java.util.function.Function
-import java.util.stream.Collectors
-
-class RedisResult : SearchResult {
+class RedisSearchResult : SearchResult {
 
     private val redisRecords = LinkedList<RedisRecord<*>>()
 

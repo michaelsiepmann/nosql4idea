@@ -29,13 +29,13 @@ import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
-import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
+import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult;
 import org.codinjutsu.tools.nosql.mongo.view.columninfo.MongoWriteableColumnInfoDecider;
 import org.codinjutsu.tools.nosql.mongo.view.model.MongoTreeModelFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoResult, DBObject> {
+public class MongoResultPanel extends AbstractNoSQLResultPanel<MongoSearchResult, DBObject> {
 
     MongoResultPanel(Project project, NoSQLResultPanelDocumentOperations<DBObject> noSQLResultPanelDocumentOperations) {
         super(project, noSQLResultPanelDocumentOperations, new MongoTreeModelFactory(), "_id"); //NON-NLS

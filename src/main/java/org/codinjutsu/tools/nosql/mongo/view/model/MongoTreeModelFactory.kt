@@ -24,7 +24,7 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.StandardNull
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.StandardStringValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.StandardValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
-import org.codinjutsu.tools.nosql.mongo.model.MongoResult
+import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult
 import org.codinjutsu.tools.nosql.mongo.view.wrapper.MongoObjectWrapper
 import java.util.*
 import javax.swing.tree.TreeNode
@@ -81,10 +81,10 @@ class MongoTreeModelFactory : NodeDescriptorFactory<DBObject> {
     }
 
     // todo
-    fun buildJsonTree(mongoResult: MongoResult): TreeNode {
-        val rootNode = NoSqlTreeNode(StandardResultDescriptor(mongoResult.name))
+    fun buildJsonTree(mongoSearchResult: MongoSearchResult): TreeNode {
+        val rootNode = NoSqlTreeNode(StandardResultDescriptor(mongoSearchResult.name))
 
-        val mongoObjects = mongoResult.mongoObjects
+        val mongoObjects = mongoSearchResult.mongoObjects
         var i = 0
         for (mongoObject in mongoObjects) {
             if (mongoObject is BasicDBList) {

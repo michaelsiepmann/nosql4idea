@@ -16,8 +16,8 @@ import org.codinjutsu.tools.nosql.solr.logic.commands.GetDocument
 import org.codinjutsu.tools.nosql.solr.logic.commands.ImportData
 import org.codinjutsu.tools.nosql.solr.logic.commands.LoadCores
 import org.codinjutsu.tools.nosql.solr.logic.commands.Search
-import org.codinjutsu.tools.nosql.solr.model.SolrDatabase
 import org.codinjutsu.tools.nosql.solr.model.SolrContext
+import org.codinjutsu.tools.nosql.solr.model.SolrDatabase
 import java.io.File
 import java.net.URL
 
@@ -49,20 +49,23 @@ internal class SolrClient : LoadableDatabaseClient<SolrContext, JsonSearchResult
         databaseServers.add(databaseServer)
     }
 
-    override fun getServers()  = databaseServers
+    override fun getServers() = databaseServers
 
     override fun defaultConfiguration() = SolrServerConfiguration()
 
-    override fun findDocument(context: SolrContext, _id: Any): JsonObject? {
-        return GetDocument(context, _id.toString()).execute()
-    }
+    override fun findAll(context: SolrContext) = jsonSearchResult(JsonObject(), context) // todo
+
+    override fun findDocument(context: SolrContext, _id: Any) =
+            GetDocument(context, _id.toString()).execute()
 
     override fun update(context: SolrContext, document: JsonObject) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun loadRecords(context: SolrContext, query: QueryOptions): JsonSearchResult {
-        val jsonObject = Search(context, query).execute()
+    override fun loadRecords(context: SolrContext, query: QueryOptions) =
+            jsonSearchResult(Search(context, query).execute(), context)
+
+    private fun jsonSearchResult(jsonObject: JsonObject, context: SolrContext): JsonSearchResult {
         val response = jsonObject.getAsJsonObject("response")
         val count = response.getAsJsonPrimitive("numFound").asInt
         val objects = response.getAsJsonArray("docs").map { JsonObjectObjectWrapper(it.asJsonObject) }

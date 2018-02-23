@@ -22,7 +22,7 @@ import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 import org.codinjutsu.tools.nosql.mongo.view.wrapper.MongoObjectWrapper
 import java.util.*
 
-class MongoResult(override val name: String) : SearchResult {
+class MongoSearchResult(override val name: String) : SearchResult {
     val mongoObjects = LinkedList<DBObject>()
 
     override val records: List<ObjectWrapper>

@@ -22,7 +22,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import org.codinjutsu.tools.nosql.NoSqlExplorerPanel
 
-class ViewCollectionValuesAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction("View collection content", "View collection content", ICON), DumbAware {
+class ViewCollectionValuesAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction("View collection content", "View collection content", AllIcons.Nodes.DataSchema), DumbAware {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
         noSqlExplorerPanel.loadRecords()
@@ -30,9 +30,5 @@ class ViewCollectionValuesAction(private val noSqlExplorerPanel: NoSqlExplorerPa
 
     override fun update(event: AnActionEvent) {
         event.presentation.isVisible = noSqlExplorerPanel.isDatabaseSelected
-    }
-
-    companion object {
-        private val ICON = AllIcons.Nodes.DataSchema
     }
 }

@@ -24,7 +24,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseResult;
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseSearchResult;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;
@@ -49,7 +49,7 @@ class CouchbasePanelTest {
 
     @BeforeEach
     void setUp() {
-        when(couchbaseClientMock.loadRecords(any(CouchbaseContext.class), any(QueryOptions.class))).thenReturn(new CouchbaseResult("dummy"));
+        when(couchbaseClientMock.loadRecords(any(CouchbaseContext.class), any(QueryOptions.class))).thenReturn(new CouchbaseSearchResult("dummy"));
 
 
         couchbasePanelWrapper = GuiActionRunner.execute(new GuiQuery<CouchbasePanel>() {
@@ -105,8 +105,8 @@ class CouchbasePanelTest {
                     });
     }
 
-    private CouchbaseResult createResults() {
-        CouchbaseResult result = new CouchbaseResult("test");
+    private CouchbaseSearchResult createResults() {
+        CouchbaseSearchResult result = new CouchbaseSearchResult("test");
         result.add(JsonObject.create().put("firstname", "Jojo")
                              .put("age", 25)
                              .put("mad", true)

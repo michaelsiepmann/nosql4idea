@@ -214,9 +214,9 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
 
         DefaultActionGroup actionGroup = new DefaultActionGroup("NoSqlExplorerGroup", false);
-        ViewCollectionValuesAction viewCollectionValuesAction = new ViewCollectionValuesAction(this);
-        RefreshServerAction refreshServerAction = new RefreshServerAction(this);
-        AddCollectionAction addCollectionAction = new AddCollectionAction(this);
+        AnAction viewCollectionValuesAction = new ViewCollectionValuesAction(this);
+        AnAction refreshServerAction = new RefreshServerAction(this);
+        AnAction addCollectionAction = new AddCollectionAction(this);
         if (ApplicationManager.getApplication() != null) {
             actionGroup.add(refreshServerAction);
             actionGroup.addSeparator();
@@ -301,7 +301,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     private DefaultMutableTreeNode getSelectedServerNode(DefaultMutableTreeNode treeNode) {
         if (treeNode != null) {
             Object object = treeNode.getUserObject();
-            if (object != null && object instanceof DatabaseServerFolder) {
+            if (object instanceof DatabaseServerFolder) {
                 return treeNode;
             }
             TreeNode parent = treeNode.getParent();
@@ -357,7 +357,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
         Tree tree = new Tree() {
 
-            private final JLabel myLabel = new JLabel(
+            private final JComponent myLabel = new JLabel(
                     String.format("<html><center>NoSql server list is empty<br><br>You may use <img src=\"%s\"> to add configuration</center></html>", pluginSettingsUrl)
             );
 

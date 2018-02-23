@@ -18,6 +18,7 @@ package org.codinjutsu.tools.nosql.commons.model;
 
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -70,6 +71,7 @@ public class DatabaseServer {
         return configuration;
     }
 
+    @NotNull
     public DatabaseVendor getVendor() {
         return configuration.getDatabaseVendor();
     }

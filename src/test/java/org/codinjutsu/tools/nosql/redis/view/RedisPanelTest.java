@@ -38,7 +38,7 @@ import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
-import org.codinjutsu.tools.nosql.redis.model.RedisResult;
+import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;
@@ -111,7 +111,7 @@ public class RedisPanelTest extends PlatformLiteFixture {
         application.addComponent(ActionManager.class, actionManager);
         application.registerService(CommonActionsManager.class, commonActionsManager);
 
-        when(redisClientMock.loadRecords(any(RedisContext.class), any(QueryOptions.class))).thenReturn(new RedisResult());
+        when(redisClientMock.loadRecords(any(RedisContext.class), any(QueryOptions.class))).thenReturn(new RedisSearchResult());
 
         redisPanelWrapper = GuiActionRunner.execute(new GuiQuery<RedisPanel>() {
             protected RedisPanel executeInEDT() {
@@ -185,28 +185,28 @@ public class RedisPanelTest extends PlatformLiteFixture {
                 });
     }
 
-    private RedisResult createRedisResults() {
-        RedisResult redisResult = new RedisResult();
-        redisResult.addString("foo:bar", "john");
-        redisResult.addList("stuff:bar", Arrays.asList("drink", "some", "beer"));
+    private RedisSearchResult createRedisResults() {
+        RedisSearchResult redisSearchResult = new RedisSearchResult();
+        redisSearchResult.addString("foo:bar", "john");
+        redisSearchResult.addList("stuff:bar", Arrays.asList("drink", "some", "beer"));
         Set<String> countries = new HashSet<>();
         countries.add("France");
         countries.add("Japan");
         countries.add("Canada");
-        redisResult.addSet("stuff:countries", countries);
+        redisSearchResult.addSet("stuff:countries", countries);
 
         Map<String, String> aliasByPeopleName = new HashMap<>();
         aliasByPeopleName.put("david", "dada");
         aliasByPeopleName.put("mickael", "mike");
         aliasByPeopleName.put("bruno", "nono");
-        redisResult.addHash("stuff:aliases", aliasByPeopleName);
+        redisSearchResult.addHash("stuff:aliases", aliasByPeopleName);
 
         Set<Tuple> scoreByGameTitle = new TreeSet<>();
         scoreByGameTitle.add(new Tuple("quake", 9d));
         scoreByGameTitle.add(new Tuple("half-life", 10d));
         scoreByGameTitle.add(new Tuple("unreal", 8d));
 
-        redisResult.addSortedSet("stuff:games:critics", scoreByGameTitle);
-        return redisResult;
+        redisSearchResult.addSortedSet("stuff:games:critics", scoreByGameTitle);
+        return redisSearchResult;
     }
 }

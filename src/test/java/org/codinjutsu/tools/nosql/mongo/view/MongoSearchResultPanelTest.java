@@ -24,7 +24,7 @@ import com.mongodb.util.JSON;
 import org.apache.commons.io.IOUtils;
 import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
-import org.codinjutsu.tools.nosql.mongo.model.MongoResult;
+import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
 import org.fest.swing.fixture.Containers;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Disabled("The JsonTreeTableView was not found by it's name")
-class MongoResultPanelTest {
+class MongoSearchResultPanelTest {
 
     private MongoResultPanel mongoResultPanel;
 
@@ -60,7 +60,7 @@ class MongoResultPanelTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(MongoResultPanelTest.class);
+        MockitoAnnotations.initMocks(MongoSearchResultPanelTest.class);
         noSQLResultPanelDocumentOperations = mock(NoSQLResultPanelDocumentOperations.class);
         when(noSQLResultPanelDocumentOperations.getDocument(any())).thenReturn(new BasicDBObject());
 
@@ -219,13 +219,13 @@ class MongoResultPanelTest {
                 mongoResultPanel.getSelectedNodeStringifiedValue());
     }
 
-    private MongoResult createCollectionResults(String data, String collectionName) throws IOException {
+    private MongoSearchResult createCollectionResults(String data, String collectionName) throws IOException {
         DBObject jsonObject = (DBObject) JSON.parse(IOUtils.toString(getClass().getResourceAsStream(data), Charset.defaultCharset()));
 
-        MongoResult mongoResult = new MongoResult(collectionName);
-        mongoResult.add(jsonObject);
+        MongoSearchResult mongoSearchResult = new MongoSearchResult(collectionName);
+        mongoSearchResult.add(jsonObject);
 
-        return mongoResult;
+        return mongoSearchResult;
     }
 
 }

@@ -23,7 +23,7 @@ import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
-import org.codinjutsu.tools.nosql.redis.model.RedisResult;
+import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
@@ -52,7 +52,7 @@ class RedisClientTest {
         queryOptions.setFilter("*");
         queryOptions.setResultLimit(300);
 
-        RedisResult result = redisClient.loadRecords(new RedisContext(redisClient, serverConfiguration, new RedisDatabase("1")), queryOptions);
+        RedisSearchResult result = redisClient.loadRecords(new RedisContext(redisClient, serverConfiguration, new RedisDatabase("1")), queryOptions);
         verify(jedis, times(1)).connect();
         verify(jedis, times(1)).select(1);
 
