@@ -78,12 +78,12 @@ public class NoSqlConfigurable extends BaseConfigurable {
 
     public NoSqlConfigurable(Project project) {
         this.project = project;
-        this.configuration = NoSqlConfiguration.getInstance(project);
-        this.serverConfigurationPanelFactory = new ServerConfigurationPanelFactory(
+        configuration = NoSqlConfiguration.getInstance(project);
+        serverConfigurationPanelFactory = new ServerConfigurationPanelFactory(
                 project,
                 DatabaseVendorUIManager.getInstance(project)
         );
-        configurations = new LinkedList<>(this.configuration.getServerConfigurations());
+        configurations = new LinkedList<>(configuration.getServerConfigurations());
         tableModel = new NoSqlServerTableModel(configurations);
         mainPanel = new JPanel(new BorderLayout());
     }
@@ -105,11 +105,11 @@ public class NoSqlConfigurable extends BaseConfigurable {
     public JComponent createComponent() {
         JPanel databaseVendorShellOptionsPanel = new JPanel();
         databaseVendorShellOptionsPanel.setLayout(new BoxLayout(databaseVendorShellOptionsPanel, BoxLayout.Y_AXIS));
-        mongoShellPanel = new ShellPathPanel(DatabaseVendor.MONGO, "--version");
+        mongoShellPanel = new ShellPathPanel(DatabaseVendor.MONGO, "--version"); //NON-NLS
         databaseVendorShellOptionsPanel.add(mongoShellPanel);
-        redisShellPanel = new ShellPathPanel(DatabaseVendor.REDIS, "--version");
+        redisShellPanel = new ShellPathPanel(DatabaseVendor.REDIS, "--version"); //NON-NLS
         databaseVendorShellOptionsPanel.add(redisShellPanel);
-        solrShellPanel = new ShellPathPanel(DatabaseVendor.SOLR, "-V");
+        solrShellPanel = new ShellPathPanel(DatabaseVendor.SOLR, "-V"); //NON-NLS
         databaseVendorShellOptionsPanel.add(solrShellPanel);
 
         mainPanel.add(databaseVendorShellOptionsPanel, BorderLayout.NORTH);
@@ -275,7 +275,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
         private void testPath(final DatabaseVendor databaseVendor) {
             ProcessOutput processOutput;
             try {
-                processOutput = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> checkShellPath(databaseVendor, getShellPath()), "Testing " + databaseVendor.name + " CLI Executable...", true, NoSqlConfigurable.this.project);
+                processOutput = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> checkShellPath(databaseVendor, getShellPath()), "Testing " + databaseVendor.name + " CLI Executable...", true, project);
             } catch (ProcessCanceledException pce) {
                 return;
             } catch (Exception e) {
@@ -376,8 +376,8 @@ public class NoSqlConfigurable extends BaseConfigurable {
                 @Override
                 protected void customizeCellRenderer(JTable jTable, Object value, boolean b, boolean b1, int i, int i1) {
                     DatabaseVendor databaseVendor = (DatabaseVendor) value;
-                    this.setIcon(databaseVendor.icon);
-                    this.append(databaseVendor.name);
+                    setIcon(databaseVendor.icon);
+                    append(databaseVendor.name);
                 }
             });
 

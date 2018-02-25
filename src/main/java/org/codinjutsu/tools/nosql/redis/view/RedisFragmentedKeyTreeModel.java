@@ -40,7 +40,7 @@ public class RedisFragmentedKeyTreeModel extends DefaultTreeModel {
 
     public RedisFragmentedKeyTreeModel(NoSqlTreeNode root) {
         super(root);
-        this.separator = "";
+        separator = "";
     }
 
     public void setSeparator(String separator) {
@@ -50,7 +50,7 @@ public class RedisFragmentedKeyTreeModel extends DefaultTreeModel {
     }
 
     public void resetSeparator() {
-        this.separator = "";
+        separator = "";
         needsUpdate = true;
         fireSeparatorChanged();
     }

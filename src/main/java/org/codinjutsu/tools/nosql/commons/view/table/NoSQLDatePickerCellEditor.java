@@ -26,7 +26,7 @@ import java.util.Locale;
 public class NoSQLDatePickerCellEditor extends DatePickerCellEditor {
 
     public NoSQLDatePickerCellEditor() {
-        this.dateFormat = DateUtils.utcDateTime(Locale.getDefault());
+        dateFormat = DateUtils.utcDateTime(Locale.getDefault());
         datePicker = DateTimePicker.create();
         datePicker.getEditor().setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
         datePicker.getEditor().setEditable(false);

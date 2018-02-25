@@ -45,7 +45,7 @@ class ConfigurationDialog extends DialogWrapper {
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
-        serverConfigurationPanel = this.serverConfigurationPanelFactory.create(configuration.getDatabaseVendor());
+        serverConfigurationPanel = serverConfigurationPanelFactory.create(configuration.getDatabaseVendor());
         serverConfigurationPanel.loadConfigurationData(configuration);
         return serverConfigurationPanel;
     }

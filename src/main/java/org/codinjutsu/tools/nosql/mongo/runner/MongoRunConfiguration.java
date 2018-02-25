@@ -162,7 +162,7 @@ class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationMod
     }
 
     public MongoDatabase getDatabase() {
-        return this.database;
+        return database;
     }
 
     public void setDatabase(MongoDatabase database) {

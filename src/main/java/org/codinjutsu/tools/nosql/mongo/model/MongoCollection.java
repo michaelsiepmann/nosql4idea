@@ -41,6 +41,6 @@ public class MongoCollection implements NamedObject, Comparable<MongoCollection>
 
     @Override
     public int compareTo(@NotNull MongoCollection otherCollection) {
-        return this.name.compareTo(otherCollection.getName());
+        return name.compareTo(otherCollection.getName());
     }
 }

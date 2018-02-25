@@ -125,7 +125,7 @@ public class ServerConfigurationPanel extends JPanel {
                 } catch (Exception ex) {
                     excRef.set(ex);
                 }
-            }, "Testing connection for " + databaseVendor.name, true, ServerConfigurationPanel.this.project);
+            }, "Testing connection for " + databaseVendor.name, true, project);
 
             if (!excRef.isNull()) {
                 Messages.showErrorDialog(rootPanel, excRef.get().getMessage(), "Connection test failed");

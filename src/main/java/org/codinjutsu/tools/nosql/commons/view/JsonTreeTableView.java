@@ -61,7 +61,7 @@ public class JsonTreeTableView extends TreeTable {
 
     public JsonTreeTableView(TreeNode rootNode, ColumnInfo... columnInfos) {
         super(new ListTreeTableModelOnColumns(rootNode, columnInfos));
-        this.columns = columnInfos;
+        columns = columnInfos;
 
         final TreeTableTree tree = getTree();
 
@@ -86,7 +86,7 @@ public class JsonTreeTableView extends TreeTable {
 
         NoSqlTreeNode node = (NoSqlTreeNode) treePath.getLastPathComponent();
 
-        TableCellRenderer renderer = this.columns[column].getRenderer(node);
+        TableCellRenderer renderer = columns[column].getRenderer(node);
         return renderer == null ? super.getCellRenderer(row, column) : renderer;
     }
 

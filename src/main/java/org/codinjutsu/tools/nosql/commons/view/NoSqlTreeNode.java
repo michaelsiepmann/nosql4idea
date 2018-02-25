@@ -28,7 +28,7 @@ public class NoSqlTreeNode extends DefaultMutableTreeNode {
     }
 
     public NodeDescriptor getDescriptor() {
-        return (NodeDescriptor) this.getUserObject();
+        return (NodeDescriptor) getUserObject();
     }
 
     public Enumeration<NoSqlTreeNode> getChildTreeNodes() {

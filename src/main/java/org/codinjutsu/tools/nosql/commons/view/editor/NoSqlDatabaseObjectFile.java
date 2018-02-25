@@ -38,7 +38,7 @@ public abstract class NoSqlDatabaseObjectFile extends VirtualFile {
         this.project = project;
         this.configuration = configuration;
         this.name = name;
-        this.myModStamp = LocalTimeCounter.currentTime();
+        myModStamp = LocalTimeCounter.currentTime();
     }
 
     @NotNull
