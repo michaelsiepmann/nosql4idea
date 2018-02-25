@@ -39,7 +39,7 @@ class AddKeyAction(private val editionPanel: EditionPanel) : AnAction("Add a key
         }
     }
 
-    override fun update(event: AnActionEvent?) {
-        //        event.getPresentation().setVisible(editionPanel.canAddKey());
+    override fun update(event: AnActionEvent) {
+        event.presentation.isVisible = editionPanel.canAddKey();
     }
 }

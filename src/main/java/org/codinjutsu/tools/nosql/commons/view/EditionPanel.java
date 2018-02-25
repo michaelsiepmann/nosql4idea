@@ -18,7 +18,7 @@ import org.codinjutsu.tools.nosql.commons.view.columninfo.WritableColumnInfo;
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.IndexedValueDescriptor;
 
 import javax.swing.AbstractAction;
@@ -214,7 +214,7 @@ public class EditionPanel extends JPanel implements Disposable {
 
     public boolean canAddKey() {
         NoSqlTreeNode selectedNode = getSelectedNode();
-        return selectedNode != null && selectedNode.getDescriptor() instanceof TypedKeyValueDescriptor;
+        return selectedNode != null && selectedNode.getDescriptor() instanceof KeyValueDescriptor;
     }
 
     public boolean canAddValue() {
