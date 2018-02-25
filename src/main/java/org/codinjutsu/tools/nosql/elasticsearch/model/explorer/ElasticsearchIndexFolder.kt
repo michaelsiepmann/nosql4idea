@@ -42,8 +42,8 @@ internal class ElasticsearchIndexFolder(override val data: ElasticsearchDatabase
     override fun canCreateChild(folderType: FolderType) = folderType == ELASTICSEARCH_TYPE
 
     override fun createChild(): Folder<*, ElasticsearchDatabase>? {
-        val typeName = JOptionPane.showInputDialog("Please enter a type-name")
-        if (typeName?.isNotEmpty() == true) {
+        val typeName = JOptionPane.showInputDialog("Please enter a type-name") ?: return null
+        if (typeName.isNotEmpty()) {
             val type = (parent as ElasticsearchDatabaseServerFolder).databaseClient.createFolder(databaseServer.configuration, data.name, typeName)
             if (type is ElasticsearchType) {
                 database?.addType(type)

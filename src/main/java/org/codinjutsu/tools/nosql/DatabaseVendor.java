@@ -41,7 +41,6 @@ import org.codinjutsu.tools.nosql.mongo.view.console.MongoConsoleRunner;
 import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile;
 import org.codinjutsu.tools.nosql.redis.RedisUI;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
-import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.explorer.RedisDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.redis.view.console.RedisConsoleRunner;
 import org.codinjutsu.tools.nosql.redis.view.editor.RedisObjectFile;
@@ -49,7 +48,7 @@ import org.codinjutsu.tools.nosql.solr.SolrUI;
 import org.codinjutsu.tools.nosql.solr.logic.SolrClient;
 import org.codinjutsu.tools.nosql.solr.model.explorer.SolrDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.solr.view.editor.SolrObjectFile;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -79,7 +78,7 @@ public enum DatabaseVendor {
     REDIS("RedisDB", RedisObjectFile.Companion.getIcon(), "localhost:6379", "format: host:port. If cluster: host:port1,host:port2,...", true) {
         @Override
         public AbstractNoSQLConsoleRunner createConsoleRunner(Project project, ServerConfiguration configuration, Database database) {
-            return new RedisConsoleRunner(project, configuration, (RedisDatabase) database);
+            return new RedisConsoleRunner(project, configuration, database);
         }
 
         @Override
@@ -171,7 +170,7 @@ public enum DatabaseVendor {
 
     public abstract DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer, Project project);
 
-    @NotNull
+    @Nullable
     public DatabaseClient getClient(Project project) {
         return ServiceManager.getService(project, getDatabaseClientClass());
     }

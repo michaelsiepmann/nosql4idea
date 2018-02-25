@@ -17,11 +17,11 @@
 package org.codinjutsu.tools.nosql.redis.logic;
 
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.redis.RedisClientStub;
-import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
-import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
+import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +52,7 @@ class RedisClientTest {
         queryOptions.setFilter("*");
         queryOptions.setResultLimit(300);
 
-        RedisSearchResult result = redisClient.loadRecords(new RedisContext(redisClient, serverConfiguration, new RedisDatabase("1")), queryOptions);
+        RedisSearchResult result = redisClient.loadRecords(new RedisContext(redisClient, serverConfiguration, new Database("1")), queryOptions);
         verify(jedis, times(1)).connect();
         verify(jedis, times(1)).select(1);
 

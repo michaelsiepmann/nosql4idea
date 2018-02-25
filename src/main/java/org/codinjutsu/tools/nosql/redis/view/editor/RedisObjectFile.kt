@@ -18,13 +18,13 @@ package org.codinjutsu.tools.nosql.redis.view.editor
 
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
+import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSQLFakeFileType
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
-import org.codinjutsu.tools.nosql.redis.model.RedisDatabase
 import javax.swing.Icon
 
-class RedisObjectFile(project: Project, configuration: ServerConfiguration, val database: RedisDatabase) : NoSqlDatabaseObjectFile(project, configuration, String.format("%s/%s", configuration.label, database.name)) {
+class RedisObjectFile(project: Project, configuration: ServerConfiguration, val database: Database) : NoSqlDatabaseObjectFile(project, configuration, String.format("%s/%s", configuration.label, database.name)) {
 
     override fun getFileType() = FILE_TYPE
 

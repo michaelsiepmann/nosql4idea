@@ -21,13 +21,12 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.DumbAware
-import org.codinjutsu.tools.nosql.commons.model.SearchResult
-import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel
+import org.codinjutsu.tools.nosql.commons.view.panel.NoSQLResultPanel
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 
-internal class CopyResultAction<RESULT : SearchResult, DOCUMENT>(private val resultPanel: AbstractNoSQLResultPanel<RESULT, DOCUMENT>) : AnAction("Copy", "Copy results to clipboard", AllIcons.Actions.Copy), DumbAware {
+internal class CopyResultAction<DOCUMENT>(private val resultPanel: NoSQLResultPanel<DOCUMENT>) : AnAction("Copy", "Copy results to clipboard", AllIcons.Actions.Copy), DumbAware {
 
     init {
         registerCustomShortcutSet(KeyEvent.VK_C, Toolkit.getDefaultToolkit().menuShortcutKeyMask, resultPanel)

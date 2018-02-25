@@ -1,21 +1,21 @@
 package org.codinjutsu.tools.nosql.redis.model;
 
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
+import org.codinjutsu.tools.nosql.commons.model.AbstractDatabaseContext;
+import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
-import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.jetbrains.annotations.NotNull;
 
-public class RedisContext extends DatabaseContext<RedisClient> {
+public class RedisContext extends AbstractDatabaseContext<RedisClient> {
 
-    private final RedisDatabase database;
+    private final Database database;
 
-    public RedisContext(RedisClient redisClient, @NotNull ServerConfiguration serverConfiguration, RedisDatabase database) {
+    public RedisContext(RedisClient redisClient, @NotNull ServerConfiguration serverConfiguration, Database database) {
         super(redisClient, serverConfiguration);
         this.database = database;
     }
 
-    public RedisDatabase getDatabase() {
+    public Database getDatabase() {
         return database;
     }
 }

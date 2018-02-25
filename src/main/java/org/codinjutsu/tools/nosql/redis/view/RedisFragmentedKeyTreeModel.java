@@ -126,7 +126,7 @@ public class RedisFragmentedKeyTreeModel extends DefaultTreeModel {
         getFragmentedKeyModel().reload();
     }
 
-    public static DefaultMutableTreeNode wrapNodes(DefaultMutableTreeNode source, String separator) {
+    static DefaultMutableTreeNode wrapNodes(DefaultMutableTreeNode source, String separator) {
         if (isEmpty(separator)) {
             return source;
         }

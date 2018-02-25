@@ -5,7 +5,6 @@ import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.SimpleTextAttributes
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecriptor
-import java.lang.String.format
 import javax.swing.Icon
 
 open class TypedKeyValueDescriptor<VALUE> @JvmOverloads constructor(
@@ -38,9 +37,5 @@ open class TypedKeyValueDescriptor<VALUE> @JvmOverloads constructor(
 
     override fun isSameKey(key: String?) = key == this.key
 
-    override fun toString(): String = format(TO_STRING_TEMPLATE, key, value)
-
-    companion object {
-        private const val TO_STRING_TEMPLATE = "\"%s\" : %s"
-    }
+    override fun toString() = "\"$key\" : $value"
 }

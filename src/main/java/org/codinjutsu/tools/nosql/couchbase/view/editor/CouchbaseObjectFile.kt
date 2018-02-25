@@ -18,13 +18,14 @@ package org.codinjutsu.tools.nosql.couchbase.view.editor
 
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
+import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSQLFakeFileType
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase
 import javax.swing.Icon
 
-class CouchbaseObjectFile(project: Project, configuration: ServerConfiguration, val database: CouchbaseDatabase) : NoSqlDatabaseObjectFile(project, configuration, String.format("%s/%s", configuration.label, database.name)) {
+class CouchbaseObjectFile(project: Project, configuration: ServerConfiguration, val database: Database) :
+        NoSqlDatabaseObjectFile(project, configuration, String.format("%s/%s", configuration.label, database.name)) {
 
     override fun getFileType() = FILE_TYPE
 

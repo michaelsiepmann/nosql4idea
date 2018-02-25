@@ -22,8 +22,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
-import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -31,9 +31,9 @@ public class RedisConsoleRunner extends AbstractNoSQLConsoleRunner {
 
     private static final Key<Boolean> SHELL_FILE = Key.create("REDIS_SHELL_FILE");
     private static final String CONSOLE_TYPE_ID = "Redis Shell";
-    private final RedisDatabase database;
+    private final Database database;
 
-    public RedisConsoleRunner(@NotNull Project project, ServerConfiguration serverConfiguration, RedisDatabase database) {
+    public RedisConsoleRunner(@NotNull Project project, ServerConfiguration serverConfiguration, Database database) {
         super(project, CONSOLE_TYPE_ID, "/tmp", serverConfiguration);
         this.database = database;
     }

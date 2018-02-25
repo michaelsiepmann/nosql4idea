@@ -18,9 +18,11 @@ package org.codinjutsu.tools.nosql.commons.logic;
 
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.model.Database;
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState;
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +30,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public interface DatabaseClient<CONTEXT, RESULT extends SearchResult, DOCUMENT> {
+public interface DatabaseClient<DOCUMENT> {
 
     void connect(ServerConfiguration serverConfiguration);
 
@@ -38,17 +40,20 @@ public interface DatabaseClient<CONTEXT, RESULT extends SearchResult, DOCUMENT> 
 
     void registerServer(DatabaseServer databaseServer);
 
+    @NotNull
     ServerConfiguration defaultConfiguration();
 
     @NotNull
-    RESULT findAll(CONTEXT context);
+    SearchResult findAll(DatabaseContext context);
 
     @Nullable
-    DOCUMENT findDocument(CONTEXT context, @NotNull Object _id);
+    DOCUMENT findDocument(DatabaseContext context, @NotNull Object _id);
 
-    void update(@NotNull CONTEXT context, @NotNull DOCUMENT document);
+    SearchResult loadRecords(DatabaseContext context, QueryOptions query);
 
-    void delete(@NotNull CONTEXT context, @NotNull Object _id);
+    void update(DatabaseContext context, DOCUMENT document);
+
+    void delete(@NotNull DatabaseContext context, @NotNull Object _id);
 
     default boolean isDatabaseWithCollections() {
         return false;
@@ -65,7 +70,7 @@ public interface DatabaseClient<CONTEXT, RESULT extends SearchResult, DOCUMENT> 
     default void dropDatabase(ServerConfiguration serverconfiguration, Database database) {
     }
 
-    default ImportResultState importFile(CONTEXT context, File file) {
+    default ImportResultState importFile(DatabaseContext context, File file) {
         return null;
     }
 

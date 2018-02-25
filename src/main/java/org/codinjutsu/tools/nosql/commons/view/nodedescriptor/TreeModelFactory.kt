@@ -1,38 +1,94 @@
 package org.codinjutsu.tools.nosql.commons.view.nodedescriptor
 
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseArray
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
-import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseArray
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabasePrimitive
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.StandardResultDescriptor
+import javax.swing.tree.TreeNode
 
-internal fun <DOCUMENT> buildTree(searchResult: SearchResult, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>): NoSqlTreeNode {
-    val resultTreeNode = NoSqlTreeNode(nodeDescriptorFactory.createResultDescriptor(searchResult.name))
-    searchResult.records.forEach { processRecord(resultTreeNode, it, nodeDescriptorFactory) }
-    return resultTreeNode
-}
-
-private fun <DOCUMENT> processRecord(parentNode: NoSqlTreeNode, record: ObjectWrapper, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
-    record.names.forEach {
-        val value = record.get(it)
-        val currentNode = NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(it, value))
-        process(value, currentNode, nodeDescriptorFactory)
-        parentNode.add(currentNode)
-    }
-}
-
-private fun <DOCUMENT> processRecordListValues(parentNode: NoSqlTreeNode, values: Any, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
-    for ((index, value) in nodeDescriptorFactory.toArray(values).withIndex()) {
-        val currentValueNode = NoSqlTreeNode(nodeDescriptorFactory.createValueDescriptor(index, value))
-        process(value, currentValueNode, nodeDescriptorFactory)
-        parentNode.add(currentValueNode)
-    }
-}
-
-internal fun <DOCUMENT> process(value: Any?, currentValueNode: NoSqlTreeNode, nodeDescriptorFactory: NodeDescriptorFactory<DOCUMENT>) {
-    if (value != null) {
-        if (nodeDescriptorFactory.isArray(value)) {
-            processRecordListValues(currentValueNode, value, nodeDescriptorFactory)
-        } else if (nodeDescriptorFactory.isObject(value)) {
-            processRecord(currentValueNode, nodeDescriptorFactory.createObjectWrapper(value), nodeDescriptorFactory)
+internal fun buildTree(searchResult: SearchResult, nodeDescriptorFactory: NodeDescriptorFactory): TreeNode {
+    val root = NoSqlTreeNode(StandardResultDescriptor(searchResult.name))
+    searchResult.records.forEach { wrapper ->
+        wrapper.names.forEach { name ->
+            val value = wrapper.get(name)
+            if (value is DatabaseElement) {
+                val current = NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(name, value))
+                processDatabaseObject(current, value, nodeDescriptorFactory)
+                root.add(current)
+            }
         }
     }
+    return root
+}
+
+private fun processDatabaseObject(parentNode: NoSqlTreeNode, databaseElement: DatabaseElement, nodeDescriptorFactory: NodeDescriptorFactory) {
+    if (databaseElement is DatabaseArray) {
+        databaseElement.toArray().withIndex().forEach { (index, element) ->
+            val currentNode = NoSqlTreeNode(nodeDescriptorFactory.createIndexValueDescriptor(index, element))
+            processDatabaseObject(currentNode, element, nodeDescriptorFactory)
+            parentNode.add(currentNode)
+        }
+    } else if (databaseElement is DatabaseObject) {
+        databaseElement.names().forEach {
+            val value = databaseElement.get(it)
+            val currentNode = NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(it, value))
+            if (value is DatabaseElement) {
+                processDatabaseObject(currentNode, value, nodeDescriptorFactory)
+            }
+            parentNode.add(currentNode)
+        }
+    }
+}
+
+internal fun processObject(parentNode: NoSqlTreeNode, value: Any?, nodeDescriptorFactory: NodeDescriptorFactory) {
+    if (value is DatabaseElement) {
+        processDatabaseObject(parentNode, value, nodeDescriptorFactory)
+    }
+}
+
+internal fun buildDBObject(rootNode: NoSqlTreeNode): DatabaseObject {
+    val result = InternalDatabaseObject()
+    rootNode.forEach {
+        val descriptor = it.descriptor
+        if (descriptor is KeyValueDescriptor) {
+            result.add(descriptor.key, buildValue(it, descriptor.value))
+        }
+    }
+    return result
+}
+
+private fun buildValue(node: NoSqlTreeNode, value: Any): DatabaseElement {
+    return when (value) {
+        is DatabaseElement -> when {
+            value.isArray() -> buildArray(node)
+            value.isObject() -> buildDBObject(node)
+            else -> InternalDatabasePrimitive((value as DatabasePrimitive).value())
+        }
+        else -> InternalDatabasePrimitive(value)
+    }
+}
+
+private fun buildArray(node: NoSqlTreeNode): DatabaseElement {
+    val result = InternalDatabaseArray()
+    node.forEach {
+        result.add(buildValue(it, it.descriptor.value))
+    }
+    return result
+}
+
+private fun NoSqlTreeNode.forEach(handler: (NoSqlTreeNode) -> Unit) {
+    children().iterator()
+            .forEach {
+                if (it is NoSqlTreeNode) {
+                    handler(it)
+                }
+            }
 }

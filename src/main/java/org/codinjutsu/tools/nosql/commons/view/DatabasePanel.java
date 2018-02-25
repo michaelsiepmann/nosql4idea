@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.NumberDocument;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
@@ -38,7 +37,7 @@ import org.codinjutsu.tools.nosql.commons.view.action.paging.NextPageAction;
 import org.codinjutsu.tools.nosql.commons.view.action.paging.PreviousPageAction;
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportFileDialog;
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState;
-import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.NoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.Pageable;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page;
@@ -46,6 +45,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel;
 import org.codinjutsu.tools.nosql.commons.view.scripting.JavascriptExecutor;
+import org.codinjutsu.tools.nosql.commons.view.scripting.ScriptingDatabaseWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -54,7 +54,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
 
-public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT extends DatabaseContext<CLIENT>, RESULT extends SearchResult, DOCUMENT> extends NoSqlResultView {
+public abstract class DatabasePanel<DOCUMENT> extends NoSqlResultView {
 
     private final LoadingDecorator loadingDecorator;
     private JPanel rootPanel;
@@ -62,19 +62,19 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
     private JPanel toolBar;
     private JPanel errorPanel;
     private final JTextField rowLimitField = new JTextField("");
-    private AbstractNoSQLResultPanel<RESULT, DOCUMENT> resultPanel;
+    private NoSQLResultPanel<DOCUMENT> resultPanel;
     private final QueryPanel queryPanel;
 
     private final Project project;
-    private final CONTEXT context;
+    private final DatabaseContext context;
 
     private Page currentPage = null;
 
-    protected DatabasePanel(Project project, CONTEXT context) {
-        this(project, context, p -> null);
+    protected DatabasePanel(Project project, DatabaseContext context, String idDescriptor) {
+        this(project, context, idDescriptor, p -> null);
     }
 
-    protected DatabasePanel(Project project, CONTEXT context, Function<Project, QueryPanel> queryPanelFactory) {
+    protected DatabasePanel(Project project, DatabaseContext context, String idDescriptor, Function<Project, QueryPanel> queryPanelFactory) {
         this.project = project;
         this.context = context;
 
@@ -85,7 +85,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
             queryPanel.setVisible(false);
         }
 
-        resultPanel = createResultPanel(project);
+        resultPanel = createResultPanel(project, idDescriptor);
 
         loadingDecorator = new LoadingDecorator(resultPanel, this, 0);
 
@@ -99,7 +99,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
         initToolBar();
     }
 
-    protected abstract AbstractNoSQLResultPanel<RESULT, DOCUMENT> createResultPanel(Project project);
+    protected abstract NoSQLResultPanel<DOCUMENT> createResultPanel(Project project, String idDescriptor);
 
     protected JPanel initToolBar() {
         toolBar.setLayout(new BorderLayout());
@@ -203,7 +203,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
         resultPanel.collapseAll();
     }
 
-    protected CONTEXT getContext() {
+    public DatabaseContext getContext() {
         return context;
     }
 
@@ -246,13 +246,13 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
         errorPanel.setVisible(true);
     }
 
-    protected RESULT getSearchResult() {
-        RESULT searchResult = getSearchResult(currentPage);
+    protected SearchResult getSearchResult() {
+        SearchResult searchResult = getSearchResult(currentPage);
         currentPage = null;
         return searchResult;
     }
 
-    private RESULT getSearchResult(Page currentPage) {
+    private SearchResult getSearchResult(Page currentPage) {
         return getSearchResult(context, createQueryOptions(currentPage));
     }
 
@@ -270,7 +270,10 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
         return queryPanel.getQueryOptions(rowLimitFieldText, currentPage);
     }
 
-    protected abstract RESULT getSearchResult(CONTEXT context, QueryOptions queryOptions);
+    @NotNull
+    protected SearchResult getSearchResult(DatabaseContext context, QueryOptions queryOptions) {
+        return context.getClient().loadRecords(context, queryOptions);
+    }
 
     private void validateQuery() {
         if (queryPanel != null) {
@@ -284,7 +287,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
     }
 
     @Override
-    public AbstractNoSQLResultPanel<RESULT, DOCUMENT> getResultPanel() {
+    public NoSQLResultPanel<DOCUMENT> getResultPanel() {
         return resultPanel;
     }
 
@@ -357,5 +360,7 @@ public abstract class DatabasePanel<CLIENT extends DatabaseClient, CONTEXT exten
     }
 
     @NotNull
-    protected abstract JavascriptExecutor<CONTEXT, DatabaseClient<CONTEXT, RESULT, DOCUMENT>> createJavascriptExecutor(String content, Project project, CONTEXT context);
+    private JavascriptExecutor createJavascriptExecutor(String content, Project project, DatabaseContext context) {
+        return new JavascriptExecutor(content, project, new ScriptingDatabaseWrapper(context), context);
+    }
 }

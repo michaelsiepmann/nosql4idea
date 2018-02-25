@@ -22,7 +22,7 @@ import org.codinjutsu.tools.nosql.redis.model.RedisRecord;
 import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.NullResultDescriptor;
-import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisValueDescriptor;
+import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisIndexedValueDescriptor;
 
 import java.util.List;
 import java.util.Map;
@@ -48,12 +48,12 @@ public class RedisTreeModel {
             List<String> valuesFromList = (List<String>) redisRecord.getValue();
             for (int index = 0; index < valuesFromList.size(); index++) {
                 String value = valuesFromList.get(index);
-                treeNode.add(new NoSqlTreeNode(RedisValueDescriptor.createDescriptor(index, value)));
+                treeNode.add(new NoSqlTreeNode(RedisIndexedValueDescriptor.createDescriptor(index, value)));
             }
         } else if (RedisKeyType.SET.equals(keyType) || RedisKeyType.ZSET.equals(keyType)) {
             Set valuesFromSet = (Set) redisRecord.getValue();
             for (Object value : valuesFromSet) {
-                treeNode.add(new NoSqlTreeNode(RedisValueDescriptor.createUnindexedDescriptor(value)));
+                treeNode.add(new NoSqlTreeNode(RedisIndexedValueDescriptor.createUnindexedDescriptor(value)));
             }
         } else if (RedisKeyType.HASH.equals(keyType)) {
             Map<String, String> valuesFromMap = (Map<String, String>) redisRecord.getValue();

@@ -22,19 +22,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
+import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
-import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperationsImpl;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
-import org.codinjutsu.tools.nosql.commons.view.panel.AbstractNoSQLResultPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.NoSQLResultPanel;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
-import org.codinjutsu.tools.nosql.commons.view.scripting.JavascriptExecutor;
-import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
 import org.codinjutsu.tools.nosql.redis.model.RedisContext;
-import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
-import org.codinjutsu.tools.nosql.redis.scripting.RedisScriptingDatabaseWrapper;
 import org.codinjutsu.tools.nosql.redis.view.action.EnableGroupingAction;
 import org.codinjutsu.tools.nosql.redis.view.action.SetSeparatorAction;
 import org.jetbrains.annotations.NotNull;
@@ -42,14 +37,14 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class RedisPanel extends DatabasePanel<RedisClient, RedisContext, RedisSearchResult, Object> {
+public class RedisPanel extends DatabasePanel<Object> {
 
     private JBTextField filterField;
     private boolean groupData;
     private String groupSeparator;
 
     public RedisPanel(Project project, RedisContext context) {
-        super(project, context);
+        super(project, context, "id");
     }
 
     @Override
@@ -89,7 +84,7 @@ public class RedisPanel extends DatabasePanel<RedisClient, RedisContext, RedisSe
         return "*";
     }
 
-    void updateResultTableTree(RedisSearchResult redisSearchResult, boolean groupByPrefix, String separator) {
+    void updateResultTableTree(SearchResult redisSearchResult, boolean groupByPrefix, String separator) {
         RedisResultPanel resultPanel = (RedisResultPanel) getResultPanel();
         resultPanel.prepareTable(groupByPrefix, separator);
         resultPanel.updateResultTableTree(redisSearchResult);
@@ -101,13 +96,8 @@ public class RedisPanel extends DatabasePanel<RedisClient, RedisContext, RedisSe
     }
 
     @Override
-    protected AbstractNoSQLResultPanel<RedisSearchResult, Object> createResultPanel(Project project) {
-        return new RedisResultPanel(project, new NoSQLResultPanelDocumentOperationsImpl<>(this));
-    }
-
-    @Override
-    protected RedisSearchResult getSearchResult(RedisContext context, QueryOptions queryOptions) {
-        return context.getClient().loadRecords(context, queryOptions);
+    protected NoSQLResultPanel<Object> createResultPanel(Project project, String idDescriptor) {
+        return new RedisResultPanel(project, this);
     }
 
     @NotNull
@@ -119,12 +109,12 @@ public class RedisPanel extends DatabasePanel<RedisClient, RedisContext, RedisSe
     }
 
     public boolean isGroupDataEnabled() {
-        return this.groupData;
+        return groupData;
     }
 
     public void toggleGroupData(boolean enabled) {
-        this.groupData = enabled;
-        updateResultTableTree(getSearchResult(), this.groupData, this.groupSeparator);
+        groupData = enabled;
+        updateResultTableTree(getSearchResult(), groupData, groupSeparator);
     }
 
     public String getGroupSeparator() {
@@ -133,7 +123,7 @@ public class RedisPanel extends DatabasePanel<RedisClient, RedisContext, RedisSe
 
     public void setGroupSeparator(String groupSeparator) {
         this.groupSeparator = groupSeparator;
-        updateResultTableTree(getSearchResult(), this.groupData, this.groupSeparator);
+        updateResultTableTree(getSearchResult(), groupData, groupSeparator);
     }
 
     @Override
@@ -151,11 +141,5 @@ public class RedisPanel extends DatabasePanel<RedisClient, RedisContext, RedisSe
 
     @Override
     public void focusOnEditor() {
-    }
-
-    @NotNull
-    @Override
-    protected JavascriptExecutor<RedisContext, DatabaseClient<RedisContext, RedisSearchResult, Object>> createJavascriptExecutor(String content, Project project, RedisContext context) {
-        return new JavascriptExecutor<>(content, project, new RedisScriptingDatabaseWrapper(context), context, context.getClient());
     }
 }

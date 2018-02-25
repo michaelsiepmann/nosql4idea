@@ -28,7 +28,7 @@ class MongoObjectFile(
         project: Project,
         configuration: ServerConfiguration,
         val collection: MongoCollection
-) : NoSqlDatabaseObjectFile(project, configuration, String.format("%s/%s/%s", configuration.label, collection.databaseName, collection.name)) {
+) : NoSqlDatabaseObjectFile(project, configuration, "${configuration.label}/${collection.databaseName}/${collection.name}") {
 
     override fun getFileType() = FILE_TYPE
 

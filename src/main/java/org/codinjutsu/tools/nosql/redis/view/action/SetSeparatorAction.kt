@@ -19,25 +19,25 @@ package org.codinjutsu.tools.nosql.redis.view.action
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.ui.Messages
-import com.intellij.util.ArrayUtil
+import com.intellij.openapi.ui.Messages.getQuestionIcon
+import com.intellij.openapi.ui.Messages.showEditableChooseDialog
 import org.codinjutsu.tools.nosql.redis.view.RedisPanel
 import java.util.*
 
 class SetSeparatorAction(private val redisPanel: RedisPanel) : AnAction(AllIcons.General.Ellipsis) {
 
     init {
-        myPredefinedSeparators.add(".")
-        myPredefinedSeparators.add(":")
+        predefinedSeparators.add(".")
+        predefinedSeparators.add(":")
     }
 
     override fun actionPerformed(event: AnActionEvent) {
-        val strings = ArrayUtil.toStringArray(myPredefinedSeparators)
+        val strings = predefinedSeparators.toTypedArray()
         val current = redisPanel.groupSeparator
-        val separator = Messages.showEditableChooseDialog("Redis Keys Separator",
-                "Select Separator",
-                Messages.getQuestionIcon(),
-                strings, current, null) ?: return
+        val separator = showEditableChooseDialog(
+                "Redis Keys Separator",
+                "Select Separator", getQuestionIcon(), strings, current, null
+        ) ?: return
 
         if (redisPanel.groupSeparator == separator) {
             return
@@ -45,19 +45,21 @@ class SetSeparatorAction(private val redisPanel: RedisPanel) : AnAction(AllIcons
 
         redisPanel.groupSeparator = separator
 
-        myPredefinedSeparators.add(separator)
+        predefinedSeparators.add(separator)
         update(event)
     }
 
-    override fun update(event: AnActionEvent?) {
+    override fun update(event: AnActionEvent) {
         val currentSeparator = redisPanel.groupSeparator
-        val textToDisplay = String.format("Group by '%s'", currentSeparator ?: "Nothing")
-        event!!.presentation.text = textToDisplay
-        event.presentation.description = textToDisplay
-        event.presentation.isEnabled = redisPanel.isGroupDataEnabled
+        val textToDisplay = "Group by '${currentSeparator ?: "Nothing"}'"
+        event.presentation.apply {
+            text = textToDisplay
+            description = textToDisplay
+            isEnabled = redisPanel.isGroupDataEnabled
+        }
     }
 
     companion object {
-        private val myPredefinedSeparators = LinkedHashSet<String>()
+        private val predefinedSeparators = LinkedHashSet<String>()
     }
 }

@@ -8,15 +8,18 @@ import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.AddKeyAction;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.AddValueAction;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.DeleteKeyAction;
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WritableColumnInfo;
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.ValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.IndexedValueDescriptor;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -26,6 +29,9 @@ import java.awt.event.ActionEvent;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.codinjutsu.tools.nosql.commons.view.nodedescriptor.TreeModelFactoryKt.buildDBObject;
+import static org.codinjutsu.tools.nosql.commons.view.nodedescriptor.TreeModelFactoryKt.processObject;
 
 public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
 
@@ -37,10 +43,10 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
 
     private JsonTreeTableView editTableView;
 
-    private final NodeDescriptorFactory<DOCUMENT> nodeDescriptorFactory;
+    private final NodeDescriptorFactory nodeDescriptorFactory;
     private final WriteableColumnInfoDecider writeableColumnInfoDecider;
 
-    public EditionPanel(NodeDescriptorFactory<DOCUMENT> nodeDescriptorFactory, WriteableColumnInfoDecider writeableColumnInfoDecider) {
+    public EditionPanel(NodeDescriptorFactory nodeDescriptorFactory, WriteableColumnInfoDecider writeableColumnInfoDecider) {
         super(new BorderLayout());
 
         this.nodeDescriptorFactory = nodeDescriptorFactory;
@@ -54,7 +60,7 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
         deleteButton.setName("deleteButton"); //NON-NLS
     }
 
-    public void init(NoSQLResultPanelDocumentOperations<DOCUMENT> documentOperations, ActionCallback actionCallback) {
+    public void init(DatabasePanel<DOCUMENT> databasePanel, ActionCallback actionCallback) {
         cancelButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -66,7 +72,10 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    documentOperations.updateDocument(buildEditedDocument());
+                    DatabaseContext context = databasePanel.getContext();
+                    DatabaseClient<DatabaseElement> client = (DatabaseClient<DatabaseElement>) context.getClient();
+                    client.update(context, buildEditedDocument());
+                    databasePanel.executeQuery();
                     actionCallback.onOperationSuccess("Document saved...");
                 } catch (Exception exception) {
                     actionCallback.onOperationFailure(exception);
@@ -78,7 +87,10 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    documentOperations.deleteDocument(getDocumentId());
+                    DatabaseContext context = databasePanel.getContext();
+                    DatabaseClient<DOCUMENT> client = (DatabaseClient<DOCUMENT>) context.getClient();
+                    client.delete(context, getDocumentId());
+                    databasePanel.executeQuery();
                     actionCallback.onOperationSuccess("Document deleted...");
                 } catch (Exception exception) {
                     actionCallback.onOperationFailure(exception);
@@ -96,9 +108,8 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
         return ((NoSqlTreeNode) rootNode.getChildAt(0));//TODO crappy
     }
 
-    private DOCUMENT buildEditedDocument() {
-        NoSqlTreeNode rootNode = (NoSqlTreeNode) editTableView.getTree().getModel().getRoot();
-        return nodeDescriptorFactory.buildDBObject(rootNode);
+    private DatabaseElement buildEditedDocument() {
+        return buildDBObject((NoSqlTreeNode) editTableView.getTree().getModel().getRoot());
     }
 
     public void updateEditionTree(DOCUMENT document) {
@@ -121,7 +132,7 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
 
     private TreeNode buildJsonTree(DOCUMENT document) {
         NoSqlTreeNode rootNode = new NoSqlTreeNode(nodeDescriptorFactory.createResultDescriptor(""));//TODO crappy
-        nodeDescriptorFactory.processObject(rootNode, document);
+        processObject(rootNode, document, nodeDescriptorFactory);
         return rootNode;
     }
 
@@ -158,7 +169,7 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
         List<TreeNode> node = new LinkedList<>();
         NoSqlTreeNode treeNode = new NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(key, value));
 
-        nodeDescriptorFactory.processObject(treeNode, value);
+        processObject(treeNode, value, nodeDescriptorFactory);
 
         node.add(treeNode);
 
@@ -188,8 +199,8 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
         NoSqlTreeNode parentNode = getParentNode();
 
         if (parentNode != null) {
-            NoSqlTreeNode treeNode = new NoSqlTreeNode(nodeDescriptorFactory.createValueDescriptor(parentNode.getChildCount(), value));
-            nodeDescriptorFactory.processObject(treeNode, value);
+            NoSqlTreeNode treeNode = new NoSqlTreeNode(nodeDescriptorFactory.createIndexValueDescriptor(parentNode.getChildCount(), value));
+            processObject(treeNode, value, nodeDescriptorFactory);
 
             node.add(treeNode);
 
@@ -206,7 +217,7 @@ public class EditionPanel<DOCUMENT> extends JPanel implements Disposable {
 
     public boolean canAddValue() {
         NoSqlTreeNode selectedNode = getSelectedNode();
-        return selectedNode != null && selectedNode.getDescriptor() instanceof ValueDescriptor;
+        return selectedNode != null && selectedNode.getDescriptor() instanceof IndexedValueDescriptor;
     }
 
     public void removeSelectedKey() {

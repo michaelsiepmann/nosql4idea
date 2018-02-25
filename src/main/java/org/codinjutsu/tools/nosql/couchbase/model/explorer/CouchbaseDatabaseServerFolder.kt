@@ -6,14 +6,13 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.explorer.CommonDatabaseFolder
 import org.codinjutsu.tools.nosql.commons.model.explorer.DatabaseServerFolder
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase
 import org.codinjutsu.tools.nosql.couchbase.view.editor.CouchbaseObjectFile
 
 internal class CouchbaseDatabaseServerFolder(databaseServer: DatabaseServer) :
-        DatabaseServerFolder<CouchbaseDatabase>(databaseServer) {
+        DatabaseServerFolder<Database>(databaseServer) {
 
     override fun createDatabaseFolder(database: Database) =
-            CommonDatabaseFolder(database as CouchbaseDatabase, this, true) {
+            CommonDatabaseFolder(database, this, true) {
                 CouchbaseObjectFile(it, databaseServer.configuration, database)
             }
 

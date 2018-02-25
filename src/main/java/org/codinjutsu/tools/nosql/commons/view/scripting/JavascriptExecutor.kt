@@ -4,19 +4,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.impl.status.TextPanel
-import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import javax.script.ScriptContext
 import javax.script.ScriptEngineManager
 import javax.script.SimpleScriptContext
 import javax.swing.JScrollPane
 
-internal class JavascriptExecutor<CONTEXT : DatabaseContext<*>, CLIENT : DatabaseClient<CONTEXT, *, *>>(
+internal class JavascriptExecutor(
         private val script: String,
         private val project: Project,
         private val wrapper: ScriptingDatabaseWrapper<*>,
-        private val context: CONTEXT,
-        private val client: CLIENT
+        private val context: DatabaseContext
 ) {
 
     fun execute() {
@@ -30,7 +28,7 @@ internal class JavascriptExecutor<CONTEXT : DatabaseContext<*>, CLIENT : Databas
         contentManager.addContent(content)
         val consoleLog = ConsoleLog(textArea)
         window.show {
-            val searchResult = client.findAll(context)
+            val searchResult = context.client.findAll(context)
             for (it in searchResult.records) {
                 val engine = ScriptEngineManager().getEngineByName("JavaScript")
                 val scriptContext = SimpleScriptContext()
@@ -41,7 +39,7 @@ internal class JavascriptExecutor<CONTEXT : DatabaseContext<*>, CLIENT : Databas
                 engine.eval("main(data, database, console);\n" + script, scriptContext)
             }
         }
- //       toolWindowManager.unregisterToolWindow("org.con.nosql.window")
+        //       toolWindowManager.unregisterToolWindow("org.con.nosql.window")
     }
 
     internal class MyTextPanel : TextPanel() {

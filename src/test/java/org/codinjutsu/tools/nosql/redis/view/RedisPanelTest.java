@@ -32,12 +32,12 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.impl.SettingsImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.PlatformLiteFixture;
+import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
-import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
-import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
+import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.fest.swing.edt.GuiActionRunner;
 import org.fest.swing.edt.GuiQuery;
@@ -115,7 +115,7 @@ public class RedisPanelTest extends PlatformLiteFixture {
 
         redisPanelWrapper = GuiActionRunner.execute(new GuiQuery<RedisPanel>() {
             protected RedisPanel executeInEDT() {
-                return new RedisPanel(dummyProject, new RedisContext(redisClientMock, new RedisServerConfiguration(), new RedisDatabase("0"))) {
+                return new RedisPanel(dummyProject, new RedisContext(redisClientMock, new RedisServerConfiguration(), new Database("0"))) {
                     @Override
                     protected void addActions(DefaultActionGroup actionResultGroup, AnAction expandAllAction, AnAction collapseAllAction) {
                     }

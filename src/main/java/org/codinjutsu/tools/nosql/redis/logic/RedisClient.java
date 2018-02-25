@@ -20,13 +20,14 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
+import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.Database;
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.model.RedisContext;
-import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisSearchResult, Object> {
+public class RedisClient implements DatabaseClient<Object> {
 
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
@@ -67,11 +68,11 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisSe
         List<Database> databases = new LinkedList<>();
         String userDatabase = databaseServer.getConfiguration().getUserDatabase();
         if (StringUtils.isNotEmpty(userDatabase)) {
-            databases.add(new RedisDatabase(userDatabase));
+            databases.add(new Database(userDatabase));
         } else {
             int totalNumberOfDatabase = Integer.parseInt(databaseNumberTuple.get(1));
             for (int databaseNumber = 0; databaseNumber < totalNumberOfDatabase; databaseNumber++) {
-                databases.add(new RedisDatabase(String.valueOf(databaseNumber)));
+                databases.add(new Database(String.valueOf(databaseNumber)));
             }
         }
         databaseServer.setDatabases(databases);
@@ -91,17 +92,18 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisSe
         return databaseServers;
     }
 
+    @NotNull
     @Override
     public ServerConfiguration defaultConfiguration() {
         return new RedisServerConfiguration();
     }
 
     @Override
-    public RedisSearchResult loadRecords(RedisContext context, QueryOptions query) {
+    public RedisSearchResult loadRecords(DatabaseContext context, QueryOptions query) {
         Jedis jedis = createJedis(context.getServerConfiguration());
         jedis.connect();
         RedisSearchResult redisSearchResult = new RedisSearchResult();
-        int index = Integer.parseInt(context.getDatabase().getName());
+        int index = Integer.parseInt(((RedisContext) context).getDatabase().getName());
         jedis.select(index);
 
         Set<String> keys = jedis.keys(query.getFilter());
@@ -139,23 +141,23 @@ public class RedisClient implements LoadableDatabaseClient<RedisContext, RedisSe
 
     @NotNull
     @Override
-    public RedisSearchResult findAll(RedisContext redisContext) {
+    public SearchResult findAll(DatabaseContext redisContext) {
         return new RedisSearchResult(); // todo
     }
 
     @Nullable
     @Override
-    public Object findDocument(RedisContext redisPanelContext, @NotNull Object _id) {
+    public Object findDocument(DatabaseContext redisPanelContext, @NotNull Object _id) {
         return null;
     }
 
     @Override
-    public void update(@NotNull RedisContext redisPanelContext, @NotNull Object o) {
+    public void update(@NotNull DatabaseContext redisPanelContext, @NotNull Object o) {
 
     }
 
     @Override
-    public void delete(@NotNull RedisContext redisPanelContext, @NotNull Object _id) {
+    public void delete(@NotNull DatabaseContext redisPanelContext, @NotNull Object _id) {
 
     }
 }

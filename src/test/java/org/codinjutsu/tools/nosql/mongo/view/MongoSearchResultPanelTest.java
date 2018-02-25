@@ -16,42 +16,19 @@
 
 package org.codinjutsu.tools.nosql.mongo.view;
 
-import com.intellij.openapi.command.impl.DummyProject;
-import com.intellij.util.ui.tree.TreeUtil;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
-import org.apache.commons.io.IOUtils;
-import org.codinjutsu.tools.nosql.commons.view.NoSQLResultPanelDocumentOperations;
-import org.codinjutsu.tools.nosql.commons.view.TableCellReader;
-import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult;
-import org.fest.swing.edt.GuiActionRunner;
-import org.fest.swing.edt.GuiQuery;
-import org.fest.swing.fixture.Containers;
-import org.fest.swing.fixture.FrameFixture;
-import org.fest.swing.fixture.JTableFixture;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Disabled("The JsonTreeTableView was not found by it's name")
 class MongoSearchResultPanelTest {
 
-    private MongoResultPanel mongoResultPanel;
+/*
+    this code doesn't work anymore. Must be refactored
+
+    // // TODO: 25.02.2018  private MongoResultPanel mongoResultPanel;
 
     private FrameFixture frameFixture;
 
-    private NoSQLResultPanelDocumentOperations<DBObject> noSQLResultPanelDocumentOperations;
+    // // TODO: 25.02.2018  private NoSQLResultPanelDocumentOperations<DBObject> noSQLResultPanelDocumentOperations;
 
     @AfterEach
     void tearDown() {
@@ -61,9 +38,11 @@ class MongoSearchResultPanelTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(MongoSearchResultPanelTest.class);
-        noSQLResultPanelDocumentOperations = mock(NoSQLResultPanelDocumentOperations.class);
-        when(noSQLResultPanelDocumentOperations.getDocument(any())).thenReturn(new BasicDBObject());
+        // noSQLResultPanelDocumentOperations = mock(NoSQLResultPanelDocumentOperations.class);
+// todo        when(noSQLResultPanelDocumentOperations.getDocument(any())).thenReturn(new BasicDBObject());
 
+*/
+/*
         mongoResultPanel = GuiActionRunner.execute(new GuiQuery<MongoResultPanel>() {
             protected MongoResultPanel executeInEDT() {
                 return new MongoResultPanel(DummyProject.getInstance(), noSQLResultPanelDocumentOperations) {
@@ -73,6 +52,8 @@ class MongoSearchResultPanelTest {
                 };
             }
         });
+*//*
+
 
         frameFixture = Containers.showInFrame(mongoResultPanel);
     }
@@ -228,4 +209,5 @@ class MongoSearchResultPanelTest {
         return mongoSearchResult;
     }
 
+*/
 }

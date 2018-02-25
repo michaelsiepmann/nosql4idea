@@ -18,9 +18,12 @@ package org.codinjutsu.tools.nosql;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 
-import static java.util.Arrays.asList;
+import java.util.Objects;
+
+import static java.util.Arrays.stream;
 
 public class DatabaseVendorClientManager {
 
@@ -35,7 +38,10 @@ public class DatabaseVendorClientManager {
     }
 
     public void cleanUpServers() {
-        asList(DatabaseVendor.values()).forEach(databaseVendor -> databaseVendor.getClient(project).cleanUpServers());
+        stream(DatabaseVendor.values())
+                .map(databaseVendor -> databaseVendor.getClient(project))
+                .filter(Objects::nonNull)
+                .forEach(DatabaseClient::cleanUpServers);
     }
 
     public void registerServer(DatabaseServer databaseServer) {

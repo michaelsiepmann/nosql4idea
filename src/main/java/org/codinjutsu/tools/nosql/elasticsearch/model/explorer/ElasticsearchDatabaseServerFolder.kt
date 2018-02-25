@@ -8,10 +8,9 @@ import org.codinjutsu.tools.nosql.commons.model.explorer.Folder
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderDatabaseServerFolder
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
-import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchType
 
 internal class ElasticsearchDatabaseServerFolder(databaseserver: DatabaseServer, project: Project) :
-        FolderDatabaseServerFolder<ElasticsearchType, JsonSearchResult, ElasticsearchDatabase>(databaseserver, project) {
+        FolderDatabaseServerFolder<JsonSearchResult, ElasticsearchDatabase>(databaseserver, project) {
     override fun createDatabaseFolder(database: Database) =
             ElasticsearchIndexFolder(database as ElasticsearchDatabase, this)
 

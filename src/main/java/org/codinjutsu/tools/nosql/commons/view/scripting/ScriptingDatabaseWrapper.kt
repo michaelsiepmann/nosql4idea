@@ -1,6 +1,14 @@
 package org.codinjutsu.tools.nosql.commons.view.scripting
 
-internal interface ScriptingDatabaseWrapper<in DOCUMENT> {
+import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 
-    fun save(document: DOCUMENT)
+internal class ScriptingDatabaseWrapper<in DOCUMENT>(
+        private val context: DatabaseContext
+) {
+    @Suppress("unused")
+    fun save(document: DOCUMENT) {
+        val client: DatabaseClient<DOCUMENT> = context.client as DatabaseClient<DOCUMENT>
+        client.update(context, document)
+    }
 }

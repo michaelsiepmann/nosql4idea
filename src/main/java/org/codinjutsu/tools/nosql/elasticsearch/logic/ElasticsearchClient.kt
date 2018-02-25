@@ -6,11 +6,13 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException
-import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient
+import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.Database
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.JsonObjectObjectWrapper
 import org.codinjutsu.tools.nosql.commons.model.JsonSearchResult
+import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration
@@ -30,7 +32,7 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion.VERSI
 import java.io.File
 import java.net.URL
 
-internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext, JsonSearchResult, JsonObject> {
+internal class ElasticsearchClient : DatabaseClient<JsonObject> {
 
     private val databaseServers = mutableListOf<DatabaseServer>()
 
@@ -60,13 +62,13 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
         databaseServers.add(databaseServer)
     }
 
-    override fun getServers()  = databaseServers
+    override fun getServers() = databaseServers
 
     override fun defaultConfiguration() =
             ElasticsearchServerConfiguration(VERSION_20)
 
-    override fun loadRecords(context: ElasticsearchContext, queryOptions: QueryOptions): JsonSearchResult {
-        return jsonSearchResult(Search(context, queryOptions).execute(), context)
+    override fun loadRecords(context: DatabaseContext, queryOptions: QueryOptions): SearchResult {
+        return jsonSearchResult(Search(context as ElasticsearchContext, queryOptions).execute(), context)
     }
 
     private fun jsonSearchResult(searchResult: JsonObject, context: ElasticsearchContext): JsonSearchResult {
@@ -87,24 +89,27 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
         DeleteElement("${configuration.serverUrl}/${database.name}").execute()
     }
 
-    override fun findAll(context: ElasticsearchContext): JsonSearchResult {
-        return jsonSearchResult(FetchAllDocuments(context).execute(), context)
+    override fun findAll(context: DatabaseContext): JsonSearchResult {
+        return jsonSearchResult(FetchAllDocuments(context as ElasticsearchContext).execute(), context)
     }
 
-    override fun findDocument(context: ElasticsearchContext, id: Any) =
-            FetchDocument(context, id.toString()).execute()
+    override fun findDocument(context: DatabaseContext, id: Any) =
+            FetchDocument(context as ElasticsearchContext, id.toString()).execute()
 
-    override fun update(context: ElasticsearchContext, document: JsonObject) {
+    override fun update(context: DatabaseContext, document: JsonObject) {
         val id = document.getAsJsonPrimitive("_id").asString
-        val result = Insert(context, document.getAsJsonObject("_source") ?: document, id).execute()
+        val result = Insert(context as ElasticsearchContext, document.getAsJsonObject("_source")
+                ?: document, id).execute()
     }
 
-    override fun delete(context: ElasticsearchContext, _id: Any) {
+    override fun delete(context: DatabaseContext, _id: Any) {
         val serverConfiguration = context.serverConfiguration
-        val database = context.database
-        val type = context.type
-        if (type != null) {
-            DeleteElement("${serverConfiguration.serverUrl}/${database.name}/${type.name}/$_id").execute()
+        if (context is ElasticsearchContext) {
+            val database = context.database
+            val type = context.type
+            if (type != null) {
+                DeleteElement("${serverConfiguration.serverUrl}/${database.name}/${type.name}/$_id").execute()
+            }
         }
     }
 
@@ -125,12 +130,12 @@ internal class ElasticsearchClient : LoadableDatabaseClient<ElasticsearchContext
         return ElasticsearchType(folderName, parentFolderName, (serverConfiguration as ElasticsearchServerConfiguration).version)
     }
 
-    override fun importFile(context: ElasticsearchContext, file: File): ImportResultState {
+    override fun importFile(context: DatabaseContext, file: File): ImportResultState {
         val result = BulkImport(context.serverConfiguration.serverUrl, file).execute()
         return ImportResultState(false, "")
     }
 
     companion object {
-        fun getInstance(project: Project): ElasticsearchClient = ServiceManager.getService(project, ElasticsearchClient::class.java)
+        fun getInstance(project: Project) = ServiceManager.getService(project, ElasticsearchClient::class.java)
     }
 }

@@ -38,7 +38,7 @@ import org.mockito.Mockito
 internal class ServerConfigurationPanelTest {
 
     private var configurationPanel: ServerConfigurationPanel? = null
-    private lateinit var databaseClientMock: DatabaseClient<*, *>
+    private lateinit var databaseClientMock: DatabaseClient<*>
 
     private lateinit var frameFixture: FrameFixture
 

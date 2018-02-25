@@ -27,17 +27,16 @@ import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
-import org.codinjutsu.tools.nosql.commons.logic.LoadableDatabaseClient;
+import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
+import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseDatabase;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseSearchResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,8 +50,10 @@ import java.util.stream.Collectors;
 import static com.couchbase.client.java.query.Select.select;
 import static com.couchbase.client.java.query.dsl.Expression.i;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext, CouchbaseSearchResult, JsonObject> {
+public class CouchbaseClient implements DatabaseClient<JsonObject> {
 
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
@@ -66,11 +67,7 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
         String userDatabase = serverConfiguration.getUserDatabase();
         Bucket bucket = null;
         try {
-            if (StringUtils.isEmpty(userDatabase)) {
-                bucket = cluster.openBucket();
-            } else {
-                bucket = cluster.openBucket(userDatabase);
-            }
+            bucket = openBucket(cluster, userDatabase);
         } catch (Exception ex) {
             throw new ConfigurationException(ex);
         } finally {
@@ -79,6 +76,10 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
             }
             cluster.disconnect();
         }
+    }
+
+    private Bucket openBucket(CouchbaseCluster cluster, String userDatabase) {
+        return isEmpty(userDatabase) ? cluster.openBucket() : cluster.openBucket(userDatabase);
     }
 
     @NotNull
@@ -99,13 +100,13 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
         ClusterManager clusterManager = cluster.clusterManager(authenticationSettings.getUsername(), authenticationSettings.getPassword());
 
         String userBucket = databaseServer.getConfiguration().getUserDatabase();
-        if (StringUtils.isNotBlank(userBucket)) {
-            return singletonList(new CouchbaseDatabase(clusterManager.getBucket(userBucket).name()));
+        if (isNotBlank(userBucket)) {
+            return singletonList(new Database(clusterManager.getBucket(userBucket).name()));
         }
 
         return clusterManager.getBuckets()
                 .stream()
-                .map(bucketSettings -> new CouchbaseDatabase(bucketSettings.name()))
+                .map(bucketSettings -> new Database(bucketSettings.name()))
                 .collect(Collectors.toList());
     }
 
@@ -123,15 +124,16 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
         return databaseServers;
     }
 
+    @NotNull
     @Override
     public ServerConfiguration defaultConfiguration() {
         return new CouchbaseServerConfiguration();
     }
 
     @Override
-    public CouchbaseSearchResult loadRecords(CouchbaseContext context, QueryOptions queryOptions) {
+    public CouchbaseSearchResult loadRecords(DatabaseContext context, QueryOptions queryOptions) {
         ServerConfiguration configuration = context.getServerConfiguration();
-        CouchbaseDatabase database = context.getDatabase();
+        Database database = ((CouchbaseContext) context).getDatabase();
         Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment.builder().build(), configuration.getServerUrl());
 //        AuthenticationSettings authenticationSettings = configuration.getAuthenticationSettings();
 //        ClusterManager clusterManager = cluster.clusterManager(authenticationSettings.getUsername(), authenticationSettings.getPassword());
@@ -157,28 +159,28 @@ public class CouchbaseClient implements LoadableDatabaseClient<CouchbaseContext,
 
     @NotNull
     @Override
-    public CouchbaseSearchResult findAll(CouchbaseContext context) {
+    public CouchbaseSearchResult findAll(DatabaseContext context) {
 /*
         todo
         ServerConfiguration configuration = context.getServerConfiguration();
-        CouchbaseDatabase database = context.getDatabase();
+        Database database = context.getDatabase();
         Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment.builder().build(), configuration.getServerUrl());
         Bucket bucket = cluster.openBucket(database.getName(), 10, TimeUnit.SECONDS);
 */
-        return new CouchbaseSearchResult(context.getDatabase().getName());
+        return new CouchbaseSearchResult(((CouchbaseContext) context).getDatabase().getName());
     }
 
     @Nullable
     @Override
-    public JsonObject findDocument(CouchbaseContext context, @NotNull Object _id) {
+    public JsonObject findDocument(DatabaseContext context, @NotNull Object _id) {
         return null;
     }
 
     @Override
-    public void update(@NotNull CouchbaseContext context, @NotNull JsonObject jsonObject) {
+    public void update(@NotNull DatabaseContext context, @NotNull JsonObject jsonObject) {
     }
 
     @Override
-    public void delete(@NotNull CouchbaseContext context, @NotNull Object _id) {
+    public void delete(@NotNull DatabaseContext context, @NotNull Object _id) {
     }
 }
