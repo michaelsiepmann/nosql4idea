@@ -18,8 +18,9 @@ package org.codinjutsu.tools.nosql.commons.view;
 
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
-import org.apache.commons.lang.StringUtils;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
+import org.codinjutsu.tools.nosql.mongo.model.JsonDataType;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JComponent;
@@ -27,10 +28,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 public class AddKeyDialog extends AbstractAddDialog {
 
     private JTextField nameTextfield;
-    private ComboBox typeCombobox;
+    private ComboBox<JsonDataType> typeCombobox;
     private JPanel valuePanel;
     private JPanel mainPanel;
 
@@ -65,7 +68,7 @@ public class AddKeyDialog extends AbstractAddDialog {
     @Override
     protected ValidationInfo doValidate() {
         String keyName = getKey();
-        if (StringUtils.isBlank(keyName)) {
+        if (isBlank(keyName)) {
             return new ValidationInfo("Key name is not set");
         }
 
@@ -93,7 +96,7 @@ public class AddKeyDialog extends AbstractAddDialog {
     }
 
     @Override
-    public Object getValue() {
+    public DatabaseElement getValue() {
         return currentEditor.getValue();
     }
 }

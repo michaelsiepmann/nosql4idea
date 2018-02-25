@@ -18,6 +18,7 @@ package org.codinjutsu.tools.nosql.commons.view;
 
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JComponent;
@@ -70,7 +71,7 @@ public class AddValueDialog extends AbstractAddDialog {
     }
 
     @Override
-    public Object getValue() {
+    public DatabaseElement getValue() {
         return currentEditor.getValue();
     }
 

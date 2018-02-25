@@ -39,7 +39,7 @@ import javax.swing.tree.DefaultMutableTreeNode
 internal open class NoSQLResultPanel(
         project: Project,
         private val databasePanel: DatabasePanel,
-        private val editable: Boolean,
+        val editable: Boolean,
         private val nodeDescriptorFactory: NodeDescriptorFactory,
         private val idDescriptorKey: String
 ) : JPanel(), Disposable {
@@ -94,7 +94,7 @@ internal open class NoSQLResultPanel(
         with(resultTableView) {
             name = "resultTreeTable"
 
-            if (isEditable()) {
+            if (editable) {
                 addMouseListener(object : MouseAdapter() {
                     override fun mouseClicked(mouseEvent: MouseEvent?) {
                         if (mouseEvent!!.clickCount == 2 && isSelectedNodeId()) {
@@ -125,8 +125,6 @@ internal open class NoSQLResultPanel(
 
         PopupHandler.installPopupHandler(resultTableView, actionPopupGroup, "POPUP", ActionManager.getInstance())
     }
-
-    fun isEditable() = editionPanel != null
 
     fun editSelectedDocument() {
         val document = getSelectedDocument() ?: return

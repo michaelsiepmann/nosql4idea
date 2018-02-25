@@ -36,7 +36,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,7 +92,7 @@ public abstract class AbstractAddDialog extends DialogWrapper {
         combobox.setSelectedItem(JsonDataType.STRING);
     }
 
-    public abstract Object getValue();
+    public abstract DatabaseElement getValue();
 
     public static abstract class TextFieldWrapper<T extends JComponent> {
 

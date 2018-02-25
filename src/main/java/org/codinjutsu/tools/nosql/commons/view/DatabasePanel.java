@@ -130,7 +130,7 @@ public abstract class DatabasePanel extends NoSqlResultView {
                 queryPanel.addActions(actionResultGroup);
             }
             actionResultGroup.addSeparator();
-            if (resultPanel.isEditable()) {
+            if (resultPanel.getEditable()) {
                 actionResultGroup.add(new AddDocumentAction(resultPanel));
                 actionResultGroup.add(new EditDocumentAction(resultPanel));
                 actionResultGroup.add(new ImportAction(this));

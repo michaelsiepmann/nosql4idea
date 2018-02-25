@@ -107,7 +107,7 @@ public class EditionPanel extends JPanel implements Disposable {
     }
 
     private NoSqlTreeNode findObjectIdNodeDescriptor(NoSqlTreeNode rootNode) {
-        return ((NoSqlTreeNode) rootNode.getChildAt(0));//TODO crappy
+        return (NoSqlTreeNode) rootNode.getChildAt(0);//TODO crappy
     }
 
     private DatabaseElement buildEditedDocument() {
@@ -138,7 +138,7 @@ public class EditionPanel extends JPanel implements Disposable {
         return rootNode;
     }
 
-    public boolean containsKey(String key) {
+    boolean containsKey(String key) {
         NoSqlTreeNode parentNode = getParentNode();
         if (parentNode == null) {
             return false;
@@ -156,17 +156,14 @@ public class EditionPanel extends JPanel implements Disposable {
 
     private NoSqlTreeNode getParentNode() {
         NoSqlTreeNode lastPathComponent = getSelectedNode();
-        if (lastPathComponent == null) {
-            return null;
-        }
-        return (NoSqlTreeNode) lastPathComponent.getParent();
+        return lastPathComponent == null ? null : (NoSqlTreeNode) lastPathComponent.getParent();
     }
 
     public NoSqlTreeNode getSelectedNode() {
         return (NoSqlTreeNode) editTableView.getTree().getLastSelectedPathComponent();
     }
 
-    public void addKey(String key, Object value) {
+    public void addKey(String key, DatabaseElement value) {
 
         List<TreeNode> node = new LinkedList<>();
         NoSqlTreeNode treeNode = new NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(key, value));
@@ -184,7 +181,7 @@ public class EditionPanel extends JPanel implements Disposable {
         treeModel.reload(parentNode);
     }
 
-    protected void buildPopupMenu() {
+    private void buildPopupMenu() {
         DefaultActionGroup actionPopupGroup = new DefaultActionGroup("AbstractEditorPopupGroup", true); //NON-NLS
         if (ApplicationManager.getApplication() != null) {
             actionPopupGroup.add(new AddKeyAction(this));
@@ -195,7 +192,7 @@ public class EditionPanel extends JPanel implements Disposable {
         PopupHandler.installPopupHandler(editTableView, actionPopupGroup, "POPUP", ActionManager.getInstance()); //NON-NLS
     }
 
-    public void addValue(Object value) {
+    public void addValue(DatabaseElement value) {
         List<TreeNode> node = new LinkedList<>();
 
         NoSqlTreeNode parentNode = getParentNode();
