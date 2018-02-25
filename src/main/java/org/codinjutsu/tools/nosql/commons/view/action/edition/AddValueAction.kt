@@ -22,7 +22,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import org.codinjutsu.tools.nosql.commons.view.AddValueDialog
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
 
-class AddValueAction<DOCUMENT>(private val editionPanel: EditionPanel<DOCUMENT>) : AnAction("Add a value", "Add a value", AllIcons.General.Add) {
+class AddValueAction(private val editionPanel: EditionPanel) : AnAction("Add a value", "Add a value", AllIcons.General.Add) {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
         val dialog = AddValueDialog.createDialog(editionPanel)

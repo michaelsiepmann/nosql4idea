@@ -16,15 +16,14 @@
 
 package org.codinjutsu.tools.nosql.commons.view.action
 
-import com.intellij.icons.AllIcons
+import com.intellij.icons.AllIcons.General.Add
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import org.codinjutsu.tools.nosql.commons.view.panel.NoSQLResultPanel
-
 import java.awt.event.KeyEvent
 
-internal class AddDocumentAction(private val resultPanel: NoSQLResultPanel<*>) : AnAction("Add", "Add document", AllIcons.General.Add), DumbAware {
+internal class AddDocumentAction(private val resultPanel: NoSQLResultPanel) : AnAction("Add", "Add document", Add), DumbAware {
 
     init {
         registerCustomShortcutSet(KeyEvent.VK_INSERT, KeyEvent.ALT_MASK, resultPanel)

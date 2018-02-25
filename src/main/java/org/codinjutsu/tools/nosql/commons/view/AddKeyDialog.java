@@ -27,14 +27,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 
-public class AddKeyDialog<DOCUMENT> extends AbstractAddDialog<DOCUMENT> {
+public class AddKeyDialog extends AbstractAddDialog {
 
     private JTextField nameTextfield;
     private ComboBox typeCombobox;
     private JPanel valuePanel;
     private JPanel mainPanel;
 
-    private AddKeyDialog(EditionPanel<DOCUMENT> editionPanel) {
+    private AddKeyDialog(EditionPanel editionPanel) {
         super(editionPanel);
         mainPanel.setPreferredSize(GuiUtils.enlargeWidth(mainPanel.getPreferredSize(), 1.5d));
         valuePanel.setLayout(new BorderLayout());
@@ -48,8 +48,8 @@ public class AddKeyDialog<DOCUMENT> extends AbstractAddDialog<DOCUMENT> {
         return mainPanel;
     }
 
-    public static <DOCUMENT> AddKeyDialog<DOCUMENT> createDialog(EditionPanel<DOCUMENT> parentPanel) {
-        AddKeyDialog<DOCUMENT> dialog = new AddKeyDialog<DOCUMENT>(parentPanel);
+    public static AddKeyDialog createDialog(EditionPanel parentPanel) {
+        AddKeyDialog dialog = new AddKeyDialog(parentPanel);
         dialog.init();
         dialog.setTitle("Add A Key");
         return dialog;

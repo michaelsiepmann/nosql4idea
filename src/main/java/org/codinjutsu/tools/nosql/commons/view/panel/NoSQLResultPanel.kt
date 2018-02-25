@@ -14,6 +14,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.tree.TreeUtil
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
 import org.codinjutsu.tools.nosql.commons.view.ActionCallback
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
@@ -35,9 +36,9 @@ import java.util.*
 import javax.swing.JPanel
 import javax.swing.tree.DefaultMutableTreeNode
 
-internal open class NoSQLResultPanel<out DOCUMENT>(
+internal open class NoSQLResultPanel(
         project: Project,
-        private val databasePanel: DatabasePanel<DOCUMENT>,
+        private val databasePanel: DatabasePanel,
         private val editable: Boolean,
         private val nodeDescriptorFactory: NodeDescriptorFactory,
         private val idDescriptorKey: String
@@ -45,7 +46,7 @@ internal open class NoSQLResultPanel<out DOCUMENT>(
 
     private val splitter: Splitter
     protected val resultTreePanel = JPanel(BorderLayout())
-    private val editionPanel: EditionPanel<DOCUMENT>?
+    private val editionPanel: EditionPanel?
 
     @Volatile
     var resultTableView: JsonTreeTableView? = null
@@ -67,8 +68,8 @@ internal open class NoSQLResultPanel<out DOCUMENT>(
         Disposer.register(project, this)
     }
 
-    private fun createEditionPanel(): EditionPanel<DOCUMENT>? {
-        val editionPanel = EditionPanel<DOCUMENT>(nodeDescriptorFactory, writeableColumnInfoDecider())
+    private fun createEditionPanel(): EditionPanel? {
+        val editionPanel = EditionPanel(nodeDescriptorFactory, writeableColumnInfoDecider())
         editionPanel.init(databasePanel, object : ActionCallback {
             override fun onOperationSuccess(message: String) {
                 hideEditionPanel()
@@ -138,7 +139,7 @@ internal open class NoSQLResultPanel<out DOCUMENT>(
         splitter.secondComponent = editionPanel
     }
 
-    private fun getSelectedDocument(): DOCUMENT? {
+    private fun getSelectedDocument(): DatabaseElement? {
         val tree = resultTableView?.tree
         val treeNode = tree?.lastSelectedPathComponent as NoSqlTreeNode
 
@@ -146,7 +147,7 @@ internal open class NoSQLResultPanel<out DOCUMENT>(
         if (descriptor is KeyValueDescriptor) {
             if (descriptor.key == idDescriptorKey) {
                 val context = databasePanel.context
-                val client: DatabaseClient<DOCUMENT> = context.client as DatabaseClient<DOCUMENT>
+                val client: DatabaseClient<DatabaseElement> = context.client as DatabaseClient<DatabaseElement>
                 return client.findDocument(context, descriptor.value!!);
             }
         }

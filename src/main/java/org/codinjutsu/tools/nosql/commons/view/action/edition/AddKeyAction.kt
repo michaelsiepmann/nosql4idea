@@ -24,7 +24,7 @@ import org.codinjutsu.tools.nosql.commons.view.EditionPanel
 
 import java.awt.event.KeyEvent
 
-class AddKeyAction<DOCUMENT>(private val editionPanel: EditionPanel<DOCUMENT>) : AnAction("Add a key", "Add a key", AllIcons.General.Add) {
+class AddKeyAction(private val editionPanel: EditionPanel) : AnAction("Add a key", "Add a key", AllIcons.General.Add) {
 
     init {
         registerCustomShortcutSet(KeyEvent.VK_INSERT, KeyEvent.ALT_MASK, editionPanel)

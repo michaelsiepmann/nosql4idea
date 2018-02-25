@@ -16,13 +16,17 @@
 
 package org.codinjutsu.tools.nosql.commons.view;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
-import com.mongodb.util.JSON;
-import org.apache.commons.lang.StringUtils;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabasePrimitive;
 import org.codinjutsu.tools.nosql.commons.view.table.DateTimePicker;
 import org.codinjutsu.tools.nosql.mongo.model.JsonDataType;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -37,9 +41,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.codinjutsu.tools.nosql.commons.model.internal.json.JsonHelperKt.convert;
 import static org.codinjutsu.tools.nosql.commons.utils.StringUtilsKt.parseNumber;
 
-public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
+public abstract class AbstractAddDialog extends DialogWrapper {
     private static final Map<JsonDataType, TextFieldWrapper> UI_COMPONENT_BY_JSON_DATATYPE = new HashMap<>();
 
     static {
@@ -48,14 +54,14 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
         UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.NUMBER, new NumberFieldWrapper());
         UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.NULL, new NullFieldWrapper());
         UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.DATE, new DateTimeFieldWrapper());
-        UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.OBJECT, new JsonFieldWrapper());
-        UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.ARRAY, new JsonFieldWrapper());
+        UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.OBJECT, new JsonFieldObjectWrapper());
+        UI_COMPONENT_BY_JSON_DATATYPE.put(JsonDataType.ARRAY, new JsonFieldArrayWrapper());
     }
 
-    final EditionPanel<DOCUMENT> editionPanel;
+    final EditionPanel editionPanel;
     TextFieldWrapper currentEditor = null;
 
-    AbstractAddDialog(EditionPanel<DOCUMENT> editionPanel) {
+    AbstractAddDialog(EditionPanel editionPanel) {
         super(editionPanel, true);
         this.editionPanel = editionPanel;
     }
@@ -89,7 +95,7 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
 
     public abstract Object getValue();
 
-    public static abstract class TextFieldWrapper<T extends JComponent, V> {
+    public static abstract class TextFieldWrapper<T extends JComponent> {
 
         protected final T component;
 
@@ -97,7 +103,7 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
             this.component = component;
         }
 
-        public abstract V getValue();
+        public abstract DatabaseElement getValue();
 
         public abstract void reset();
 
@@ -116,20 +122,15 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
         }
     }
 
-    private static class StringFieldWrapper extends TextFieldWrapper<JTextField, String> {
+    public static abstract class JTextFieldWrapper extends TextFieldWrapper<JTextField> {
 
-        private StringFieldWrapper() {
+        private JTextFieldWrapper() {
             super(new JTextField());
         }
 
         @Override
-        public String getValue() {
-            return component.getText();
-        }
-
-        @Override
         public boolean isValueSet() {
-            return StringUtils.isNotBlank(component.getText());
+            return isNotBlank(component.getText());
         }
 
         @Override
@@ -138,65 +139,58 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
         }
     }
 
-    private static class JsonFieldWrapper extends TextFieldWrapper<JTextField, Object> {
-
-        private JsonFieldWrapper() {
-            super(new JTextField());
-        }
+    private static class StringFieldWrapper extends JTextFieldWrapper {
 
         @Override
-        public Object getValue() {
-            return JSON.parse(component.getText());
-        }
-
-        @Override
-        public boolean isValueSet() {
-            return StringUtils.isNotBlank(component.getText());
-        }
-
-        @Override
-        public void reset() {
-            component.setText("");
+        public DatabaseElement getValue() {
+            return new InternalDatabasePrimitive(component.getText());
         }
     }
 
-    private static class NumberFieldWrapper extends TextFieldWrapper<JTextField, Number> {
-
-        private NumberFieldWrapper() {
-            super(new JTextField());
-        }
+    private static class JsonFieldArrayWrapper extends JTextFieldWrapper {
 
         @Override
-        public Number getValue() {
+        public DatabaseElement getValue() {
+            return convert(new Gson().fromJson(component.getText(), JsonArray.class));
+        }
+    }
+
+    private static class JsonFieldObjectWrapper extends JTextFieldWrapper {
+
+        @Override
+        public DatabaseElement getValue() {
+            return convert(new Gson().fromJson(component.getText(), JsonObject.class));
+        }
+    }
+
+    private static class NumberFieldWrapper extends JTextFieldWrapper {
+
+        @Override
+        public DatabaseElement getValue() {
+            return new InternalDatabasePrimitive(parseValue());
+        }
+
+        @NotNull
+        private Number parseValue() {
             return parseNumber(component.getText());
-        }
-
-        @Override
-        public void reset() {
-            component.setText("");
-        }
-
-        @Override
-        public boolean isValueSet() {
-            return StringUtils.isNotBlank(component.getText());
         }
 
         @Override
         public void validate() {
             super.validate();
-            getValue();
+            parseValue();
         }
     }
 
-    private static class BooleanFieldWrapper extends TextFieldWrapper<JBCheckBox, Boolean> {
+    private static class BooleanFieldWrapper extends TextFieldWrapper<JBCheckBox> {
 
         private BooleanFieldWrapper() {
             super(new JBCheckBox());
         }
 
         @Override
-        public Boolean getValue() {
-            return component.isSelected();
+        public DatabaseElement getValue() {
+            return new InternalDatabasePrimitive(component.isSelected());
         }
 
         @Override
@@ -205,14 +199,14 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
         }
     }
 
-    private static class NullFieldWrapper extends TextFieldWrapper<JLabel, Object> {
+    private static class NullFieldWrapper extends TextFieldWrapper<JLabel> {
 
         private NullFieldWrapper() {
             super(new JLabel("null"));
         }
 
         @Override
-        public Object getValue() {
+        public DatabaseElement getValue() {
             return null;
         }
 
@@ -221,7 +215,7 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
         }
     }
 
-    private static class DateTimeFieldWrapper extends TextFieldWrapper<DateTimePicker, Date> {
+    private static class DateTimeFieldWrapper extends TextFieldWrapper<DateTimePicker> {
 
         private DateTimeFieldWrapper() {
             super(DateTimePicker.create());
@@ -229,8 +223,8 @@ public abstract class AbstractAddDialog<DOCUMENT> extends DialogWrapper {
         }
 
         @Override
-        public Date getValue() {
-            return component.getDate();
+        public DatabaseElement getValue() {
+            return new InternalDatabasePrimitive(component.getDate());
         }
 
         @Override

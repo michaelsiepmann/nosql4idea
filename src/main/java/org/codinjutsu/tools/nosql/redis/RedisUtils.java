@@ -16,26 +16,28 @@
 
 package org.codinjutsu.tools.nosql.redis;
 
-import org.apache.commons.lang.StringUtils;
 import redis.clients.jedis.Tuple;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toCollection;
+import static org.apache.commons.lang.StringUtils.join;
 
 public class RedisUtils {
 
     public static String stringifySortedSet(Set<Tuple> sortedSet) {
-        List<String> stringifiedTuples = sortedSet.stream().map(RedisUtils::stringifyTuple).collect(Collectors.toCollection(LinkedList::new));
-        return String.format("{%s}", StringUtils.join(stringifiedTuples, ", "));
+        List<String> stringifiedTuples = sortedSet.stream().map(RedisUtils::stringifyTuple).collect(toCollection(LinkedList::new));
+        return format("{%s}", join(stringifiedTuples, ", ")); //NON-NLS
     }
 
     public static String stringifySet(Set set) {
-        return String.format("{%s}", StringUtils.join(set, ", "));
+        return format("{%s}", join(set, ", ")); //NON-NLS
     }
 
     private static String stringifyTuple(Tuple tuple) {
-        return String.format("(%s, %s)", tuple.getElement(), tuple.getScore());
+        return format("(%s, %s)", tuple.getElement(), tuple.getScore()); //NON-NLS
     }
 }

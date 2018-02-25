@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisTreeModel {
-    public static NoSqlTreeNode buildTree(RedisSearchResult redisSearchResult) {
+class RedisTreeModel {
+    static NoSqlTreeNode buildTree(RedisSearchResult redisSearchResult) {
         NoSqlTreeNode rootNode = new NoSqlTreeNode(new NullResultDescriptor());
 
         if (redisSearchResult != null) {

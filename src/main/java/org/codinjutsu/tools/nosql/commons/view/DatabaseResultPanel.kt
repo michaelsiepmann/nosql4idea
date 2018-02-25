@@ -9,9 +9,9 @@ import org.codinjutsu.tools.nosql.commons.view.panel.NoSQLResultPanel
 
 internal class DatabaseResultPanel(
         project: Project,
-        databasePanel: DatabasePanel<DatabaseObject>,
+        databasePanel: DatabasePanel,
         idDescriptorKey: String
-) : NoSQLResultPanel<DatabaseObject>(project, databasePanel, true, JsonNodeDescriptorFactory(), idDescriptorKey) {
+) : NoSQLResultPanel(project, databasePanel, true, JsonNodeDescriptorFactory(), idDescriptorKey) {
 
     override fun writeableColumnInfoDecider() = object : WriteableColumnInfoDecider {
         override fun isNodeWriteable(treeNode: NoSqlTreeNode) =

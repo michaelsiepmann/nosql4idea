@@ -16,7 +16,7 @@
 
 package org.codinjutsu.tools.nosql.commons.view.action
 
-import com.intellij.icons.AllIcons
+import com.intellij.icons.AllIcons.Actions.Copy
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ide.CopyPasteManager
@@ -26,7 +26,7 @@ import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 
-internal class CopyResultAction<DOCUMENT>(private val resultPanel: NoSQLResultPanel<DOCUMENT>) : AnAction("Copy", "Copy results to clipboard", AllIcons.Actions.Copy), DumbAware {
+internal class CopyResultAction(private val resultPanel: NoSQLResultPanel) : AnAction("Copy", "Copy results to clipboard", Copy), DumbAware {
 
     init {
         registerCustomShortcutSet(KeyEvent.VK_C, Toolkit.getDefaultToolkit().menuShortcutKeyMask, resultPanel)

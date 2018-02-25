@@ -58,7 +58,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
 
-public abstract class DatabasePanel<DOCUMENT> extends NoSqlResultView {
+public abstract class DatabasePanel extends NoSqlResultView {
 
     private final LoadingDecorator loadingDecorator;
     private JPanel rootPanel;
@@ -66,7 +66,7 @@ public abstract class DatabasePanel<DOCUMENT> extends NoSqlResultView {
     private JPanel toolBar;
     private JPanel errorPanel;
     private final JTextField rowLimitField = new JTextField("");
-    private NoSQLResultPanel<DOCUMENT> resultPanel;
+    private NoSQLResultPanel resultPanel;
     private final QueryPanel queryPanel;
 
     private final Project project;
@@ -103,7 +103,7 @@ public abstract class DatabasePanel<DOCUMENT> extends NoSqlResultView {
         initToolBar();
     }
 
-    protected abstract NoSQLResultPanel<DOCUMENT> createResultPanel(Project project, String idDescriptor);
+    protected abstract NoSQLResultPanel createResultPanel(Project project, String idDescriptor);
 
     protected JPanel initToolBar() {
         toolBar.setLayout(new BorderLayout());
@@ -132,12 +132,12 @@ public abstract class DatabasePanel<DOCUMENT> extends NoSqlResultView {
             actionResultGroup.addSeparator();
             if (resultPanel.isEditable()) {
                 actionResultGroup.add(new AddDocumentAction(resultPanel));
-                actionResultGroup.add(new EditDocumentAction<>(resultPanel));
+                actionResultGroup.add(new EditDocumentAction(resultPanel));
                 actionResultGroup.add(new ImportAction(this));
                 actionResultGroup.add(new RunScriptAction(this));
             }
 
-            actionResultGroup.add(new CopyResultAction<>(resultPanel));
+            actionResultGroup.add(new CopyResultAction(resultPanel));
 
             if (this instanceof Pageable) {
                 Pageable pageable = (Pageable) this;
@@ -291,7 +291,7 @@ public abstract class DatabasePanel<DOCUMENT> extends NoSqlResultView {
     }
 
     @Override
-    public NoSQLResultPanel<DOCUMENT> getResultPanel() {
+    public NoSQLResultPanel getResultPanel() {
         return resultPanel;
     }
 

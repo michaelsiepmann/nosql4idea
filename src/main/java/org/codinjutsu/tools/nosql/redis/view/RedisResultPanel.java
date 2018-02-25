@@ -13,12 +13,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-public class RedisResultPanel extends NoSQLResultPanel<Object> {
+public class RedisResultPanel extends NoSQLResultPanel {
 
     private boolean groupByPrefix;
     private String separator;
 
-    RedisResultPanel(@NotNull Project project, DatabasePanel<Object> databasePanel) {
+    RedisResultPanel(@NotNull Project project, DatabasePanel databasePanel) {
         super(project, databasePanel, true, new RedisNodeDescriptorFactory(), "_id"); //NON-NLS
     }
 

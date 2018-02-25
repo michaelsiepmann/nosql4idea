@@ -21,7 +21,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.panels.NonOpaquePanel;
-import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
@@ -39,14 +38,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-public class RedisPanel extends DatabasePanel<Object> {
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
+public class RedisPanel extends DatabasePanel {
 
     private JBTextField filterField;
     private boolean groupData;
     private String groupSeparator;
 
     public RedisPanel(Project project, RedisContext context) {
-        super(project, context, "id");
+        super(project, context, "id"); //NON-NLS
     }
 
     @Override
@@ -80,10 +81,7 @@ public class RedisPanel extends DatabasePanel<Object> {
 
     private String getFilter() {
         String filter = filterField.getText();
-        if (StringUtils.isNotBlank(filter)) {
-            return filter;
-        }
-        return "*";
+        return isNotBlank(filter) ? filter : "*";
     }
 
     void updateResultTableTree(SearchResult redisSearchResult, boolean groupByPrefix, String separator) {
@@ -98,7 +96,7 @@ public class RedisPanel extends DatabasePanel<Object> {
     }
 
     @Override
-    protected NoSQLResultPanel<Object> createResultPanel(Project project, String idDescriptor) {
+    protected NoSQLResultPanel createResultPanel(Project project, String idDescriptor) {
         return new RedisResultPanel(project, this);
     }
 

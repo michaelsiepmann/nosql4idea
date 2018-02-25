@@ -23,7 +23,7 @@ import org.codinjutsu.tools.nosql.commons.view.EditionPanel
 
 import java.awt.event.KeyEvent
 
-class DeleteKeyAction(private val editionPanel: EditionPanel<*>) : AnAction("Delete this", "Delete the selected node", AllIcons.Actions.Delete) {
+class DeleteKeyAction(private val editionPanel: EditionPanel) : AnAction("Delete this", "Delete the selected node", AllIcons.Actions.Delete) {
 
     init {
         registerCustomShortcutSet(KeyEvent.VK_DELETE, KeyEvent.ALT_MASK, editionPanel)
