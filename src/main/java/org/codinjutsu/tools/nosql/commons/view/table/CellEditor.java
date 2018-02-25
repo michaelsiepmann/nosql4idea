@@ -19,8 +19,10 @@ package org.codinjutsu.tools.nosql.commons.view.table;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import java.awt.Component;
 
 public class CellEditor extends DefaultCellEditor {
 

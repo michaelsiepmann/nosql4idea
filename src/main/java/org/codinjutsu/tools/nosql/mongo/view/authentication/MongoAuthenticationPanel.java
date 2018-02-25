@@ -23,7 +23,12 @@ import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView
 import org.codinjutsu.tools.nosql.mongo.logic.MongoExtraSettings;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 public class MongoAuthenticationPanel implements AuthenticationView {
     private JPanel mainPanel;

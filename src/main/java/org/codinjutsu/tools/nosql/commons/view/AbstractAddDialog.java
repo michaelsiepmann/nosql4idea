@@ -24,8 +24,14 @@ import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.view.table.DateTimePicker;
 import org.codinjutsu.tools.nosql.mongo.model.JsonDataType;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;

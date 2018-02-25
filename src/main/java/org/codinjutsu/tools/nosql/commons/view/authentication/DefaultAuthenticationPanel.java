@@ -18,10 +18,11 @@ package org.codinjutsu.tools.nosql.commons.view.authentication;
 
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
-import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class DefaultAuthenticationPanel implements AuthenticationView {
 

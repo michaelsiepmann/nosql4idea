@@ -18,8 +18,8 @@ package org.codinjutsu.tools.nosql.couchbase
 
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.DatabaseUI
-import org.codinjutsu.tools.nosql.commons.view.authentication.DefaultAuthenticationPanel
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
+import org.codinjutsu.tools.nosql.commons.view.authentication.DefaultAuthenticationPanel
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext

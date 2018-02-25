@@ -34,8 +34,10 @@ import org.codinjutsu.tools.nosql.redis.view.action.EnableGroupingAction;
 import org.codinjutsu.tools.nosql.redis.view.action.SetSeparatorAction;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Box;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class RedisPanel extends DatabasePanel<Object> {
 

@@ -22,8 +22,10 @@ import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
 
 public class AddKeyDialog<DOCUMENT> extends AbstractAddDialog<DOCUMENT> {
 

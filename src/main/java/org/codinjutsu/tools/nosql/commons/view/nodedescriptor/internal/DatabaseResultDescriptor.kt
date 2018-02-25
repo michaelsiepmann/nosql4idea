@@ -2,10 +2,9 @@ package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal
 
 import com.intellij.ui.ColoredTableCellRenderer
 import com.intellij.ui.ColoredTreeCellRenderer
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.ResultDescriptor
 
-internal class DatabaseResultDescriptor(collectionName: String) : ResultDescriptor<Any?>, DatabaseDescriptor {
+internal class DatabaseResultDescriptor(collectionName: String) : ResultDescriptor<Any?> {
 
     private val formattedText = "results of '$collectionName'"
 
@@ -19,12 +18,8 @@ internal class DatabaseResultDescriptor(collectionName: String) : ResultDescript
 
     override fun getFormattedValue() = ""
 
-    override fun getValue() = null
+    override fun getValue(): Any? = null
 
     override fun setValue(value: Any?) {
-    }
-
-    override fun buildObject(databaseObject: DatabaseObject) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

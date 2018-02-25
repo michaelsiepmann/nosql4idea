@@ -22,8 +22,8 @@ import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient
 import org.codinjutsu.tools.nosql.redis.model.RedisContext
-import org.codinjutsu.tools.nosql.redis.view.authentication.RedisAuthenticationPanel
 import org.codinjutsu.tools.nosql.redis.view.RedisPanel
+import org.codinjutsu.tools.nosql.redis.view.authentication.RedisAuthenticationPanel
 import org.codinjutsu.tools.nosql.redis.view.editor.RedisObjectFile
 
 class RedisUI : DatabaseUI {

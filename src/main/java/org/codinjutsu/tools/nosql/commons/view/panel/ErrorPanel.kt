@@ -20,11 +20,11 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.ui.HoverHyperlinkLabel
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
-
-import javax.swing.*
+import java.awt.Dimension
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
-import javax.swing.event.HyperlinkListener
-import java.awt.*
 
 class ErrorPanel(ex: Exception) : JPanel() {
 

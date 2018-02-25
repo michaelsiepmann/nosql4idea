@@ -22,7 +22,8 @@ import org.codinjutsu.tools.nosql.commons.model.explorer.Folder;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class NoSqlTreeRenderer extends ColoredTreeCellRenderer {

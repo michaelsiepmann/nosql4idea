@@ -17,8 +17,8 @@
 package org.codinjutsu.tools.nosql.commons
 
 import com.intellij.openapi.project.Project
-import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
+import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 
 interface DatabaseUI {

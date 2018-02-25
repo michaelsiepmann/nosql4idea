@@ -17,10 +17,9 @@
 package org.codinjutsu.tools.nosql.commons.view.table;
 
 import org.codinjutsu.tools.nosql.commons.utils.DateUtils;
-import org.codinjutsu.tools.nosql.commons.view.table.DateTimePicker;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
 import java.awt.event.ActionListener;
 import java.util.Locale;
 

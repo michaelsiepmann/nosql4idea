@@ -18,13 +18,13 @@ package org.codinjutsu.tools.nosql.redis.view.nodedescriptor;
 
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Tuple;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

@@ -25,9 +25,9 @@ import com.intellij.openapi.fileEditor.FileEditorState
 import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.util.UserDataHolderBase
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
-
-import javax.swing.*
 import java.beans.PropertyChangeListener
+import javax.swing.JComponent
+import javax.swing.JPanel
 
 class NoSqlDatabaseDataEditor internal constructor(private var panel: NoSqlResultView?) : UserDataHolderBase(), FileEditor {
     private var disposed = false

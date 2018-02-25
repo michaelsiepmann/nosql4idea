@@ -1,10 +1,10 @@
 package org.codinjutsu.tools.nosql.commons.view
 
 import com.intellij.openapi.project.Project
+import org.codinjutsu.tools.nosql.commons.model.internal.json.JsonNodeDescriptorFactory
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseArray
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.JsonNodeDescriptorFactory
 import org.codinjutsu.tools.nosql.commons.view.panel.NoSQLResultPanel
 
 internal class DatabaseResultPanel(

@@ -17,12 +17,12 @@
 package org.codinjutsu.tools.nosql.redis.view;
 
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.NullResultDescriptor;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisRecord;
 import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
-import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisKeyValueDescriptor;
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.NullResultDescriptor;
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisIndexedValueDescriptor;
+import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisKeyValueDescriptor;
 
 import java.util.List;
 import java.util.Map;

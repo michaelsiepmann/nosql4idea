@@ -26,7 +26,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 
 public class NoSqlWindowManager {

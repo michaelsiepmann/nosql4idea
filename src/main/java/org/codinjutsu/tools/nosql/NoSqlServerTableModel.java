@@ -17,8 +17,8 @@
 package org.codinjutsu.tools.nosql;
 
 import com.intellij.util.ui.ItemRemovable;
-import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.List;

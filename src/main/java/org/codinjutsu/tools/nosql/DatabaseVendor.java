@@ -50,7 +50,7 @@ import org.codinjutsu.tools.nosql.solr.model.explorer.SolrDatabaseServerFolder;
 import org.codinjutsu.tools.nosql.solr.view.editor.SolrObjectFile;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public enum DatabaseVendor {
 

@@ -10,7 +10,6 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalD
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabasePrimitive
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.StandardResultDescriptor
 import javax.swing.tree.TreeNode
 

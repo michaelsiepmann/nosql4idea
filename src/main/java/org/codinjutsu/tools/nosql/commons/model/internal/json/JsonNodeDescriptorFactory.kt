@@ -1,4 +1,4 @@
-package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal
+package org.codinjutsu.tools.nosql.commons.model.internal.json
 
 import com.intellij.icons.AllIcons
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
@@ -6,6 +6,8 @@ import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
 import org.codinjutsu.tools.nosql.commons.utils.getSimpleTextAttributes
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.DatabaseIndexedValueDescriptor
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.DatabaseResultDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.BooleanKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.DefaultKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor
@@ -20,16 +22,16 @@ internal class JsonNodeDescriptorFactory : NodeDescriptorFactory {
 
     override fun createKeyValueDescriptor(key: String, value: Any?): KeyValueDescriptor<*> =
             when (value) {
-                null -> DatabaseKeyValueDescriptor(NullKeyValueDescriptor(key))
+                null -> NullKeyValueDescriptor(key)
                 is DatabasePrimitive -> when {
-                    value.isBoolean() -> DatabaseKeyValueDescriptor(BooleanKeyValueDescriptor(key, value.asBoolean()))
-                    value.isNumber() -> DatabaseKeyValueDescriptor(NumberKeyValueDescriptor(key, value.asNumber()))
-                    value.isString() -> DatabaseKeyValueDescriptor(StringKeyValueDescriptor(key, value.asString()))
-                    else -> DatabaseKeyValueDescriptor(DefaultKeyValueDescriptor(key, value, getSimpleTextAttributes(value)))
+                    value.isBoolean() -> BooleanKeyValueDescriptor(key, value.asBoolean())
+                    value.isNumber() -> NumberKeyValueDescriptor(key, value.asNumber())
+                    value.isString() -> StringKeyValueDescriptor(key, value.asString())
+                    else -> DefaultKeyValueDescriptor(key, value, getSimpleTextAttributes(value))
                 }
-                is String -> DatabaseKeyValueDescriptor(StringKeyValueDescriptor(key, value))
-                is DatabaseElement -> DatabaseKeyValueDescriptor(TypedKeyValueDescriptor(key, value, StyleAttributesProvider.getObjectAttribute(), findIcon(value)))
-                else -> DatabaseKeyValueDescriptor(DefaultKeyValueDescriptor(key, value, getSimpleTextAttributes(value)))
+                is String -> StringKeyValueDescriptor(key, value)
+                is DatabaseElement -> TypedKeyValueDescriptor(key, value, StyleAttributesProvider.getObjectAttribute(), findIcon(value))
+                else -> DefaultKeyValueDescriptor(key, value, getSimpleTextAttributes(value))
             }
 
     override fun createIndexValueDescriptor(index: Int, value: Any) =

@@ -17,8 +17,7 @@
 package org.codinjutsu.tools.nosql.commons.view.authentication
 
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
-
-import javax.swing.*
+import javax.swing.JPanel
 
 interface AuthenticationView {
 
