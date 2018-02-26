@@ -54,7 +54,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.convert;
 import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.revert;
 
@@ -70,19 +72,18 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
 
     public void connect(ServerConfiguration configuration) {
         try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
-            String userDatabase = configuration.getUserDatabase();
-
-            MongoIterable<String> collectionNames;
-            if (StringUtils.isNotEmpty(userDatabase)) {
-                collectionNames = mongo.getDatabase(userDatabase).listCollectionNames();
-            } else {
-                collectionNames = mongo.getDatabase("test").listCollectionNames(); //NON-NLS
-            }
-            collectionNames.first();
+            getCollectionNames(mongo, configuration.getUserDatabase()).first();
         } catch (MongoException ex) {
             LOG.error("Error when accessing Mongo server", ex); //NON-NLS
             throw new MongoConnectionException(ex.getMessage());
         }
+    }
+
+    private MongoIterable<String> getCollectionNames(com.mongodb.MongoClient mongo, String userDatabase) {
+        if (isNotEmpty(userDatabase)) {
+            return mongo.getDatabase(userDatabase).listCollectionNames();
+        }
+        return mongo.getDatabase("test").listCollectionNames(); //NON-NLS
     }
 
     public void cleanUpServers() {
@@ -113,23 +114,18 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
     }
 
     List<Database> loadDatabaseCollections(ServerConfiguration configuration) {
-        List<Database> mongoDatabases = new LinkedList<>();
         try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String userDatabase = configuration.getUserDatabase();
-
-            if (StringUtils.isNotEmpty(userDatabase)) {
-                DB database = mongo.getDB(userDatabase);
-                mongoDatabases.add(createMongoDatabaseAndItsCollections(database));
-            } else {
-                List<String> databaseNames = mongo.getDatabaseNames();
-                Collections.sort(databaseNames);
-                for (String databaseName : databaseNames) {
-                    DB database = mongo.getDB(databaseName);
-                    mongoDatabases.add(createMongoDatabaseAndItsCollections(database));
-                }
+            if (isNotEmpty(userDatabase)) {
+                List<Database> mongoDatabases = new LinkedList<>();
+                mongoDatabases.add(createMongoDatabaseAndItsCollections(mongo.getDB(userDatabase)));
+                return mongoDatabases;
             }
-
-            return mongoDatabases;
+            List<String> databaseNames = mongo.getDatabaseNames();
+            Collections.sort(databaseNames);
+            return databaseNames.stream()
+                    .map(databaseName -> createMongoDatabaseAndItsCollections(mongo.getDB(databaseName)))
+                    .collect(Collectors.toCollection(LinkedList::new));
         } catch (MongoException mongoEx) {
             throw new ConfigurationException(mongoEx);
         }
@@ -138,47 +134,39 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
     private Database createMongoDatabaseAndItsCollections(DB database) {
         MongoDatabase mongoDatabase = new MongoDatabase(database.getName());
         Set<String> collectionNames = database.getCollectionNames();
-        for (String collectionName : collectionNames) {
-            mongoDatabase.addCollection(new MongoCollection(collectionName, database.getName()));
-        }
+        collectionNames.stream()
+                .map(collectionName -> new MongoCollection(collectionName, database.getName()))
+                .forEach(mongoDatabase::addCollection);
         return mongoDatabase;
     }
 
     @Override
     public void update(DatabaseContext context, DatabaseElement document) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
-            MongoCollection mongoCollection = ((MongoContext) context).getMongoCollection();
-            String databaseName = mongoCollection.getDatabaseName();
-
-            DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(mongoCollection.getName());
-
-            collection.save(revert(document));
+            getCollection((MongoContext) context, mongo).save(revert(document));
         }
     }
 
     @Override
     public void delete(DatabaseContext context, Object _id) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
-            MongoCollection mongoCollection = ((MongoContext) context).getMongoCollection();
-            String databaseName = mongoCollection.getDatabaseName();
-
-            DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(mongoCollection.getName());
-
-            collection.remove(new BasicDBObject(ID_DESCRIPTOR_KEY, _id));
+            getCollection((MongoContext) context, mongo).remove(new BasicDBObject(ID_DESCRIPTOR_KEY, _id));
         }
+    }
+
+    private DBCollection getCollection(MongoContext context, com.mongodb.MongoClient mongo) {
+        return getMongoCollection(mongo, context.getMongoCollection());
+    }
+
+    private DBCollection getMongoCollection(com.mongodb.MongoClient mongo, MongoCollection mongoCollection) {
+        DB database = mongo.getDB(mongoCollection.getDatabaseName());
+        return database.getCollection(mongoCollection.getName());
     }
 
     @Override
     public void dropFolder(ServerConfiguration configuration, Object mongoCollection) {
         try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
-            String databaseName = ((MongoCollection) mongoCollection).getDatabaseName();
-
-            DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(((MongoCollection) mongoCollection).getName());
-
-            collection.drop();
+            getMongoCollection(mongo, (MongoCollection) mongoCollection).drop();
         }
     }
 
@@ -191,12 +179,9 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
 
     SearchResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
-            String databaseName = context.getMongoCollection().getDatabaseName();
-
-            DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(context.getMongoCollection().getName());
-
-            MongoSearchResult mongoSearchResult = new MongoSearchResult(context.getMongoCollection().getName());
+            MongoCollection mongoCollection = context.getMongoCollection();
+            DBCollection collection = getMongoCollection(mongo, mongoCollection);
+            MongoSearchResult mongoSearchResult = new MongoSearchResult(mongoCollection.getName());
             if (mongoQueryOptions.isAggregate()) {
                 return aggregate(mongoQueryOptions, mongoSearchResult, collection);
             }
@@ -212,12 +197,9 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
 
     private SearchResult findOnMongoServer(DatabaseContext context) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
-            MongoCollection mongoCollection = ((MongoContext) context).getMongoCollection();
-            String databaseName = mongoCollection.getDatabaseName();
-            DB database = mongo.getDB(databaseName);
-            String mongoCollectionName = mongoCollection.getName();
-            MongoSearchResult mongoSearchResult = new MongoSearchResult(mongoCollectionName);
-            database.getCollection(mongoCollectionName)
+            MongoContext mongoContext = (MongoContext) context;
+            MongoSearchResult mongoSearchResult = new MongoSearchResult(mongoContext.getMongoCollection().getName());
+            getCollection(mongoContext, mongo)
                     .find()
                     .toArray()
                     .forEach(mongoSearchResult::add);
@@ -232,10 +214,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
 
     private DBObject findOneOnMongoServer(DatabaseContext context, Object _id) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
-            MongoCollection mongoCollection = ((MongoContext) context).getMongoCollection();
-            String databaseName = mongoCollection.getDatabaseName();
-            DB database = mongo.getDB(databaseName);
-            DBCollection collection = database.getCollection(mongoCollection.getName());
+            DBCollection collection = getCollection((MongoContext) context, mongo);
             return collection.findOne(new BasicDBObject(ID_DESCRIPTOR_KEY, _id));
         }
     }
@@ -298,7 +277,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         uriBuilder.setServerAddresses(serverUrl);
         AuthenticationSettings authenticationSettings = configuration.getAuthenticationSettings();
         MongoExtraSettings mongoExtraSettings = new MongoExtraSettings(authenticationSettings.getExtras());
-        if (StringUtils.isNotEmpty(authenticationSettings.getUsername())) {
+        if (isNotEmpty(authenticationSettings.getUsername())) {
             uriBuilder.setCredential(authenticationSettings.getUsername(), authenticationSettings.getPassword(), mongoExtraSettings.getAuthenticationDatabase());
         }
 
