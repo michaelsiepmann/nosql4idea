@@ -2,6 +2,7 @@ package org.codinjutsu.tools.nosql.mongo.view.model
 
 import com.mongodb.DBObject
 import org.bson.types.ObjectId
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.BooleanKeyValueDescriptor
@@ -21,7 +22,11 @@ import java.util.*
 internal class MongoNodeDescriptorFactory : NodeDescriptorFactory {
     override fun createResultDescriptor(name: String) = StandardResultDescriptor()
 
-    override fun createKeyValueDescriptor(key: String, value: Any?) =
+    override fun createKeyValueDescriptor(key: String, value: Any?): TypedKeyValueDescriptor<out Any?> {
+        return createTypedKeyValueDescriptor(key, toInternalValue(value))
+    }
+
+    private fun createTypedKeyValueDescriptor(key: String, value: Any?) =
             when (value) {
                 null -> NullKeyValueDescriptor(key)
                 is Boolean -> BooleanKeyValueDescriptor(key, value.toString().toBoolean())
@@ -43,28 +48,38 @@ internal class MongoNodeDescriptorFactory : NodeDescriptorFactory {
                 else -> DefaultKeyValueDescriptor(key, value, StyleAttributesProvider.getStringAttribute())
             }
 
-    override fun createIndexValueDescriptor(index: Int, value: Any): StandardIndexedValueDescriptor<*> {
+    private fun toInternalValue(value: Any?) =
+            if (value is DatabasePrimitive) {
+                value.value()
+            } else {
+                value
+            }
+
+    override fun createIndexValueDescriptor(index: Int, value: Any?): StandardIndexedValueDescriptor<*> {
         if (value == null) {
             return StandardNullIndexedValueDescriptor(index)
         }
 
-        return when (value) {
-            is String -> StandardStringIndexedValueDescriptor(index, value)
-            is Boolean -> object : StandardIndexedValueDescriptor<Boolean>(index, value, StyleAttributesProvider.getBooleanAttribute()) {
-                override fun setValue(value: Any) {
-                    super.setValue(value.toString().toBoolean())
-                }
-            }
-            is Number -> object : StandardIndexedValueDescriptor<Number>(index, value, StyleAttributesProvider.getNumberAttribute()) {
-                override fun setValue(value: Any) {
-                    var number = value as String
-                    number = number.replace("(.*)\\..*".toRegex(), "$1")
-                    super.setValue(number.toInt())
-                }
-            }
-            is Date -> StandardDateIndexedValueDescriptor(index, value)
-            is DBObject -> StandardIndexedValueDescriptor(index, value, StyleAttributesProvider.getObjectAttribute())
-            else -> StandardIndexedValueDescriptor(index, value, StyleAttributesProvider.getStringAttribute())
-        }
+        return createStandardIndexedValueDescriptor(index, toInternalValue(value)!!)
     }
+
+    private fun createStandardIndexedValueDescriptor(index: Int, value: Any) =
+            when (value) {
+                is String -> StandardStringIndexedValueDescriptor(index, value)
+                is Boolean -> object : StandardIndexedValueDescriptor<Boolean>(index, value, StyleAttributesProvider.getBooleanAttribute()) {
+                    override fun setValue(value: Any) {
+                        super.setValue(value.toString().toBoolean())
+                    }
+                }
+                is Number -> object : StandardIndexedValueDescriptor<Number>(index, value, StyleAttributesProvider.getNumberAttribute()) {
+                    override fun setValue(value: Any) {
+                        var number = value as String
+                        number = number.replace("(.*)\\..*".toRegex(), "$1")
+                        super.setValue(number.toInt())
+                    }
+                }
+                is Date -> StandardDateIndexedValueDescriptor(index, value)
+                is DBObject -> StandardIndexedValueDescriptor(index, value, StyleAttributesProvider.getObjectAttribute())
+                else -> StandardIndexedValueDescriptor(index, value, StyleAttributesProvider.getStringAttribute())
+            }
 }

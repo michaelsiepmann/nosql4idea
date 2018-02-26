@@ -42,7 +42,7 @@ internal open class DatabaseIndexedValueDescriptor(
     }
 
     companion object {
-        fun createDescriptor(index: Int, value: Any) =
+        fun createDescriptor(index: Int, value: Any?) =
                 if (value is String) {
                     DatabaseStringIndexedValueDescriptor(index, value)
                 } else {

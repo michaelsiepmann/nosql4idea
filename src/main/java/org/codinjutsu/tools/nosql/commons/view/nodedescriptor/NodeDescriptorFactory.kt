@@ -10,5 +10,5 @@ internal interface NodeDescriptorFactory {
 
     fun createKeyValueDescriptor(key: String, value: Any?): KeyValueDescriptor<*>
 
-    fun createIndexValueDescriptor(index: Int, value: Any): IndexedValueDescriptor<*>
+    fun createIndexValueDescriptor(index: Int, value: Any?): IndexedValueDescriptor<*>
 }

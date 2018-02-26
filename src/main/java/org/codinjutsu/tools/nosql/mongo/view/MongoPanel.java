@@ -11,10 +11,12 @@ import org.codinjutsu.tools.nosql.mongo.view.model.MongoNodeDescriptorFactory;
 import org.codinjutsu.tools.nosql.mongo.view.panel.query.MongoQueryPanel;
 import org.jetbrains.annotations.NotNull;
 
+import static org.codinjutsu.tools.nosql.mongo.logic.MongoClient.ID_DESCRIPTOR_KEY;
+
 public class MongoPanel extends DatabasePanel {
 
     public MongoPanel(Project project, DatabaseContext context) {
-        super(project, context, "_id", MongoQueryPanel::new); //NON-NLS
+        super(project, context, ID_DESCRIPTOR_KEY, MongoQueryPanel::new);
     }
 
     @Override

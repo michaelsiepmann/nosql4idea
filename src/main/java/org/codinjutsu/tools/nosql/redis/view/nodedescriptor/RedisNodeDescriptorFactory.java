@@ -19,12 +19,12 @@ public class RedisNodeDescriptorFactory implements NodeDescriptorFactory {
     @NotNull
     @Override
     public KeyValueDescriptor<?> createKeyValueDescriptor(@NotNull String key, @Nullable Object value) {
-        return RedisKeyValueDescriptor.createDescriptor(key, value.toString());
+        return RedisKeyValueDescriptor.createDescriptor(key, value != null ? value.toString() : null);
     }
 
     @NotNull
     @Override
-    public IndexedValueDescriptor<?> createIndexValueDescriptor(int index, @NotNull Object value) {
+    public IndexedValueDescriptor<?> createIndexValueDescriptor(int index, Object value) {
         return RedisIndexedValueDescriptor.createDescriptor(index, value);
     }
 }

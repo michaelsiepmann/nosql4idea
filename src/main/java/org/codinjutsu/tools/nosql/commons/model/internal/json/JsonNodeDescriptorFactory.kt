@@ -34,7 +34,7 @@ internal class JsonNodeDescriptorFactory : NodeDescriptorFactory {
                 else -> DefaultKeyValueDescriptor(key, value, getSimpleTextAttributes(value))
             }
 
-    override fun createIndexValueDescriptor(index: Int, value: Any) =
+    override fun createIndexValueDescriptor(index: Int, value: Any?) =
             DatabaseIndexedValueDescriptor.createDescriptor(index, value)
 
     private fun findIcon(value: DatabaseElement) =

@@ -39,7 +39,7 @@ public class CouchbaseNodeDescriptorFactory implements NodeDescriptorFactory {
 
     @NotNull
     @Override
-    public IndexedValueDescriptor<?> createIndexValueDescriptor(int index, @NotNull Object value) {
+    public IndexedValueDescriptor<?> createIndexValueDescriptor(int index, Object value) {
         if (value instanceof String) {
             return new StandardStringIndexedValueDescriptor(index, (String) value);
         }

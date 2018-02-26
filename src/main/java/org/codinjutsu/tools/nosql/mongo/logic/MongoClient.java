@@ -37,6 +37,8 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
@@ -44,6 +46,7 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoContext;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult;
+import org.codinjutsu.tools.nosql.mongo.model.internal.DelegatingMongoSearchResult;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -52,9 +55,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class MongoClient implements DatabaseClient<DBObject> {
+import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.convert;
+import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.revert;
+
+public class MongoClient implements DatabaseClient<DatabaseElement> {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
+    public static final String ID_DESCRIPTOR_KEY = "_id"; //NON-NLS
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
     public static MongoClient getInstance(Project project) {
@@ -69,11 +76,11 @@ public class MongoClient implements DatabaseClient<DBObject> {
             if (StringUtils.isNotEmpty(userDatabase)) {
                 collectionNames = mongo.getDatabase(userDatabase).listCollectionNames();
             } else {
-                collectionNames = mongo.getDatabase("test").listCollectionNames();
+                collectionNames = mongo.getDatabase("test").listCollectionNames(); //NON-NLS
             }
             collectionNames.first();
         } catch (MongoException ex) {
-            LOG.error("Error when accessing Mongo server", ex);
+            LOG.error("Error when accessing Mongo server", ex); //NON-NLS
             throw new MongoConnectionException(ex.getMessage());
         }
     }
@@ -128,7 +135,7 @@ public class MongoClient implements DatabaseClient<DBObject> {
         }
     }
 
-    private MongoDatabase createMongoDatabaseAndItsCollections(DB database) {
+    private Database createMongoDatabaseAndItsCollections(DB database) {
         MongoDatabase mongoDatabase = new MongoDatabase(database.getName());
         Set<String> collectionNames = database.getCollectionNames();
         for (String collectionName : collectionNames) {
@@ -138,7 +145,7 @@ public class MongoClient implements DatabaseClient<DBObject> {
     }
 
     @Override
-    public void update(DatabaseContext context, DBObject document) {
+    public void update(DatabaseContext context, DatabaseElement document) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
             MongoCollection mongoCollection = ((MongoContext) context).getMongoCollection();
             String databaseName = mongoCollection.getDatabaseName();
@@ -146,7 +153,7 @@ public class MongoClient implements DatabaseClient<DBObject> {
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(mongoCollection.getName());
 
-            collection.save(document);
+            collection.save(revert(document));
         }
     }
 
@@ -159,7 +166,7 @@ public class MongoClient implements DatabaseClient<DBObject> {
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(mongoCollection.getName());
 
-            collection.remove(new BasicDBObject("_id", _id));
+            collection.remove(new BasicDBObject(ID_DESCRIPTOR_KEY, _id));
         }
     }
 
@@ -182,7 +189,7 @@ public class MongoClient implements DatabaseClient<DBObject> {
         }
     }
 
-    public MongoSearchResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
+    SearchResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
             String databaseName = context.getMongoCollection().getDatabaseName();
 
@@ -198,9 +205,12 @@ public class MongoClient implements DatabaseClient<DBObject> {
         }
     }
 
-
     @Override
-    public MongoSearchResult findAll(DatabaseContext context) {
+    public SearchResult findAll(DatabaseContext context) {
+        return new DelegatingMongoSearchResult(findOnMongoServer(context));
+    }
+
+    private SearchResult findOnMongoServer(DatabaseContext context) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
             MongoCollection mongoCollection = ((MongoContext) context).getMongoCollection();
             String databaseName = mongoCollection.getDatabaseName();
@@ -216,57 +226,66 @@ public class MongoClient implements DatabaseClient<DBObject> {
     }
 
     @Override
-    public DBObject findDocument(DatabaseContext context, Object _id) {
+    public DatabaseElement findDocument(DatabaseContext context, Object _id) {
+        return convert(findOneOnMongoServer(context, updateId(_id)));
+    }
+
+    private DBObject findOneOnMongoServer(DatabaseContext context, Object _id) {
         try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
             MongoCollection mongoCollection = ((MongoContext) context).getMongoCollection();
             String databaseName = mongoCollection.getDatabaseName();
             DB database = mongo.getDB(databaseName);
             DBCollection collection = database.getCollection(mongoCollection.getName());
-            return collection.findOne(new BasicDBObject("_id", _id));
+            return collection.findOne(new BasicDBObject(ID_DESCRIPTOR_KEY, _id));
         }
+    }
+
+    private Object updateId(Object id) {
+        if (id instanceof DatabasePrimitive) {
+            Object result = ((DatabasePrimitive) id).value();
+            if (result != null) {
+                return result;
+            }
+        }
+        return id;
     }
 
     @Override
     public SearchResult loadRecords(DatabaseContext context, QueryOptions query) {
-        return loadCollectionValues((MongoContext) context, new MongoQueryOptions(query));
+        return new DelegatingMongoSearchResult(loadCollectionValues((MongoContext) context, new MongoQueryOptions(query)));
     }
 
-    private MongoSearchResult aggregate(MongoQueryOptions mongoQueryOptions, MongoSearchResult mongoSearchResult, DBCollection collection) {
+    private SearchResult aggregate(MongoQueryOptions mongoQueryOptions, MongoSearchResult mongoSearchResult, DBCollection collection) {
         AggregationOutput aggregate = collection.aggregate(mongoQueryOptions.getOperations());
         int index = 0;
         Iterator<DBObject> iterator = aggregate.results().iterator();
-        while (iterator.hasNext() && index < mongoQueryOptions.getResultLimit()) {
+        while (iterator.hasNext() && index++ < mongoQueryOptions.getResultLimit()) {
             mongoSearchResult.add(iterator.next());
         }
         return mongoSearchResult;
     }
 
-    private MongoSearchResult find(MongoQueryOptions mongoQueryOptions, MongoSearchResult mongoSearchResult, DBCollection collection) {
-        DBObject filter = mongoQueryOptions.getFilter();
-        DBObject projection = mongoQueryOptions.getProjection();
-        DBObject sort = mongoQueryOptions.getSort();
-
-        DBCursor cursor;
-        if (projection == null) {
-            cursor = collection.find(filter);
-        } else {
-            cursor = collection.find(filter, projection);
-        }
-
-        if (sort != null) {
-            cursor = cursor.sort(sort);
-        }
-
-        try {
+    private SearchResult find(MongoQueryOptions mongoQueryOptions, MongoSearchResult mongoSearchResult, DBCollection collection) {
+        try (DBCursor cursor = createCursor(mongoQueryOptions, collection)) {
             int index = 0;
             while (cursor.hasNext() && index < mongoQueryOptions.getResultLimit()) {
                 mongoSearchResult.add(cursor.next());
                 index++;
             }
-        } finally {
-            cursor.close();
         }
         return mongoSearchResult;
+    }
+
+    private DBCursor createCursor(MongoQueryOptions mongoQueryOptions, DBCollection collection) {
+        DBCursor cursor = findCursor(mongoQueryOptions, collection);
+        DBObject sort = mongoQueryOptions.getSort();
+        return sort != null ? cursor.sort(sort) : cursor;
+    }
+
+    private DBCursor findCursor(MongoQueryOptions mongoQueryOptions, DBCollection collection) {
+        DBObject filter = mongoQueryOptions.getFilter();
+        DBObject projection = mongoQueryOptions.getProjection();
+        return projection == null ? collection.find(filter) : collection.find(filter, projection);
     }
 
     protected com.mongodb.MongoClient createMongoClient(ServerConfiguration configuration) {
