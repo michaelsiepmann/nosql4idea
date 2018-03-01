@@ -29,7 +29,7 @@ public class RedisAuthenticationPanel implements AuthenticationView {
     private JPanel mainPanel;
 
     public RedisAuthenticationPanel() {
-        passwordField.setName("passwordField");
+        passwordField.setName("passwordField"); //NON-NLS
     }
 
     @NotNull

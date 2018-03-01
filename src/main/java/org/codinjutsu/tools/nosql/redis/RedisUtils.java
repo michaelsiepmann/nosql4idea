@@ -37,7 +37,7 @@ public class RedisUtils {
         return format("{%s}", join(set, ", ")); //NON-NLS
     }
 
-    private static String stringifyTuple(Tuple tuple) {
+    public static String stringifyTuple(Tuple tuple) {
         return format("(%s, %s)", tuple.getElement(), tuple.getScore()); //NON-NLS
     }
 }

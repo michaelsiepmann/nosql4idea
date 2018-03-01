@@ -24,8 +24,10 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.IndexedValueDescriptor;
 import redis.clients.jedis.Tuple;
 
+import static java.lang.String.valueOf;
 import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getIndexAttribute;
 import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getStringAttribute;
+import static org.codinjutsu.tools.nosql.redis.RedisUtils.stringifyTuple;
 
 public class RedisIndexedValueDescriptor extends AbstractNodeDecriptor<Object> implements IndexedValueDescriptor<Object> {
 
@@ -66,11 +68,7 @@ public class RedisIndexedValueDescriptor extends AbstractNodeDecriptor<Object> i
 
     @Override
     public String getFormattedValue() {
-        if (value instanceof Tuple) {
-            Tuple tupleValue = (Tuple) value;
-            return String.format("(%s, %s)", tupleValue.getElement(), tupleValue.getScore());
-        }
-        return String.valueOf(value);
+        return value instanceof Tuple ? stringifyTuple((Tuple) value) : valueOf(value);
     }
 
     @Override

@@ -18,13 +18,13 @@ package org.codinjutsu.tools.nosql.redis.logic;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.model.RedisContext;
@@ -41,7 +41,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RedisClient implements DatabaseClient<Object> {
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
+public class RedisClient implements DatabaseClient<DatabaseElement> {
 
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
@@ -55,7 +57,7 @@ public class RedisClient implements DatabaseClient<Object> {
         jedis.connect();
         String userDatabase = serverConfiguration.getUserDatabase();
         int index = 0;
-        if (StringUtils.isNotEmpty(userDatabase)) {
+        if (isNotEmpty(userDatabase)) {
             index = Integer.parseInt(userDatabase);
         }
         jedis.select(index);
@@ -67,7 +69,7 @@ public class RedisClient implements DatabaseClient<Object> {
         List<String> databaseNumberTuple = jedis.configGet("databases");
         List<Database> databases = new LinkedList<>();
         String userDatabase = databaseServer.getConfiguration().getUserDatabase();
-        if (StringUtils.isNotEmpty(userDatabase)) {
+        if (isNotEmpty(userDatabase)) {
             databases.add(new Database(userDatabase));
         } else {
             int totalNumberOfDatabase = Integer.parseInt(databaseNumberTuple.get(1));
@@ -99,44 +101,46 @@ public class RedisClient implements DatabaseClient<Object> {
     }
 
     @Override
-    public RedisSearchResult loadRecords(DatabaseContext context, QueryOptions query) {
+    public SearchResult loadRecords(DatabaseContext context, QueryOptions query) {
         Jedis jedis = createJedis(context.getServerConfiguration());
         jedis.connect();
         RedisSearchResult redisSearchResult = new RedisSearchResult();
         int index = Integer.parseInt(((RedisContext) context).getDatabase().getName());
         jedis.select(index);
 
-        Set<String> keys = jedis.keys(query.getFilter());
-        for (String key : keys) {
-            RedisKeyType keyType = RedisKeyType.getKeyType(jedis.type(key));
-            if (RedisKeyType.LIST.equals(keyType)) {
-                List<String> values = jedis.lrange(key, 0, -1);
-                redisSearchResult.addList(key, values);
-            } else if (RedisKeyType.SET.equals(keyType)) {
-                Set<String> values = jedis.smembers(key);
-                redisSearchResult.addSet(key, values);
-            } else if (RedisKeyType.HASH.equals(keyType)) {
-                Map<String, String> values = jedis.hgetAll(key);
-                redisSearchResult.addHash(key, values);
-            } else if (RedisKeyType.ZSET.equals(keyType)) {
-                Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf", "+inf");
-                redisSearchResult.addSortedSet(key, valuesWithScores);
-            } else if (RedisKeyType.STRING.equals(keyType)) {
-                String value = jedis.get(key);
-                redisSearchResult.addString(key, value);
+        try {
+            Set<String> keys = jedis.keys(query.getFilter());
+            for (String key : keys) {
+                RedisKeyType keyType = RedisKeyType.getKeyType(jedis.type(key));
+                if (RedisKeyType.LIST.equals(keyType)) {
+                    List<String> values = jedis.lrange(key, 0, -1);
+                    redisSearchResult.addList(key, values);
+                } else if (RedisKeyType.SET.equals(keyType)) {
+                    Set<String> values = jedis.smembers(key);
+                    redisSearchResult.addSet(key, values);
+                } else if (RedisKeyType.HASH.equals(keyType)) {
+                    Map<String, String> values = jedis.hgetAll(key);
+                    redisSearchResult.addHash(key, values);
+                } else if (RedisKeyType.ZSET.equals(keyType)) {
+                    Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf", "+inf");
+                    redisSearchResult.addSortedSet(key, valuesWithScores);
+                } else if (RedisKeyType.STRING.equals(keyType)) {
+                    String value = jedis.get(key);
+                    redisSearchResult.addString(key, value);
+                }
             }
+        } catch (Exception ignored) {
         }
         return redisSearchResult;
     }
 
     protected Jedis createJedis(ServerConfiguration serverConfiguration) {
-        String redisUri = "redis://";
-        String password = serverConfiguration.getAuthenticationSettings().getPassword();
-        if (StringUtils.isNotEmpty(password)) {
-            redisUri += ":" + password + "@";
-        }
-        redisUri += serverConfiguration.getServerUrl();
-        return new Jedis(redisUri);
+        return new Jedis(createUri(serverConfiguration.getAuthenticationSettings().getPassword(), serverConfiguration.getServerUrl()));
+    }
+
+    @NotNull
+    private String createUri(String password, String serverUrl) {
+        return "redis://" + (isNotEmpty(password) ? ":" + password + "@" : "") + serverUrl; //NON-NLS
     }
 
     @NotNull
@@ -147,12 +151,12 @@ public class RedisClient implements DatabaseClient<Object> {
 
     @Nullable
     @Override
-    public Object findDocument(DatabaseContext redisPanelContext, @NotNull Object _id) {
+    public DatabaseElement findDocument(DatabaseContext redisPanelContext, @NotNull Object _id) {
         return null;
     }
 
     @Override
-    public void update(@NotNull DatabaseContext redisPanelContext, @NotNull Object o) {
+    public void update(@NotNull DatabaseContext redisPanelContext, @NotNull DatabaseElement databaseElement) {
 
     }
 
