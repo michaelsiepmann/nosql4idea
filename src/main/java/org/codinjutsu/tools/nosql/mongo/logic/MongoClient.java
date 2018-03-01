@@ -20,7 +20,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -47,13 +46,17 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult;
 import org.codinjutsu.tools.nosql.mongo.model.internal.DelegatingMongoSearchResult;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -95,12 +98,12 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
     }
 
     @Override
-
+    @NotNull
     public Collection<DatabaseServer> getServers() {
         return databaseServers;
     }
 
-
+    @NotNull
     @Override
     public MongoServerConfiguration defaultConfiguration() {
         return new MongoServerConfiguration();
@@ -113,90 +116,81 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         databaseServer.setStatus(DatabaseServer.Status.OK);
     }
 
-    List<Database> loadDatabaseCollections(ServerConfiguration configuration) {
+    private List<Database> loadDatabaseCollections(ServerConfiguration configuration) {
         try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String userDatabase = configuration.getUserDatabase();
             if (isNotEmpty(userDatabase)) {
                 List<Database> mongoDatabases = new LinkedList<>();
-                mongoDatabases.add(createMongoDatabaseAndItsCollections(mongo.getDB(userDatabase)));
+                mongoDatabases.add(createMongoDatabaseAndItsCollections(mongo.getDatabase(userDatabase)));
                 return mongoDatabases;
             }
-            List<String> databaseNames = mongo.getDatabaseNames();
+            List<String> databaseNames = toList(mongo.listDatabaseNames());
             Collections.sort(databaseNames);
             return databaseNames.stream()
-                    .map(databaseName -> createMongoDatabaseAndItsCollections(mongo.getDB(databaseName)))
+                    .map(databaseName -> createMongoDatabaseAndItsCollections(mongo.getDatabase(databaseName)))
                     .collect(Collectors.toCollection(LinkedList::new));
         } catch (MongoException mongoEx) {
             throw new ConfigurationException(mongoEx);
         }
     }
 
-    private Database createMongoDatabaseAndItsCollections(DB database) {
-        MongoDatabase mongoDatabase = new MongoDatabase(database.getName());
-        Set<String> collectionNames = database.getCollectionNames();
-        collectionNames.stream()
-                .map(collectionName -> new MongoCollection(collectionName, database.getName()))
-                .forEach(mongoDatabase::addCollection);
-        return mongoDatabase;
+    private Database createMongoDatabaseAndItsCollections(com.mongodb.client.MongoDatabase database) {
+        return new MongoDatabase(database.getName(), new HashSet<>(toList(database.listCollectionNames())));
     }
 
     @Override
     public void update(DatabaseContext context, DatabaseElement document) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+        withMongoClient(context, mongo -> {
             getCollection((MongoContext) context, mongo).save(revert(document));
-        }
+        });
     }
 
     @Override
-    public void delete(DatabaseContext context, Object _id) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+    public void delete(@NotNull DatabaseContext context, @NotNull Object _id) {
+        withMongoClient(context, mongo -> {
             getCollection((MongoContext) context, mongo).remove(new BasicDBObject(ID_DESCRIPTOR_KEY, _id));
-        }
+        });
     }
 
     private DBCollection getCollection(MongoContext context, com.mongodb.MongoClient mongo) {
-        return getMongoCollection(mongo, context.getMongoCollection());
+        return getCollection(mongo, context.getMongoCollection());
     }
 
-    private DBCollection getMongoCollection(com.mongodb.MongoClient mongo, MongoCollection mongoCollection) {
-        DB database = mongo.getDB(mongoCollection.getDatabaseName());
-        return database.getCollection(mongoCollection.getName());
+    private DBCollection getCollection(com.mongodb.MongoClient mongo, MongoCollection mongoCollection) {
+        return mongo.getDB(mongoCollection.getDatabaseName()).getCollection(mongoCollection.getName());
     }
 
     @Override
     public void dropFolder(ServerConfiguration configuration, Object mongoCollection) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
-            getMongoCollection(mongo, (MongoCollection) mongoCollection).drop();
-        }
+        withMongoClient(configuration, mongo -> getCollection(mongo, (MongoCollection) mongoCollection).drop());
     }
 
     @Override
     public void dropDatabase(ServerConfiguration configuration, Database database) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
-            mongo.dropDatabase(database.getName());
-        }
+        withMongoClient(configuration, mongo -> mongo.dropDatabase(database.getName()));
     }
 
     SearchResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+        return withMongoClient(context, mongo -> {
             MongoCollection mongoCollection = context.getMongoCollection();
-            DBCollection collection = getMongoCollection(mongo, mongoCollection);
+            DBCollection collection = getCollection(mongo, mongoCollection);
             MongoSearchResult mongoSearchResult = new MongoSearchResult(mongoCollection.getName());
             if (mongoQueryOptions.isAggregate()) {
                 return aggregate(mongoQueryOptions, mongoSearchResult, collection);
             }
 
             return find(mongoQueryOptions, mongoSearchResult, collection);
-        }
+        });
     }
 
+    @NotNull
     @Override
     public SearchResult findAll(DatabaseContext context) {
         return new DelegatingMongoSearchResult(findOnMongoServer(context));
     }
 
     private SearchResult findOnMongoServer(DatabaseContext context) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+        return withMongoClient(context, mongo -> {
             MongoContext mongoContext = (MongoContext) context;
             MongoSearchResult mongoSearchResult = new MongoSearchResult(mongoContext.getMongoCollection().getName());
             getCollection(mongoContext, mongo)
@@ -204,19 +198,19 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
                     .toArray()
                     .forEach(mongoSearchResult::add);
             return mongoSearchResult;
-        }
+        });
     }
 
     @Override
-    public DatabaseElement findDocument(DatabaseContext context, Object _id) {
+    public DatabaseElement findDocument(DatabaseContext context, @NotNull Object _id) {
         return convert(findOneOnMongoServer(context, updateId(_id)));
     }
 
     private DBObject findOneOnMongoServer(DatabaseContext context, Object _id) {
-        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+        return withMongoClient(context, mongo -> {
             DBCollection collection = getCollection((MongoContext) context, mongo);
             return collection.findOne(new BasicDBObject(ID_DESCRIPTOR_KEY, _id));
-        }
+        });
     }
 
     private Object updateId(Object id) {
@@ -303,5 +297,27 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         com.mongodb.client.MongoDatabase database = createMongoClient(serverConfiguration).getDatabase(parentFolderName);
         database.createCollection(folderName);
         return new MongoCollection(folderName, parentFolderName);
+    }
+
+    private List<String> toList(MongoIterable<String> mongoIterable) {
+        List<String> result = new ArrayList<>();
+        mongoIterable.forEach((Consumer<String>) result::add);
+        return result;
+    }
+
+    private void withMongoClient(DatabaseContext context, Consumer<com.mongodb.MongoClient> consumer) {
+        withMongoClient(context.getServerConfiguration(), consumer);
+    }
+
+    private void withMongoClient(ServerConfiguration serverConfiguration, Consumer<com.mongodb.MongoClient> consumer) {
+        try (com.mongodb.MongoClient mongo = createMongoClient(serverConfiguration)) {
+            consumer.accept(mongo);
+        }
+    }
+
+    private <T> T withMongoClient(DatabaseContext context, Function<com.mongodb.MongoClient, T> function) {
+        try (com.mongodb.MongoClient mongo = createMongoClient(context.getServerConfiguration())) {
+            return function.apply(mongo);
+        }
     }
 }

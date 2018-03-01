@@ -19,9 +19,9 @@ package org.codinjutsu.tools.nosql.mongo.model
 import org.codinjutsu.tools.nosql.commons.model.Database
 import java.util.*
 
-class MongoDatabase(name: String) : Database(name) {
+class MongoDatabase(name: String, collectionNames: Set<String> = emptySet()) : Database(name) {
 
-    private val collections = TreeSet<MongoCollection>()
+    private val collections = TreeSet<MongoCollection>(collectionNames.map { MongoCollection(it, name) })
 
     fun getCollections() = collections
 
