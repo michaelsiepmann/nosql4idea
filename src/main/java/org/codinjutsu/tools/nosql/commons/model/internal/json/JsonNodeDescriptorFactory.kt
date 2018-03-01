@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.model.internal.json
 
-import com.intellij.icons.AllIcons
+import com.intellij.icons.AllIcons.Json.Array
+import com.intellij.icons.AllIcons.Json.Object
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
@@ -39,8 +40,8 @@ internal class JsonNodeDescriptorFactory : NodeDescriptorFactory {
 
     private fun findIcon(value: DatabaseElement) =
             when {
-                value.isArray() -> AllIcons.Json.Property_brackets
-                value.isObject() -> AllIcons.Json.Property_braces
+                value.isArray() -> Array
+                value.isObject() -> Object
                 else -> null
             }
 }
