@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlin_version = '1.2.21'
+        kotlin_version = '1.2.30'
         junit5_version = '5.1.0'
     }
     repositories {
@@ -36,7 +36,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "com.couchbase.client:java-client:2.5.2"
+    compile "com.couchbase.client:java-client:2.5.5"
     compile "org.mongodb:mongo-java-driver:3.6.3"
     compile "redis.clients:jedis:2.9.0"
 
