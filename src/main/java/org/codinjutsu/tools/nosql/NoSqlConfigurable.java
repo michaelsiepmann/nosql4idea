@@ -39,7 +39,9 @@ import com.intellij.ui.table.JBTable;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanelFactory;
+import org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +60,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+import static java.text.MessageFormat.format;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceString;
 
 public class NoSqlConfigurable extends BaseConfigurable {
 
@@ -91,7 +95,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
     @Nls
     @Override
     public String getDisplayName() {
-        return "NoSql Servers";
+        return getResourceString("settings.displayname");
     }
 
     @Nullable
@@ -189,21 +193,25 @@ public class NoSqlConfigurable extends BaseConfigurable {
         stopEditing();
 
         SelectDatabaseVendorDialog databaseVendorDialog = new SelectDatabaseVendorDialog(mainPanel);
-        databaseVendorDialog.setTitle("Add a NoSql Server");
+        databaseVendorDialog.setTitle(getResourceString("settings.dialog.selectdatabase.title"));
         databaseVendorDialog.show();
         if (!databaseVendorDialog.isOK()) {
             return;
         }
 
         DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
-        WriteableServerConfiguration serverConfiguration = (WriteableServerConfiguration) selectedDatabaseVendor.getClient(project).defaultConfiguration();
+        DatabaseClient client = selectedDatabaseVendor.getClient(project);
+        if (client == null) {
+            return;
+        }
+        WriteableServerConfiguration serverConfiguration = (WriteableServerConfiguration) client.defaultConfiguration();
 
         ConfigurationDialog dialog = new ConfigurationDialog(
                 mainPanel,
                 serverConfigurationPanelFactory,
                 serverConfiguration
         );
-        dialog.setTitle("Add a NoSql Server");
+        dialog.setTitle(getResourceString("settings.dialog.configuredatabase.add.title"));
         dialog.show();
         if (dialog.isOK()) {
             configurations.add(serverConfiguration);
@@ -229,7 +237,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                 serverConfigurationPanelFactory,
                 copiedConfiguration
         );
-        dialog.setTitle("Edit a NoSql Server");
+        dialog.setTitle(getResourceString("settings.dialog.configuredatabase.edit.title"));
         dialog.show();
         if (dialog.isOK()) {
             configurations.set(selectedIndex, copiedConfiguration);
@@ -263,11 +271,11 @@ public class NoSqlConfigurable extends BaseConfigurable {
         }
 
         private JLabel createLabel(String databaseVendorName) {
-            return new JLabel(String.format("Path to %s CLI:\t\t", databaseVendorName));
+            return new JLabel(format(getResourceString("settings.pathtocli.label"), databaseVendorName));
         }
 
         private JButton createTestButton(final DatabaseVendor databaseVendorName) {
-            JButton testButton = new JButton("Test");
+            JButton testButton = new JButton(getResourceString("settings.testbutton.label"));
             testButton.addActionListener(actionEvent -> testPath(databaseVendorName));
             return testButton;
         }
@@ -275,15 +283,16 @@ public class NoSqlConfigurable extends BaseConfigurable {
         private void testPath(final DatabaseVendor databaseVendor) {
             ProcessOutput processOutput;
             try {
-                processOutput = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> checkShellPath(databaseVendor, getShellPath()), "Testing " + databaseVendor.name + " CLI Executable...", true, project);
+                processOutput = ProgressManager.getInstance()
+                        .runProcessWithProgressSynchronously(() -> checkShellPath(databaseVendor, getShellPath()), format(getResourceString("settings.testing.progresstitle"), databaseVendor.name), true, project);
             } catch (ProcessCanceledException pce) {
                 return;
             } catch (Exception e) {
-                Messages.showErrorDialog(mainPanel, e.getMessage(), "Something wrong happened");
+                Messages.showErrorDialog(mainPanel, e.getMessage(), getResourceString("settings.errordialog.title"));
                 return;
             }
             if (processOutput != null && processOutput.getExitCode() == 0) {
-                Messages.showInfoMessage(mainPanel, processOutput.getStdout(), databaseVendor.name + " CLI Path Checked");
+                Messages.showInfoMessage(mainPanel, processOutput.getStdout(), format(getResourceString("settings.clipath.confirmed"), databaseVendor.name));
             }
         }
 
@@ -303,16 +312,13 @@ public class NoSqlConfigurable extends BaseConfigurable {
                     handler.runProcess(TIMEOUT_MS) :
                     handler.runProcessWithProgressIndicator(indicator);
             if (result.isTimeout()) {
-                throw new TimeoutException(String.format("Couldn't check %s CLI executable - stopped by timeout.", databaseVendor.name));
+                throw new TimeoutException(format(getResourceString("settings.errormessages.clitimeout"), databaseVendor.name));
             }
             if (result.isCancelled()) {
                 throw new ProcessCanceledException();
             }
             if (result.getExitCode() != 0 || !result.getStderr().isEmpty()) {
-                throw new ExecutionException(String.format("Errors while executing %s. exitCode=%s errors: %s",
-                        commandLine.toString(),
-                        result.getExitCode(),
-                        result.getStderr()));
+                throw new ExecutionException(format(getResourceString("settings.errormessages.generalerror"), commandLine.toString(), result.getExitCode(), result.getStderr()));
             }
             return result;
         }
@@ -333,9 +339,9 @@ public class NoSqlConfigurable extends BaseConfigurable {
         private LabeledComponent<TextFieldWithBrowseButton> createShellPathField(DatabaseVendor databaseVendor) {
             LabeledComponent<TextFieldWithBrowseButton> shellPathField = new LabeledComponent<>();
             TextFieldWithBrowseButton component = new TextFieldWithBrowseButton();
-            component.getChildComponent().setName("shellPathField");
+            component.getChildComponent().setName("shellPathField"); //NON-NLS
             shellPathField.setComponent(component);
-            shellPathField.getComponent().addBrowseFolderListener(String.format("%s CLI configuration", databaseVendor.name), "", null,
+            shellPathField.getComponent().addBrowseFolderListener(format(getResourceString("settings.cliconfigbrowserdialog.title"), databaseVendor.name), "", null,
                     new FileChooserDescriptor(true, false, false, false, false, false));
 
             shellPathField.getComponent().setText(configuration.getShellPath(databaseVendor));
@@ -359,7 +365,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
         @NotNull
         @Override
         protected String getLabelText() {
-            return "Servers";
+            return getResourceString("settings.servers.label");
         }
 
         @Override
@@ -370,7 +376,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
         @Override
         protected JComponent createMainComponent() {
             table = new JBTable(tableModel);
-            table.getEmptyText().setText("No server configuration set");
+            table.getEmptyText().setText(ResourcesLoaderKt.getResourceString("settings.message.noserverconfiguration"));
             table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             table.setDefaultRenderer(DatabaseVendor.class, new ColoredTableCellRenderer() {
                 @Override
@@ -389,11 +395,11 @@ public class NoSqlConfigurable extends BaseConfigurable {
 
             return ToolbarDecorator.createDecorator(table)
                     .setAddAction(button -> onAddAction())
-                    .setAddActionName("addServer")
+                    .setAddActionName("addServer") //NON-NLS
                     .setEditAction(button -> onEditAction())
-                    .setEditActionName("editServer")
+                    .setEditActionName("editServer") //NON-NLS
                     .setRemoveAction(button -> onRemoveAction())
-                    .setRemoveActionName("removeServer")
+                    .setRemoveActionName("removeServer") //NON-NLS
                     .disableUpDownActions()
                     .createPanel();
         }

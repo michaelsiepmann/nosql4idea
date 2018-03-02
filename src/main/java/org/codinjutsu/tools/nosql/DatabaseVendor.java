@@ -178,4 +178,8 @@ public enum DatabaseVendor {
     protected abstract Class<? extends DatabaseClient> getDatabaseClientClass();
 
     public abstract Class<? extends DatabaseUI> getDatabaseUIClass();
+
+    public String getVendorName() {
+        return name;
+    }
 }
