@@ -16,7 +16,7 @@
 
 package org.codinjutsu.tools.nosql.commons.view.action
 
-import com.intellij.icons.AllIcons
+import com.intellij.icons.AllIcons.Actions.Refresh
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
@@ -41,8 +41,8 @@ class RefreshServerAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : 
 
     companion object {
         private val CONNECT_ICON = GuiUtils.loadIcon("connector.png", "connector_dark.png")
-        private val REFRESH_ICON = AllIcons.Actions.Refresh
-        private val REFRESH_TEXT = "Refresh this server"
-        private val CONNECT_TEXT = "Connect to this server"
+        private val REFRESH_ICON = Refresh
+        private const val REFRESH_TEXT = "Refresh this server"
+        private const val CONNECT_TEXT = "Connect to this server"
     }
 }

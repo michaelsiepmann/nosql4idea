@@ -4,7 +4,7 @@ import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
-import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException
+import org.codinjutsu.tools.nosql.commons.exceptions.ConfigurationException
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext

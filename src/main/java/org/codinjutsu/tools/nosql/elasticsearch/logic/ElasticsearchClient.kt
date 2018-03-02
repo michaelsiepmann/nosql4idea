@@ -5,7 +5,8 @@ import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
-import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException
+import org.codinjutsu.tools.nosql.commons.exceptions.ConfigurationException
+import org.codinjutsu.tools.nosql.commons.exceptions.DatabaseException
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
@@ -45,13 +46,21 @@ internal class ElasticsearchClient : DatabaseClient<JsonObject> {
     }
 
     override fun loadServer(databaseServer: DatabaseServer) {
-        val databases = GetIndices(databaseServer.configuration.serverUrl)
-                .execute()
-                .entrySet()
-                .map {
-                    ElasticsearchDatabase(it.key, getTypes((databaseServer.configuration as ElasticsearchServerConfiguration), it.key))
-                }
-        databaseServer.databases.addAll(databases)
+        try {
+            val configuration = databaseServer.configuration as ElasticsearchServerConfiguration
+            val databases = GetIndices(configuration.serverUrl)
+                    .execute()
+                    .keySet()
+                    .map {
+                        ElasticsearchDatabase(it, getTypes(configuration, it))
+                    }
+            databaseServer.databases.apply {
+                clear()
+                addAll(databases)
+            }
+        } catch (e: Exception) {
+            throw DatabaseException(e)
+        }
     }
 
     override fun cleanUpServers() {

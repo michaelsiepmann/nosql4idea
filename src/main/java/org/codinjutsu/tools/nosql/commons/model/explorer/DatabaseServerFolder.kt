@@ -34,9 +34,9 @@ abstract class DatabaseServerFolder<DATABASE : Database> constructor(override va
             val host = databaseServer.serverUrl
             append(if (label.isBlank()) host else label)
 
+            icon = databaseServer.vendor.icon
             if (DatabaseServer.Status.OK == databaseServer.status) {
                 toolTipText = host
-                icon = databaseServer.vendor.icon
             } else {
                 foreground = JBColor.RED
                 toolTipText = "Unable to connect"

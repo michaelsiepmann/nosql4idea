@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.commons.logic;
+package org.codinjutsu.tools.nosql.commons.exceptions;
 
 public class ConfigurationException extends RuntimeException {
     public ConfigurationException(String message) {

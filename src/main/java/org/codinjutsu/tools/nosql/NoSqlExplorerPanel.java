@@ -32,7 +32,8 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.logic.ConfigurationException;
+import org.codinjutsu.tools.nosql.commons.exceptions.ConfigurationException;
+import org.codinjutsu.tools.nosql.commons.exceptions.DatabaseException;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.explorer.DatabaseServerFolder;
@@ -57,6 +58,7 @@ import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
@@ -70,16 +72,19 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
+import static java.lang.String.format;
 import static org.codinjutsu.tools.nosql.commons.utils.GuiUtils.showNotification;
 
 public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
     private static final URL pluginSettingsUrl = GuiUtils.isUnderDarcula() ? GuiUtils.getIconResource("pluginSettings_dark.png") : GuiUtils.getIconResource("pluginSettings.png"); //NON-NLS
 
-    private JPanel rootPanel;
-    private JPanel treePanel;
-    private JPanel toolBarPanel;
-    private Tree databaseTree;
+    private JPanel rootPanel = new JPanel();
+    private JPanel treePanel = new JPanel();
+    private JPanel toolBarPanel = new JPanel();
+    private ExplorerTree databaseTree = new ExplorerTree();
 
     private final Project project;
     private final DatabaseVendorClientManager databaseVendorClientManager;
@@ -88,22 +93,22 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         this.project = project;
         this.databaseVendorClientManager = databaseVendorClientManager;
 
+        rootPanel.setLayout(new BorderLayout());
+        rootPanel.add(toolBarPanel, NORTH);
+        rootPanel.add(treePanel, CENTER);
+
         treePanel.setLayout(new BorderLayout());
 
-        databaseTree = createTree();
-        databaseTree.setCellRenderer(new NoSqlTreeRenderer());
-        databaseTree.setName("databaseTree"); //NON-NLS
-
         setLayout(new BorderLayout());
-        treePanel.add(new JBScrollPane(databaseTree), BorderLayout.CENTER);
-        add(rootPanel, BorderLayout.CENTER);
+        treePanel.add(new JBScrollPane(databaseTree), CENTER);
+        add(rootPanel, CENTER);
 
         toolBarPanel.setLayout(new BorderLayout());
 
         ApplicationManager.getApplication().invokeLater(this::reloadAllServerConfigurations);
     }
 
-    public void reloadAllServerConfigurations() {
+    void reloadAllServerConfigurations() {
         databaseVendorClientManager.cleanUpServers();
         databaseTree.setRootVisible(false);
 
@@ -159,11 +164,11 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
                 });
 
-            } catch (ConfigurationException confEx) {
+            } catch (ConfigurationException | DatabaseException confEx) {
                 databaseServer.setStatus(DatabaseServer.Status.ERROR);
                 showNotification(treePanel,
                         MessageType.ERROR,
-                        String.format("Error when connecting on %s", databaseServer.getLabel()),
+                        format("Error when connecting on %s", databaseServer.getLabel()),
                         Balloon.Position.atLeft);
             } finally {
                 databaseTree.setPaintBusy(false);
@@ -184,7 +189,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         return NoSqlConfiguration.getInstance(project).getServerConfigurations();
     }
 
-    public void installActions() {
+    void installActions() {
 
         final TreeExpander treeExpander = new TreeExpander() {
             @Override
@@ -292,16 +297,16 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         return treeNode != null ? (Folder) treeNode.getUserObject() : null;
     }
 
+    private DefaultMutableTreeNode getSelectedServerNode() {
+        return getSelectedServerNode((DefaultMutableTreeNode) databaseTree.getLastSelectedPathComponent());
+    }
+
     private DatabaseServer getSelectedDatabaseServer() {
         DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) databaseTree.getLastSelectedPathComponent();
         if (treeNode != null) {
             return ((Folder) treeNode.getUserObject()).getDatabaseServer();
         }
         return null;
-    }
-
-    private DefaultMutableTreeNode getSelectedServerNode() {
-        return getSelectedServerNode((DefaultMutableTreeNode) databaseTree.getLastSelectedPathComponent());
     }
 
     private DefaultMutableTreeNode getSelectedServerNode(DefaultMutableTreeNode treeNode) {
@@ -359,42 +364,6 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         return selectedFolder != null && selectedFolder.isViewableContent();
     }
 
-    private Tree createTree() {
-
-        Tree tree = new Tree() {
-
-            private final JComponent myLabel = new JLabel(
-                    String.format("<html><center>NoSql server list is empty<br><br>You may use <img src=\"%s\"> to add configuration</center></html>", pluginSettingsUrl)
-            );
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                if (!getServerConfigurations().isEmpty()) return;
-
-                myLabel.setFont(getFont());
-                myLabel.setBackground(getBackground());
-                myLabel.setForeground(getForeground());
-                Rectangle bounds = getBounds();
-                Dimension size = myLabel.getPreferredSize();
-                myLabel.setBounds(0, 0, size.width, size.height);
-
-                int x = (bounds.width - size.width) / 2;
-                Graphics g2 = g.create(bounds.x + x, bounds.y + 20, bounds.width, bounds.height);
-                try {
-                    myLabel.paint(g2);
-                } finally {
-                    g2.dispose();
-                }
-            }
-        };
-
-        tree.getEmptyText().clear();
-        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
-        return tree;
-    }
-
     @Nullable
     private NoSqlDatabaseObjectFile createNoSqlObjectFile() {
         Folder folder = getSelectedFolder();
@@ -419,33 +388,70 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         if (selectedFolder != null) {
             Folder child = selectedFolder.createChild();
             if (child != null) {
-                getParentOf(selectedFolder).add(new DefaultMutableTreeNode(child));
+                databaseTree.getParentOf(selectedFolder).add(new DefaultMutableTreeNode(child));
             }
         }
-    }
-
-    private DefaultMutableTreeNode getParentOf(Folder folder) {
-        return getParentOf((DefaultMutableTreeNode) databaseTree.getModel().getRoot(), folder);
-    }
-
-    private DefaultMutableTreeNode getParentOf(DefaultMutableTreeNode node, Folder folder) {
-        if (node != null) {
-            Enumeration children = node.children();
-            while (children.hasMoreElements()) {
-                DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
-                if (childNode.getUserObject() == folder) {
-                    return node;
-                }
-                DefaultMutableTreeNode result = getParentOf(childNode, folder);
-                if (result != null) {
-                    return result;
-                }
-            }
-        }
-        return null;
     }
 
     public void refreshSelectedServer() {
         reloadServerConfiguration(getSelectedServerNode(), true);
+    }
+
+    private class ExplorerTree extends Tree {
+
+        private final JComponent myLabel = new JLabel(format("<html><center>NoSql server list is empty<br><br>You may use <img src=\"%s\"> to add configuration</center></html>", pluginSettingsUrl));
+
+        private ExplorerTree() {
+            getEmptyText().clear();
+            getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+            setCellRenderer(new NoSqlTreeRenderer());
+            setName("databaseTree"); //NON-NLS
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            TreeModel model = getModel();
+            if (model != null && model.getChildCount(model.getRoot()) != 0) {
+                return;
+            }
+
+            myLabel.setFont(getFont());
+            myLabel.setBackground(getBackground());
+            myLabel.setForeground(getForeground());
+            Rectangle bounds = getBounds();
+            Dimension size = myLabel.getPreferredSize();
+            myLabel.setBounds(0, 0, size.width, size.height);
+
+            int x = (bounds.width - size.width) / 2;
+            Graphics g2 = g.create(bounds.x + x, bounds.y + 20, bounds.width, bounds.height);
+            try {
+                myLabel.paint(g2);
+            } finally {
+                g2.dispose();
+            }
+        }
+
+        private DefaultMutableTreeNode getParentOf(Folder folder) {
+            return getParentOf((DefaultMutableTreeNode) getModel().getRoot(), folder);
+        }
+
+        private DefaultMutableTreeNode getParentOf(DefaultMutableTreeNode node, Folder folder) {
+            if (node != null) {
+                Enumeration children = node.children();
+                while (children.hasMoreElements()) {
+                    DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
+                    if (childNode.getUserObject() == folder) {
+                        return node;
+                    }
+                    DefaultMutableTreeNode result = getParentOf(childNode, folder);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+            return null;
+        }
+
     }
 }
