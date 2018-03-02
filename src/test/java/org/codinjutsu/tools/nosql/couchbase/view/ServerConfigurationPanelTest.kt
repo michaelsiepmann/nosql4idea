@@ -49,8 +49,8 @@ internal class ServerConfigurationPanelTest {
             override fun executeInEDT(): ServerConfigurationPanel {
                 return ServerConfigurationPanel(DummyProject.getInstance(),
                         DatabaseVendor.COUCHBASE,
-                        databaseClientMock,
-                        DefaultAuthenticationPanel()
+                        DefaultAuthenticationPanel(),
+                        true
                 )
             }
         })

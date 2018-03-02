@@ -19,6 +19,8 @@ internal class ElasticsearchUI : DatabaseUI {
         return ElasticsearchPanel(project, createContext(project, elasticSearchObjectFile))
     }
 
+    override fun hasOptionsPanel() = false
+
     private fun createContext(project: Project, elasticSearchObjectFile: ElasticsearchObjectFile) =
             JsonDatabaseContext(ElasticsearchContext.create(project, elasticSearchObjectFile.configuration, elasticSearchObjectFile.type, elasticSearchObjectFile.database))
 }

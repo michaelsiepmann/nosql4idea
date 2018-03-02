@@ -19,6 +19,7 @@ package org.codinjutsu.tools.nosql.commons.view;
 import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.DatabaseVendorUIManager;
+import org.codinjutsu.tools.nosql.commons.DatabaseUI;
 
 public class ServerConfigurationPanelFactory {
 
@@ -32,11 +33,12 @@ public class ServerConfigurationPanelFactory {
     }
 
     public ServerConfigurationPanel create(DatabaseVendor databaseVendor) {
+        DatabaseUI databaseUI = databaseVendorUIManager.get(databaseVendor);
         return new ServerConfigurationPanel(
                 project,
                 databaseVendor,
-                databaseVendor.getClient(project),
-                databaseVendorUIManager.get(databaseVendor).createAuthenticationView()
+                databaseUI.createAuthenticationView(),
+                databaseUI.hasOptionsPanel()
         );
     }
 }

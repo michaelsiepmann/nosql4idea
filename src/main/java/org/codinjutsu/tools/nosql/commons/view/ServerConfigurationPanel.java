@@ -26,7 +26,6 @@ import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Ref;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.RawCommandLineEditor;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
 import org.codinjutsu.tools.nosql.commons.configuration.ConsoleRunnerConfiguration;
@@ -45,6 +44,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 
+import static com.intellij.ui.IdeBorderFactory.createTitledBorder;
+import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -57,7 +58,7 @@ public class ServerConfigurationPanel extends JPanel {
     private JTextField userDatabaseField;
     private JCheckBox autoConnectCheckBox;
     private JButton testConnectionButton;
-    private JPanel mongoShellOptionsPanel;
+    private JPanel shellOptionsPanel;
     private TextFieldWithBrowseButton shellWorkingDirField;
     private RawCommandLineEditor shellArgumentsLineField;
     private JLabel databaseTipsLabel;
@@ -71,37 +72,42 @@ public class ServerConfigurationPanel extends JPanel {
 
     public ServerConfigurationPanel(Project project,
                                     DatabaseVendor databaseVendor,
-                                    DatabaseClient databaseClient,
-                                    AuthenticationView authenticationView) {
+                                    AuthenticationView authenticationView,
+                                    boolean hasOptionsPanel) {
         this.project = project;
-        this.databaseClient = databaseClient;
         this.databaseVendor = databaseVendor;
         this.authenticationView = authenticationView;
+        databaseClient = databaseVendor.getClient(project);
 
         setLayout(new BorderLayout());
         add(rootPanel, BorderLayout.CENTER);
         authenticationContainer.add(authenticationView.getComponent());
 
-        labelField.setName("labelField");
-        databaseVendorLabel.setName("databaseVendorLabel");
+        labelField.setName("labelField"); //NON-NLS
+        databaseVendorLabel.setName("databaseVendorLabel"); //NON-NLS
         databaseVendorLabel.setText(databaseVendor.name);
         databaseVendorLabel.setIcon(databaseVendor.icon);
 
-        databaseTipsLabel.setName("databaseTipsLabel");
+        databaseTipsLabel.setName("databaseTipsLabel"); //NON-NLS
         databaseTipsLabel.setText(databaseVendor.tips);
 
-        serverUrlField.setName("serverUrlField");
+        serverUrlField.setName("serverUrlField"); //NON-NLS
 
-        authenticationContainer.setBorder(IdeBorderFactory.createTitledBorder("Authentication settings", true));
-        userDatabaseField.setName("userDatabaseField");
+        authenticationContainer.setBorder(createTitledBorder("Authentication settings", true));
+        userDatabaseField.setName("userDatabaseField"); //NON-NLS
         userDatabaseField.setToolTipText("If your access is restricted to a specific database (e.g.: MongoLab), you can set it right here");
 
-        autoConnectCheckBox.setName("autoConnectField");
+        autoConnectCheckBox.setName("autoConnectField"); //NON-NLS
 
-        mongoShellOptionsPanel.setBorder(IdeBorderFactory.createTitledBorder("Mongo shell options", true));
-        shellArgumentsLineField.setDialogCaption("Mongo arguments");
+        String vendorName = databaseVendor.getVendorName();
+        if (hasOptionsPanel) {
+            shellOptionsPanel.setBorder(createTitledBorder(format("%s shell options", vendorName), true));
+        } else {
+            shellOptionsPanel.setVisible(false);
+        }
+        shellArgumentsLineField.setDialogCaption(format("%s arguments", vendorName));
 
-        testConnectionButton.setName("testConnection");
+        testConnectionButton.setName("testConnection"); //NON-NLS
 
         shellWorkingDirField.setText(null);
         initListeners();
@@ -181,13 +187,13 @@ public class ServerConfigurationPanel extends JPanel {
         for (String subServerUrl : serverUrl.split(",")) {
             String[] host_port = subServerUrl.split(":");
             if (host_port.length < 2) {
-                throw new ConfigurationException(String.format("URL '%s' format is incorrect. It should be 'host:port'", subServerUrl));
+                throw new ConfigurationException(format("URL '%s' format is incorrect. It should be 'host:port'", subServerUrl));
             }
 
             try {
                 Integer.valueOf(host_port[1].trim());
             } catch (NumberFormatException e) {
-                throw new ConfigurationException(String.format("Port in the URL '%s' is incorrect. It should be a number", subServerUrl));
+                throw new ConfigurationException(format("Port in the URL '%s' is incorrect. It should be a number", subServerUrl));
             }
         }
 
@@ -244,14 +250,14 @@ public class ServerConfigurationPanel extends JPanel {
     private void createUIComponents() {
         shellWorkingDirField = new TextFieldWithBrowseButton();
         FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-        ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> browseFolderActionListener =
-                new ComponentWithBrowseButton.BrowseFolderActionListener<>("Shell working directory",
-                        null,
-                        shellWorkingDirField,
-                        null,
-                        fileChooserDescriptor,
-                        TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
-        shellWorkingDirField.addBrowseFolderListener(null, browseFolderActionListener, false);
-        shellWorkingDirField.setName("shellWorkingDirField");
+        shellWorkingDirField.addActionListener(new ComponentWithBrowseButton.BrowseFolderActionListener<>(
+                "Shell working directory",
+                null,
+                shellWorkingDirField,
+                null,
+                fileChooserDescriptor,
+                TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT)
+        );
+        shellWorkingDirField.setName("shellWorkingDirField"); //NON-NLS
     }
 }

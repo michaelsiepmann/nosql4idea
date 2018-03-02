@@ -25,4 +25,6 @@ interface DatabaseUI {
     fun createAuthenticationView(): AuthenticationView
 
     fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView
+
+    fun hasOptionsPanel(): Boolean = true
 }

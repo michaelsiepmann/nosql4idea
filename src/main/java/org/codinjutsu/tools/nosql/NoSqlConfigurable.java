@@ -60,7 +60,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import static java.text.MessageFormat.format;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceString;
 
@@ -271,7 +270,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
         }
 
         private JLabel createLabel(String databaseVendorName) {
-            return new JLabel(format(getResourceString("settings.pathtocli.label"), databaseVendorName));
+            return new JLabel(getResourceString("settings.pathtocli.label", databaseVendorName));
         }
 
         private JButton createTestButton(final DatabaseVendor databaseVendorName) {
@@ -284,7 +283,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
             ProcessOutput processOutput;
             try {
                 processOutput = ProgressManager.getInstance()
-                        .runProcessWithProgressSynchronously(() -> checkShellPath(databaseVendor, getShellPath()), format(getResourceString("settings.testing.progresstitle"), databaseVendor.name), true, project);
+                        .runProcessWithProgressSynchronously(() -> checkShellPath(databaseVendor, getShellPath()), getResourceString("settings.testing.progresstitle", databaseVendor.name), true, project);
             } catch (ProcessCanceledException pce) {
                 return;
             } catch (Exception e) {
@@ -292,7 +291,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                 return;
             }
             if (processOutput != null && processOutput.getExitCode() == 0) {
-                Messages.showInfoMessage(mainPanel, processOutput.getStdout(), format(getResourceString("settings.clipath.confirmed"), databaseVendor.name));
+                Messages.showInfoMessage(mainPanel, processOutput.getStdout(), getResourceString("settings.clipath.confirmed", databaseVendor.name));
             }
         }
 
@@ -312,13 +311,13 @@ public class NoSqlConfigurable extends BaseConfigurable {
                     handler.runProcess(TIMEOUT_MS) :
                     handler.runProcessWithProgressIndicator(indicator);
             if (result.isTimeout()) {
-                throw new TimeoutException(format(getResourceString("settings.errormessages.clitimeout"), databaseVendor.name));
+                throw new TimeoutException(getResourceString("settings.errormessages.clitimeout", databaseVendor.name));
             }
             if (result.isCancelled()) {
                 throw new ProcessCanceledException();
             }
             if (result.getExitCode() != 0 || !result.getStderr().isEmpty()) {
-                throw new ExecutionException(format(getResourceString("settings.errormessages.generalerror"), commandLine.toString(), result.getExitCode(), result.getStderr()));
+                throw new ExecutionException(getResourceString("settings.errormessages.generalerror", commandLine.toString(), result.getExitCode(), result.getStderr()));
             }
             return result;
         }
@@ -341,7 +340,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
             TextFieldWithBrowseButton component = new TextFieldWithBrowseButton();
             component.getChildComponent().setName("shellPathField"); //NON-NLS
             shellPathField.setComponent(component);
-            shellPathField.getComponent().addBrowseFolderListener(format(getResourceString("settings.cliconfigbrowserdialog.title"), databaseVendor.name), "", null,
+            shellPathField.getComponent().addBrowseFolderListener(getResourceString("settings.cliconfigbrowserdialog.title", databaseVendor.name), "", null,
                     new FileChooserDescriptor(true, false, false, false, false, false));
 
             shellPathField.getComponent().setText(configuration.getShellPath(databaseVendor));

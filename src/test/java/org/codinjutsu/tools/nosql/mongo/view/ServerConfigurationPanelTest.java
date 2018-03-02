@@ -57,8 +57,7 @@ class ServerConfigurationPanelTest {
             protected ServerConfigurationPanel executeInEDT() {
                 return new ServerConfigurationPanel(DummyProject.getInstance(),
                         MONGO,
-                        databaseClientMock,
-                        new MongoAuthenticationPanel()
+                        new MongoAuthenticationPanel(), true
                 );
             }
         });

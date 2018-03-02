@@ -51,8 +51,7 @@ class ServerConfigurationPanelTest {
             protected ServerConfigurationPanel executeInEDT() {
                 return new ServerConfigurationPanel(DummyProject.getInstance(),
                         DatabaseVendor.REDIS,
-                        databaseClientMock,
-                        new RedisAuthenticationPanel()
+                        new RedisAuthenticationPanel(), true
                 );
             }
         });

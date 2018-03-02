@@ -4,28 +4,28 @@ import org.jetbrains.annotations.PropertyKey
 import java.text.MessageFormat
 import java.util.*
 
-const private val BUNDLE = "org.codinjutsu.tools.nosql.i18n.translations"
+private const val BUNDLE = "org.codinjutsu.tools.nosql.i18n.translations"
 
-private var _bundle: ResourceBundle? = null
+private var resourceBundle: ResourceBundle? = null
 
 private fun getResourceBundle(): ResourceBundle {
-    if (_bundle == null) {
+    if (resourceBundle == null) {
         try {
-            _bundle = ResourceBundle.getBundle(BUNDLE, Locale.getDefault())
+            resourceBundle = ResourceBundle.getBundle(BUNDLE, Locale.getDefault())
         } catch (e: MissingResourceException) {
             throw MissingResourceException("Missing Resource bundle: " + Locale.getDefault() + ' ', BUNDLE, "")
         }
     }
-    return _bundle!!
+    return resourceBundle!!
 }
 
 fun getResourceString(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
     try {
-        val bundle = getResourceBundle()
-        if (params.isNotEmpty() && bundle.getString(key).indexOf('{') >= 0) {
-            return MessageFormat.format(bundle.getString(key), *params)
+        val string = getResourceBundle().getString(key)
+        if (params.isNotEmpty() && string.indexOf('{') >= 0) {
+            return MessageFormat.format(string, *params)
         }
-        return bundle.getString(key)
+        return string
     } catch (e: MissingResourceException) {
         throw MissingResourceException("Missing Resource: " + Locale.getDefault() + " - key: " + key + "  - resources: " + BUNDLE, BUNDLE, key)
     }

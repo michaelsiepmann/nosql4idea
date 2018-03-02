@@ -33,4 +33,6 @@ class CouchbaseUI : DatabaseUI {
         val couchbaseObjectFile = objectFile as CouchbaseObjectFile
         return CouchbasePanel(project, CouchbaseContext(CouchbaseClient.getInstance(project), couchbaseObjectFile.configuration, couchbaseObjectFile.database))
     }
+
+    override fun hasOptionsPanel() = false
 }
