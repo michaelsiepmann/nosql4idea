@@ -91,7 +91,7 @@ public class RedisPanel extends DatabasePanel {
     }
 
     @Override
-    public Object getRecords() {
+    public SearchResult getRecords() {
         return getSearchResult(getContext(), new QueryOptionsImpl());
     }
 

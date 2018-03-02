@@ -34,6 +34,8 @@ import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
+import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
@@ -53,7 +55,7 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-public class CouchbaseClient implements DatabaseClient<JsonObject> {
+public class CouchbaseClient implements DatabaseClient<DatabaseElement> {
 
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
@@ -131,7 +133,7 @@ public class CouchbaseClient implements DatabaseClient<JsonObject> {
     }
 
     @Override
-    public CouchbaseSearchResult loadRecords(DatabaseContext context, QueryOptions queryOptions) {
+    public SearchResult loadRecords(DatabaseContext context, QueryOptions queryOptions) {
         ServerConfiguration configuration = context.getServerConfiguration();
         Database database = ((CouchbaseContext) context).getDatabase();
         Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment.builder().build(), configuration.getServerUrl());
@@ -159,7 +161,7 @@ public class CouchbaseClient implements DatabaseClient<JsonObject> {
 
     @NotNull
     @Override
-    public CouchbaseSearchResult findAll(DatabaseContext context) {
+    public SearchResult findAll(DatabaseContext context) {
 /*
         todo
         ServerConfiguration configuration = context.getServerConfiguration();
@@ -172,12 +174,12 @@ public class CouchbaseClient implements DatabaseClient<JsonObject> {
 
     @Nullable
     @Override
-    public JsonObject findDocument(DatabaseContext context, @NotNull Object _id) {
+    public DatabaseElement findDocument(DatabaseContext context, @NotNull Object _id) {
         return null;
     }
 
     @Override
-    public void update(@NotNull DatabaseContext context, @NotNull JsonObject jsonObject) {
+    public void update(@NotNull DatabaseContext context, @NotNull DatabaseElement databaseElement) {
     }
 
     @Override
