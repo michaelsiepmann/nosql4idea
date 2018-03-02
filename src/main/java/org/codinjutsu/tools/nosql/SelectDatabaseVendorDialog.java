@@ -19,23 +19,32 @@ package org.codinjutsu.tools.nosql;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.ColoredListCellRenderer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.Component;
+
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.WEST;
 
 public class SelectDatabaseVendorDialog extends DialogWrapper {
 
+    private JPanel mainPanel = new JPanel();
+    private ComboBox<DatabaseVendor> databaseVendorCombobox = new ComboBox<>();
 
-    private JPanel mainPanel;
-    private ComboBox databaseVendorCombobox;
-
-    protected SelectDatabaseVendorDialog(Component parent) {
+    SelectDatabaseVendorDialog(Component parent) {
         super(parent, true);
-        databaseVendorCombobox.setName("databaseVendorCombobox");
+        databaseVendorCombobox.setName("databaseVendorCombobox"); //NON-NLS
+
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(new JLabel("Database Vendor:"), WEST);
+        mainPanel.add(databaseVendorCombobox, CENTER);
 
         init();
     }
@@ -54,11 +63,10 @@ public class SelectDatabaseVendorDialog extends DialogWrapper {
 
     private void initCombobox() {
 
-        databaseVendorCombobox.setModel(new DefaultComboBoxModel(DatabaseVendor.values()));
-        databaseVendorCombobox.setRenderer(new ColoredListCellRenderer() {
+        databaseVendorCombobox.setModel(new DefaultComboBoxModel<>(DatabaseVendor.values()));
+        databaseVendorCombobox.setRenderer(new ColoredListCellRenderer<DatabaseVendor>() {
             @Override
-            protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-                DatabaseVendor databaseVendor = (DatabaseVendor) value;
+            protected void customizeCellRenderer(@NotNull JList list, DatabaseVendor databaseVendor, int index, boolean selected, boolean hasFocus) {
                 setIcon(databaseVendor.icon);
                 append(databaseVendor.name);
             }
@@ -67,7 +75,7 @@ public class SelectDatabaseVendorDialog extends DialogWrapper {
         databaseVendorCombobox.setSelectedItem(DatabaseVendor.MONGO);
     }
 
-    public DatabaseVendor getSelectedDatabaseVendor() {
+    DatabaseVendor getSelectedDatabaseVendor() {
         return (DatabaseVendor) databaseVendorCombobox.getSelectedItem();
     }
 }
