@@ -28,7 +28,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class NoSqlTreeRenderer extends ColoredTreeCellRenderer {
 
-    public static final Icon DATABASE = GuiUtils.loadIcon("database.png");
+    public static final Icon DATABASE = GuiUtils.loadIcon("database.png"); //NON-NLS
     public static final Icon MONGO_COLLECTION = AllIcons.Nodes.Folder;
 
     @Override

@@ -161,6 +161,6 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
         shellWorkingDirField = new TextFieldWithBrowseButton();
         shellWorkingDirField.addBrowseFolderListener("Mongo shell working directory", "", null,
                 new FileChooserDescriptor(false, true, false, false, false, false));
-        shellWorkingDirField.setName("shellWorkingDirField");
+        shellWorkingDirField.setName("shellWorkingDirField"); //NON-NLS
     }
 }

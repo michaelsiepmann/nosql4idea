@@ -20,8 +20,8 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import org.codinjutsu.tools.nosql.commons.model.DataType
-import org.codinjutsu.tools.nosql.commons.view.add.AddValueDialog
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
+import org.codinjutsu.tools.nosql.commons.view.add.AddValueDialog
 
 class AddValueAction(private val editionPanel: EditionPanel, private val dataTypes : Array<DataType>) : AnAction("Add a value", "Add a value", AllIcons.General.Add) {
 

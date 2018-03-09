@@ -32,7 +32,6 @@ import org.codinjutsu.tools.nosql.commons.configuration.ConsoleRunnerConfigurati
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableConsoleRunnerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
-import org.codinjutsu.tools.nosql.commons.exceptions.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
 import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView;
 import org.jetbrains.annotations.NotNull;
@@ -45,9 +44,9 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 
 import static com.intellij.ui.IdeBorderFactory.createTitledBorder;
-import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceString;
 
 public class ServerConfigurationPanel extends JPanel {
 
@@ -93,19 +92,19 @@ public class ServerConfigurationPanel extends JPanel {
 
         serverUrlField.setName("serverUrlField"); //NON-NLS
 
-        authenticationContainer.setBorder(createTitledBorder("Authentication settings", true));
+        authenticationContainer.setBorder(createTitledBorder(getResourceString("configuration.authentication.title"), true));
         userDatabaseField.setName("userDatabaseField"); //NON-NLS
-        userDatabaseField.setToolTipText("If your access is restricted to a specific database (e.g.: MongoLab), you can set it right here");
+        userDatabaseField.setToolTipText(getResourceString("configuration.userdatabase.tooltip"));
 
         autoConnectCheckBox.setName("autoConnectField"); //NON-NLS
 
         String vendorName = databaseVendor.getVendorName();
         if (hasOptionsPanel) {
-            shellOptionsPanel.setBorder(createTitledBorder(format("%s shell options", vendorName), true));
+            shellOptionsPanel.setBorder(createTitledBorder(getResourceString("configuration.shelloptions.title", vendorName), true));
         } else {
             shellOptionsPanel.setVisible(false);
         }
-        shellArgumentsLineField.setDialogCaption(format("%s arguments", vendorName));
+        shellArgumentsLineField.setDialogCaption(getResourceString("configuration.shellarguments.label", vendorName));
 
         testConnectionButton.setName("testConnection"); //NON-NLS
 
@@ -124,19 +123,19 @@ public class ServerConfigurationPanel extends JPanel {
 
                 final ProgressIndicator progressIndicator = progressManager.getProgressIndicator();
                 if (progressIndicator != null) {
-                    progressIndicator.setText("Connecting to " + configuration.getServerUrl());
+                    progressIndicator.setText(getResourceString("configuration.progress.connecting", configuration.getServerUrl()));
                 }
                 try {
                     databaseClient.connect(configuration);
                 } catch (Exception ex) {
                     excRef.set(ex);
                 }
-            }, "Testing connection for " + databaseVendorName, true, project);
+            }, getResourceString("configuration.progress.testingconnection", databaseVendorName), true, project);
 
             if (!excRef.isNull()) {
-                Messages.showErrorDialog(rootPanel, excRef.get().getMessage(), "Connection test failed");
+                Messages.showErrorDialog(rootPanel, excRef.get().getMessage(), getResourceString("configuration.progress.connection.test.failed.title"));
             } else {
-                Messages.showInfoMessage(rootPanel, "Connection test successful for " + databaseVendorName, "Connection test successful");
+                Messages.showInfoMessage(rootPanel, getResourceString("configuration.progress.connection.test.successful.message", databaseVendorName), getResourceString("configuration.progress.connection.test.successful.title"));
             }
         });
     }
@@ -170,33 +169,13 @@ public class ServerConfigurationPanel extends JPanel {
 
     public ValidationInfo validateInputs() {
         if (isEmpty(getLabel())) {
-            return new ValidationInfo("Label should be set");
+            return new ValidationInfo(getResourceString("configuration.validate.missinglabel"));
         }
         String serverUrl = getServerUrls();
         if (isEmpty(serverUrl)) {
-            return new ValidationInfo("URL(s) should be set");
+            return new ValidationInfo(getResourceString("configuration.validate.missingurl"));
         }
         return null;
-    }
-
-    private void validateUrls() {
-        String serverUrl = getServerUrls();
-        if (isEmpty(serverUrl)) {
-            throw new ConfigurationException("URL(s) should be set");
-        }
-        for (String subServerUrl : serverUrl.split(",")) {
-            String[] host_port = subServerUrl.split(":");
-            if (host_port.length < 2) {
-                throw new ConfigurationException(format("URL '%s' format is incorrect. It should be 'host:port'", subServerUrl));
-            }
-
-            try {
-                Integer.valueOf(host_port[1].trim());
-            } catch (NumberFormatException e) {
-                throw new ConfigurationException(format("Port in the URL '%s' is incorrect. It should be a number", subServerUrl));
-            }
-        }
-
     }
 
     private String getLabel() {
@@ -251,7 +230,7 @@ public class ServerConfigurationPanel extends JPanel {
         shellWorkingDirField = new TextFieldWithBrowseButton();
         FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(false, true, false, false, false, false);
         shellWorkingDirField.addActionListener(new ComponentWithBrowseButton.BrowseFolderActionListener<>(
-                "Shell working directory",
+                getResourceString("configuration.shell.working.directory.title"),
                 null,
                 shellWorkingDirField,
                 null,

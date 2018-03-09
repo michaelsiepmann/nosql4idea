@@ -12,9 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
-/**
+ *
  * This is licensed under LGPL.  License can be found here:  http://www.gnu.org/licenses/lgpl-3.0.txt
  * <p/>
  * This is provided as is.  If you have questions please direct them to charlie.hubbard at gmail dot you know what.
@@ -166,19 +164,5 @@ public class DateTimePicker extends JXDatePicker {
 
         getLinkPanel().setBackground(backgroundColor);
         getLinkPanel().setForeground(foregroundColor);
-    }
-
-
-    public static void main(String[] args) {
-        String[] ids = TimeZone.getAvailableIDs();
-        for (String id : ids) {
-            if (!id.startsWith("Etc")) {
-                TimeZone zone = TimeZone.getTimeZone(id);
-                int offset = zone.getRawOffset() / 1000;
-                int hour = offset / 3600;
-                int minutes = (offset % 3600) / 60;
-                System.out.println(String.format("(GMT%+d:%02d) %s", hour, minutes, id));
-            }
-        }
     }
 }

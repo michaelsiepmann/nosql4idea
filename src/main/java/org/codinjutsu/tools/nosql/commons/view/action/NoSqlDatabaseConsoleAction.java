@@ -39,7 +39,7 @@ public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
     private final NoSqlExplorerPanel noSqlExplorerPanel;
 
     public NoSqlDatabaseConsoleAction(NoSqlExplorerPanel noSqlExplorerPanel) {
-        super("DB Shell...", "DB Shell", GuiUtils.loadIcon("toolConsole.png"));
+        super("DB Shell...", "DB Shell", GuiUtils.loadIcon("toolConsole.png")); //NON-NLS
         this.noSqlExplorerPanel = noSqlExplorerPanel;
     }
 

@@ -31,7 +31,7 @@ import javax.swing.Icon;
 
 public class NoSqlWindowManager {
 
-    private static final Icon NOSQL_ICON = GuiUtils.loadIcon("nosql_13x13.png");
+    private static final Icon NOSQL_ICON = GuiUtils.loadIcon("nosql_13x13.png"); //NON-NLS
 
     private static final String NOSQL_RUNNER = "NoSql Runner";
     private static final String NOSQL_EXPLORER = "NoSql Explorer";

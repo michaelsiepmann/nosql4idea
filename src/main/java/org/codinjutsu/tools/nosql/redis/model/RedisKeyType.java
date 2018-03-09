@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 
 public enum RedisKeyType {
 
-    LIST("list"), SET("set"), ZSET("zset"), HASH("hash"), STRING("string");
+    LIST("list"), SET("set"), ZSET("zset"), HASH("hash"), STRING("string"); //NON-NLS
     public final String label;
 
     RedisKeyType(String label) {

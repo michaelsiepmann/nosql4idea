@@ -124,7 +124,7 @@ public abstract class DatabasePanel extends NoSqlResultView {
     }
 
     private void installResultPanelActions() {
-        DefaultActionGroup actionResultGroup = new DefaultActionGroup("NoSQLResultGroup", true);
+        DefaultActionGroup actionResultGroup = new DefaultActionGroup("NoSQLResultGroup", true); //NON-NLS
         if (ApplicationManager.getApplication() != null) {
             actionResultGroup.add(new ExecuteQuery(this));
             if (queryPanel != null) {

@@ -66,7 +66,7 @@ public class RedisClient implements DatabaseClient<DatabaseElement> {
     @Override
     public void loadServer(DatabaseServer databaseServer) {
         Jedis jedis = createJedis(databaseServer.getConfiguration());
-        List<String> databaseNumberTuple = jedis.configGet("databases");
+        List<String> databaseNumberTuple = jedis.configGet("databases"); //NON-NLS
         List<Database> databases = new LinkedList<>();
         String userDatabase = databaseServer.getConfiguration().getUserDatabase();
         if (isNotEmpty(userDatabase)) {
@@ -122,7 +122,7 @@ public class RedisClient implements DatabaseClient<DatabaseElement> {
                     Map<String, String> values = jedis.hgetAll(key);
                     redisSearchResult.addHash(key, values);
                 } else if (RedisKeyType.ZSET.equals(keyType)) {
-                    Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf", "+inf");
+                    Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf", "+inf"); //NON-NLS
                     redisSearchResult.addSortedSet(key, valuesWithScores);
                 } else if (RedisKeyType.STRING.equals(keyType)) {
                     String value = jedis.get(key);

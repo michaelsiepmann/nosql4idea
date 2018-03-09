@@ -42,7 +42,7 @@ import java.util.Enumeration;
 
 public class GuiUtils {
 
-    private static final String ICON_FOLDER = "/icons/";
+    private static final String ICON_FOLDER = "/icons/"; //NON-NLS
 
     public static Icon loadIcon(String iconFilename) {
         return IconLoader.findIcon(ICON_FOLDER + iconFilename);
@@ -72,7 +72,7 @@ public class GuiUtils {
     }
 
     public static boolean isUnderDarcula() {
-        return UIManager.getLookAndFeel().getName().contains("Darcula");
+        return UIManager.getLookAndFeel().getName().contains("Darcula"); //NON-NLS
     }
 
     public static void runInSwingThread(Runnable runnable) {

@@ -16,6 +16,7 @@
 
 package org.codinjutsu.tools.nosql.mongo.model;
 
+@SuppressWarnings("HardCodedStringLiteral")
 public enum MongoAggregateOperator {
 
     MATCH("$match"),

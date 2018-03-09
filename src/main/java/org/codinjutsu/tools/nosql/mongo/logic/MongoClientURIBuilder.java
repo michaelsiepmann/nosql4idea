@@ -25,9 +25,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class MongoClientURIBuilder {
+class MongoClientURIBuilder {
 
-    private static final String DEFAULT_AUTH_DB = "admin";
+    private static final String DEFAULT_AUTH_DB = "admin"; //NON-NLS
 
     private String serverUrls;
     private String username;
@@ -39,40 +39,40 @@ public class MongoClientURIBuilder {
     private MongoClientURIBuilder() {
     }
 
-    public static MongoClientURIBuilder builder() {
+    static MongoClientURIBuilder builder() {
         return new MongoClientURIBuilder();
     }
 
-    public MongoClientURIBuilder setServerAddresses(String serverUrls) {
+    MongoClientURIBuilder setServerAddresses(String serverUrls) {
         this.serverUrls = serverUrls;
         return this;
     }
 
-    public MongoClientURIBuilder setCredential(String username, String password, String authDatabase) {
+    MongoClientURIBuilder setCredential(String username, String password, String authDatabase) {
         this.username = username;
         this.password = password;
         this.authDatabase = StringUtils.isNotEmpty(authDatabase) ? authDatabase : DEFAULT_AUTH_DB;
         return this;
     }
 
-    public String build() {
+    String build() {
         StringBuilder strBuilder = new StringBuilder();
-        Map<String, String> options = new HashMap<String, String>();
+        Map<String, String> options = new HashMap<>();
         if (StringUtils.isEmpty(username)) {
-            strBuilder.append(String.format("mongodb://%s/", serverUrls));
+            strBuilder.append(String.format("mongodb://%s/", serverUrls)); //NON-NLS
         } else {
-            strBuilder.append(String.format("mongodb://%s:%s@%s/", username, password, serverUrls));
+            strBuilder.append(String.format("mongodb://%s:%s@%s/", username, password, serverUrls)); //NON-NLS
         }
         if (authDatabase != null) {
-            options.put("authSource", authDatabase);
+            options.put("authSource", authDatabase); //NON-NLS
         }
 
         if (authenticationMecanism != null) {
-            options.put("authMechanism", authenticationMecanism.getMechanismName());
+            options.put("authMechanism", authenticationMecanism.getMechanismName()); //NON-NLS
         }
 
         if (sslEnabled) {
-            options.put("ssl", Boolean.TRUE.toString());
+            options.put("ssl", Boolean.TRUE.toString()); //NON-NLS
         }
         if (options.size() == 0) {
             return strBuilder.toString();
@@ -80,12 +80,12 @@ public class MongoClientURIBuilder {
         return strBuilder.append(buildOptions(options)).toString();
     }
 
-    public MongoClientURIBuilder setAuthenticationMecanism(@NotNull AuthenticationMechanism authenticationMecanism) {
+    MongoClientURIBuilder setAuthenticationMecanism(@NotNull AuthenticationMechanism authenticationMecanism) {
         this.authenticationMecanism = authenticationMecanism;
         return this;
     }
 
-    public MongoClientURIBuilder sslEnabled() {
+    MongoClientURIBuilder sslEnabled() {
         sslEnabled = true;
         return this;
     }
@@ -93,7 +93,7 @@ public class MongoClientURIBuilder {
     private static String buildOptions(Map<String, String> options) {
         List<String> optionList = new LinkedList<String>();
         for (Map.Entry<String, String> keyValue : options.entrySet()) {
-            optionList.add(String.format("%s=%s", keyValue.getKey(), keyValue.getValue()));
+            optionList.add(String.format("%s=%s", keyValue.getKey(), keyValue.getValue())); //NON-NLS
         }
         return "?" + StringUtils.join(optionList, "&");
     }

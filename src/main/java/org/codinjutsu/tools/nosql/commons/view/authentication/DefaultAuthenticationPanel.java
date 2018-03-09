@@ -31,8 +31,8 @@ public class DefaultAuthenticationPanel implements AuthenticationView {
     private JPanel mainPanel;
 
     public DefaultAuthenticationPanel() {
-        usernameField.setName("usernameField");
-        passwordField.setName("passwordField");
+        usernameField.setName("usernameField"); //NON-NLS
+        passwordField.setName("passwordField"); //NON-NLS
     }
 
     @NotNull

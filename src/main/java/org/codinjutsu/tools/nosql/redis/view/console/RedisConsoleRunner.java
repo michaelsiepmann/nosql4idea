@@ -36,7 +36,7 @@ public class RedisConsoleRunner extends AbstractNoSQLConsoleRunner {
     private final Database database;
 
     public RedisConsoleRunner(@NotNull Project project, ServerConfiguration serverConfiguration, Database database) {
-        super(project, CONSOLE_TYPE_ID, "/tmp", serverConfiguration);
+        super(project, CONSOLE_TYPE_ID, "/tmp", serverConfiguration); //NON-NLS
         this.database = database;
     }
 
@@ -55,7 +55,7 @@ public class RedisConsoleRunner extends AbstractNoSQLConsoleRunner {
     @NotNull
     @Override
     protected Process createProcess(@NotNull GeneralCommandLine commandLine, @NotNull ServerConfiguration serverConfiguration) throws ExecutionException {
-        commandLine.addParameters("-n", database.getName());
+        commandLine.addParameters("-n", database.getName()); //NON-NLS
 
         setWorkingDirectory(commandLine, serverConfiguration);
 

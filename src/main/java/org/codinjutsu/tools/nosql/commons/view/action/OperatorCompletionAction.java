@@ -38,7 +38,7 @@ import java.util.List;
 
 public class OperatorCompletionAction extends AnAction implements Disposable {
 
-    private static final String MONGO_OPERATOR_COMPLETION = "MONGO_OPERATOR_COMPLETION";
+    private static final String MONGO_OPERATOR_COMPLETION = "MONGO_OPERATOR_COMPLETION"; //NON-NLS
 
     private static final JBList QUERY_OPERATOR_LIST;
 

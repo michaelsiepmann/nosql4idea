@@ -20,8 +20,8 @@ import com.intellij.icons.AllIcons.General.Add
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import org.codinjutsu.tools.nosql.commons.model.DataType
-import org.codinjutsu.tools.nosql.commons.view.add.AddKeyDialog
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
+import org.codinjutsu.tools.nosql.commons.view.add.AddKeyDialog
 import java.awt.event.KeyEvent
 
 class AddKeyAction(private val editionPanel: EditionPanel, private val dataTypes : Array<DataType>) : AnAction("Add a key", "Add a key", Add) {

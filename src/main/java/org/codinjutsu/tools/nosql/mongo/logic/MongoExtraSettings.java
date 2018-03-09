@@ -23,11 +23,11 @@ import java.util.Map;
 
 public class MongoExtraSettings {
 
-    private static final String DEFAULT_AUTH_DATABASE = "admin";
+    private static final String DEFAULT_AUTH_DATABASE = "admin"; //NON-NLS
 
-    private static final String SSL = "ssl";
-    private static final String AUTH_DATABASE = "authDatabase";
-    private static final String AUTH_MECHANISM = "authMechanism";
+    private static final String SSL = "ssl"; //NON-NLS
+    private static final String AUTH_DATABASE = "authDatabase"; //NON-NLS
+    private static final String AUTH_MECHANISM = "authMechanism"; //NON-NLS
     private Map<String, String> extras = new HashMap<>();
 
     public MongoExtraSettings() {

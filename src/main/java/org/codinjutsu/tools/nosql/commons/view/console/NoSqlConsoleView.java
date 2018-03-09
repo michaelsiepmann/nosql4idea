@@ -24,6 +24,6 @@ import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 public class NoSqlConsoleView extends LanguageConsoleImpl {
     public NoSqlConsoleView(Project project, String title, ServerConfiguration configuration) {
         super(project, title, StdFileTypes.PLAIN_TEXT.getLanguage());
-        setPrompt(String.format("%s> ", configuration.getServerUrl()));
+        setPrompt(String.format("%s> ", configuration.getServerUrl())); //NON-NLS
     }
 }

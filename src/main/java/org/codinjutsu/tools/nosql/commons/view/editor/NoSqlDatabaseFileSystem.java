@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class NoSqlDatabaseFileSystem extends VirtualFileSystem implements ApplicationComponent {
 
-    private static final String PROTOCOL = "nosql";
+    private static final String PROTOCOL = "nosql"; //NON-NLS
 
     public static NoSqlDatabaseFileSystem getInstance() {
         return ApplicationManager.getApplication().getComponent(NoSqlDatabaseFileSystem.class);

@@ -40,7 +40,7 @@ public class MongoConsoleRunner extends AbstractNoSQLConsoleRunner {
     private final MongoDatabase database;
 
     public MongoConsoleRunner(@NotNull Project project, ServerConfiguration serverConfiguration, MongoDatabase database) {
-        super(project, CONSOLE_TYPE_ID, "/tmp", serverConfiguration);
+        super(project, CONSOLE_TYPE_ID, "/tmp", serverConfiguration); //NON-NLS
         this.database = database;
     }
 
@@ -70,15 +70,15 @@ public class MongoConsoleRunner extends AbstractNoSQLConsoleRunner {
         setWorkingDirectory(commandLine, serverConfiguration);
 
         AuthenticationSettings authenticationSettings = serverConfiguration.getAuthenticationSettings();
-        addCommandlineParameter(commandLine, "--username", authenticationSettings.getUsername());
-        addCommandlineParameter(commandLine, "--password", authenticationSettings.getPassword());
+        addCommandlineParameter(commandLine, "--username", authenticationSettings.getUsername()); //NON-NLS
+        addCommandlineParameter(commandLine, "--password", authenticationSettings.getPassword()); //NON-NLS
 
         MongoExtraSettings mongoExtraSettings = new MongoExtraSettings(authenticationSettings.getExtras());
-        addCommandlineParameter(commandLine, "--authenticationDatabase", mongoExtraSettings.getAuthenticationDatabase());
+        addCommandlineParameter(commandLine, "--authenticationDatabase", mongoExtraSettings.getAuthenticationDatabase()); //NON-NLS
 
         AuthenticationMechanism authenticationMecanism = mongoExtraSettings.getAuthenticationMechanism();
         if (authenticationMecanism != null) {
-            commandLine.addParameter("--authenticationMecanism");
+            commandLine.addParameter("--authenticationMecanism"); //NON-NLS
             commandLine.addParameter(authenticationMecanism.getMechanismName());
         }
 

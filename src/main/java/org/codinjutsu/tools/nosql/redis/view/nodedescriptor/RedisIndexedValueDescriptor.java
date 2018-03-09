@@ -63,7 +63,7 @@ public class RedisIndexedValueDescriptor extends AbstractNodeDecriptor<Object> i
 
     @Override
     public String getFormattedKey() {
-        return String.format("[%s]", index);
+        return String.format("[%s]", index); //NON-NLS
     }
 
     @Override

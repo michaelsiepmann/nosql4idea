@@ -44,7 +44,7 @@ public class MongoRunConfigurationType implements ConfigurationType {
     }
 
     public Icon getIcon() {
-        return GuiUtils.loadIcon("mongo_logo.png");
+        return GuiUtils.loadIcon("mongo_logo.png"); //NON-NLS
     }
 
     @NonNls

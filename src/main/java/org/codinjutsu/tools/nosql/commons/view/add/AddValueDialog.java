@@ -27,6 +27,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
+import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceString;
+
 public class AddValueDialog extends AbstractAddDialog {
 
     private final DataType[] dataTypes;
@@ -51,7 +53,7 @@ public class AddValueDialog extends AbstractAddDialog {
     public static AddValueDialog createDialog(EditionPanel parentPanel, DataType[] values) {
         AddValueDialog dialog = new AddValueDialog(parentPanel, values);
         dialog.init();
-        dialog.setTitle("Add A Value");
+        dialog.setTitle(getResourceString("dialog.addvalue.title"));
         return dialog;
     }
 

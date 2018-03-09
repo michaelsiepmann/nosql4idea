@@ -56,13 +56,13 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
 
     @Override
     public Element getState() {
-        Element rootElement = new Element("nosql");
-        Element configurations = new Element("configurations");
+        Element rootElement = new Element("nosql"); //NON-NLS
+        Element configurations = new Element("configurations"); //NON-NLS
         rootElement.addContent(configurations);
         for (ServerConfiguration configuration : serverConfigurations) {
             configurations.addContent(XmlSerializer.serialize(configuration));
         }
-        Element shell = new Element("shell");
+        Element shell = new Element("shell"); //NON-NLS
         rootElement.addContent(shell);
         shell.addContent(XmlSerializer.serialize(shellPathByDatabaseVendor));
         return rootElement;
@@ -70,25 +70,25 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
 
     @Override
     public void loadState(Element element) {
-        for (Element child : element.getChild("configurations").getChildren()) {
+        for (Element child : element.getChild("configurations").getChildren()) { //NON-NLS
             Class<? extends ServerConfiguration> clazz = getServerConfigurationClass(child.getName());
             serverConfigurations.add(XmlSerializer.deserialize(child, clazz));
         }
-        shellPathByDatabaseVendor = XmlSerializer.deserialize(element.getChild("shell"), HashMap.class);
+        shellPathByDatabaseVendor = XmlSerializer.deserialize(element.getChild("shell"), HashMap.class); //NON-NLS
     }
 
     @NotNull
     private Class<? extends ServerConfiguration> getServerConfigurationClass(String name) {
         switch (name.toLowerCase()) {
-            case "elasticsearchserverconfiguration":
+            case "elasticsearchserverconfiguration": //NON-NLS
                 return ElasticsearchServerConfiguration.class;
-            case "mongoserverconfiguration":
+            case "mongoserverconfiguration": //NON-NLS
                 return MongoServerConfiguration.class;
-            case "redisserverconfiguration":
+            case "redisserverconfiguration": //NON-NLS
                 return RedisServerConfiguration.class;
-            case "couchbaseserverconfiguration":
+            case "couchbaseserverconfiguration": //NON-NLS
                 return CouchbaseServerConfiguration.class;
-            case "solrserverconfiguration":
+            case "solrserverconfiguration": //NON-NLS
                 return SolrServerConfiguration.class;
             default:
                 return MongoServerConfiguration.class;

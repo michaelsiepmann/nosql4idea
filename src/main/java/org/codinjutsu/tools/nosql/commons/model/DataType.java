@@ -25,15 +25,17 @@ import org.codinjutsu.tools.nosql.commons.view.add.NumberFieldWrapper;
 import org.codinjutsu.tools.nosql.commons.view.add.StringFieldWrapper;
 import org.codinjutsu.tools.nosql.commons.view.add.TextFieldWrapper;
 
+import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceString;
+
 public enum DataType {
 
-    STRING("String", new StringFieldWrapper()),
-    NUMBER("Number", new NumberFieldWrapper()),
-    BOOLEAN("Boolean", new BooleanFieldWrapper()),
-    ARRAY("Array", new JsonFieldArrayWrapper()),
-    OBJECT("Object", new JsonFieldObjectWrapper()),
-    NULL("Null", new NullFieldWrapper()),
-    DATE("Date", new DateTimeFieldWrapper());
+    STRING(getResourceString("datatype.string.name"), new StringFieldWrapper()),
+    NUMBER(getResourceString("datatype.number.name"), new NumberFieldWrapper()),
+    BOOLEAN(getResourceString("datatype.boolean.name"), new BooleanFieldWrapper()),
+    ARRAY(getResourceString("datatype.array.name"), new JsonFieldArrayWrapper()),
+    OBJECT(getResourceString("datatype.object.name"), new JsonFieldObjectWrapper()),
+    NULL(getResourceString("datatype.null.name"), new NullFieldWrapper()),
+    DATE(getResourceString("datatype.date.name"), new DateTimeFieldWrapper());
 
     private final String type;
     private final TextFieldWrapper textFieldWrapper;

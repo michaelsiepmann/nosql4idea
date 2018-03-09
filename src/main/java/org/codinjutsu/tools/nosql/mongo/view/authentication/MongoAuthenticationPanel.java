@@ -40,15 +40,14 @@ public class MongoAuthenticationPanel implements AuthenticationView {
     private JRadioButton defaultAuthMethodRadioButton;
     private JCheckBox sslConnectionField;
 
-
     public MongoAuthenticationPanel() {
-        usernameField.setName("usernameField");
-        passwordField.setName("passwordField");
-        authenticationDatabaseField.setName("authenticationDatabaseField");
-        mongoCRAuthRadioButton.setName("mongoCRAuthField");
-        scramSHA1AuthRadioButton.setName("scramSHA1AuthField");
-        defaultAuthMethodRadioButton.setName("defaultAuthMethod");
-        sslConnectionField.setName("sslConnectionField");
+        usernameField.setName("usernameField"); //NON-NLS
+        passwordField.setName("passwordField"); //NON-NLS
+        authenticationDatabaseField.setName("authenticationDatabaseField"); //NON-NLS
+        mongoCRAuthRadioButton.setName("mongoCRAuthField"); //NON-NLS
+        scramSHA1AuthRadioButton.setName("scramSHA1AuthField"); //NON-NLS
+        defaultAuthMethodRadioButton.setName("defaultAuthMethod"); //NON-NLS
+        sslConnectionField.setName("sslConnectionField"); //NON-NLS
 
         ButtonGroup authMethodGroup = new ButtonGroup();
         authMethodGroup.add(mongoCRAuthRadioButton);
