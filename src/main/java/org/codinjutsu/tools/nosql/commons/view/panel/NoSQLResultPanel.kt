@@ -13,6 +13,7 @@ import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.tree.TreeUtil
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
+import org.codinjutsu.tools.nosql.commons.model.DataType
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
@@ -41,7 +42,8 @@ internal open class NoSQLResultPanel(
         private val databasePanel: DatabasePanel,
         val editable: Boolean,
         private val nodeDescriptorFactory: NodeDescriptorFactory,
-        private val idDescriptorKey: String
+        private val idDescriptorKey: String,
+        private val dataTypes: Array<DataType>
 ) : JPanel(), Disposable {
 
     private val splitter: Splitter
@@ -69,8 +71,8 @@ internal open class NoSQLResultPanel(
     }
 
     private fun createEditionPanel(): EditionPanel? {
-        val editionPanel = EditionPanel(nodeDescriptorFactory, writeableColumnInfoDecider())
-        editionPanel.init(databasePanel, object : ActionCallback {
+        val editionPanel = EditionPanel(databasePanel, nodeDescriptorFactory, writeableColumnInfoDecider())
+        editionPanel.init(object : ActionCallback {
             override fun onOperationSuccess(message: String) {
                 hideEditionPanel()
                 GuiUtils.showNotification(resultTreePanel, MessageType.INFO, message, Balloon.Position.above)
@@ -128,12 +130,12 @@ internal open class NoSQLResultPanel(
 
     fun editSelectedDocument() {
         val document = getSelectedDocument() ?: return
-        editionPanel?.updateEditionTree(document)
+        editionPanel?.updateEditionTree(document, dataTypes)
         splitter.secondComponent = editionPanel
     }
 
     fun addDocument() {
-        editionPanel?.updateEditionTree(null)
+        editionPanel?.updateEditionTree(null, dataTypes)
         splitter.secondComponent = editionPanel
     }
 
@@ -146,7 +148,7 @@ internal open class NoSQLResultPanel(
             if (descriptor.key == idDescriptorKey) {
                 val context = databasePanel.context
                 val client: DatabaseClient<DatabaseElement> = context.client as DatabaseClient<DatabaseElement>
-                return client.findDocument(context, descriptor.value!!);
+                return client.findDocument(context, descriptor.value!!)
             }
         }
 

@@ -23,13 +23,16 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang.StringUtils;
-import org.codinjutsu.tools.nosql.DatabaseVendor;
+import org.codinjutsu.tools.nosql.DatabaseVendorInformation;
 import org.codinjutsu.tools.nosql.NoSqlConfiguration;
 import org.codinjutsu.tools.nosql.NoSqlExplorerPanel;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
+import static org.codinjutsu.tools.nosql.DatabaseVendor.REDIS;
 
 public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
 
@@ -52,11 +55,11 @@ public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
 
         Presentation presentation = e.getPresentation();
         presentation.setVisible(
-                configuration != null &&
-                        (StringUtils.isNotBlank(configuration.getShellPath(DatabaseVendor.MONGO)) ||
-                                StringUtils.isNotBlank(configuration.getShellPath(DatabaseVendor.REDIS))
+                (configuration != null) &&
+                        (isNotBlank(configuration.getShellPath(MONGO)) ||
+                                isNotBlank(configuration.getShellPath(REDIS))
                         ) &&
-                        noSqlExplorerPanel.getConfiguration() != null &&
+                        (noSqlExplorerPanel.getConfiguration() != null) &&
                         noSqlExplorerPanel.getConfiguration().isSingleServer()
         );
         presentation.setEnabled(noSqlExplorerPanel.hasDatabaseConsoleApplication());
@@ -71,10 +74,13 @@ public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
 
     private void runShell(Project project) {
         ServerConfiguration configuration = noSqlExplorerPanel.getConfiguration();
-        if (configuration.getDatabaseVendor().hasConsoleWindow) {
-            AbstractNoSQLConsoleRunner consoleRunner = configuration.getDatabaseVendor().createConsoleRunner(project, configuration, noSqlExplorerPanel.getSelectedDatabase());
+        DatabaseVendorInformation databaseVendorInformation = configuration.getDatabaseVendorInformation();
+        if (databaseVendorInformation.getHasConsoleWindow()) {
+            AbstractNoSQLConsoleRunner consoleRunner = databaseVendorInformation.createConsoleRunner(project, configuration, noSqlExplorerPanel.getSelectedDatabase());
             try {
-                consoleRunner.initAndRun();
+                if (consoleRunner != null) {
+                    consoleRunner.initAndRun();
+                }
             } catch (ExecutionException e1) {
                 throw new RuntimeException(e1);
             }

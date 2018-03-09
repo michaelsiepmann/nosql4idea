@@ -24,6 +24,7 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.codinjutsu.tools.nosql.DatabaseVendorInformation;
 import org.codinjutsu.tools.nosql.DatabaseVendorUIManager;
 import org.codinjutsu.tools.nosql.commons.DatabaseUI;
 import org.jdom.Element;
@@ -40,13 +41,12 @@ public class NoSqlDatabaseDataEditorProvider implements FileEditorProvider, Appl
     @NotNull
     @Override
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        NoSqlDatabaseObjectFile objectFile = (NoSqlDatabaseObjectFile) file;
-        DatabaseUI databaseUI = DatabaseVendorUIManager.getInstance(project).get(objectFile.getConfiguration().getDatabaseVendor());
-
+        DatabaseVendorInformation databaseVendorInformation = ((NoSqlDatabaseObjectFile) file).getConfiguration().getDatabaseVendor().getDatabaseVendorInformation();
+        DatabaseUI databaseUI = DatabaseVendorUIManager.getInstance(project).get(databaseVendorInformation);
         if (databaseUI == null) {
             throw new IllegalStateException("Unsupported file");
         }
-        return new NoSqlDatabaseDataEditor(databaseUI.createResultPanel(project, objectFile));
+        return new NoSqlDatabaseDataEditor(databaseUI.createResultPanel(project, (NoSqlDatabaseObjectFile) file));
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.apache.commons.httpclient.methods.PostMethod
 internal abstract class AbstractPostCommand : AbstractHttpClientCommand() {
 
     override fun createMethod(url: String): HttpMethod {
-        val method = PostMethod(url);
+        val method = PostMethod(url)
         preparePost(method)
         return method
     }

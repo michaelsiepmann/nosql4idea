@@ -9,8 +9,10 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
+import org.codinjutsu.tools.nosql.commons.model.DataType;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
+import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.AddKeyAction;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.AddValueAction;
 import org.codinjutsu.tools.nosql.commons.view.action.edition.DeleteKeyAction;
@@ -28,12 +30,14 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.codinjutsu.tools.nosql.commons.view.nodedescriptor.TreeModelFactoryKt.buildDBObject;
 import static org.codinjutsu.tools.nosql.commons.view.nodedescriptor.TreeModelFactoryKt.processObject;
+import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceString;
 
 public class EditionPanel extends JPanel implements Disposable {
 
@@ -45,11 +49,15 @@ public class EditionPanel extends JPanel implements Disposable {
 
     private JsonTreeTableView editTableView;
 
+    private SchemeItem scheme;
+
+    private final DatabasePanel databasePanel;
     private final NodeDescriptorFactory nodeDescriptorFactory;
     private final WriteableColumnInfoDecider writeableColumnInfoDecider;
 
-    public EditionPanel(NodeDescriptorFactory nodeDescriptorFactory, WriteableColumnInfoDecider writeableColumnInfoDecider) {
+    public EditionPanel(DatabasePanel databasePanel, NodeDescriptorFactory nodeDescriptorFactory, WriteableColumnInfoDecider writeableColumnInfoDecider) {
         super(new BorderLayout());
+        this.databasePanel = databasePanel;
 
         this.nodeDescriptorFactory = nodeDescriptorFactory;
         this.writeableColumnInfoDecider = writeableColumnInfoDecider;
@@ -62,11 +70,11 @@ public class EditionPanel extends JPanel implements Disposable {
         deleteButton.setName("deleteButton"); //NON-NLS
     }
 
-    public void init(DatabasePanel databasePanel, ActionCallback actionCallback) {
+    public void init(ActionCallback actionCallback) {
         cancelButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                actionCallback.onOperationCancelled("Modification canceled...");
+                actionCallback.onOperationCancelled(getResourceString("edition.messages.modificationCanceled"));
             }
         });
 
@@ -78,7 +86,7 @@ public class EditionPanel extends JPanel implements Disposable {
                     DatabaseClient<DatabaseElement> client = (DatabaseClient<DatabaseElement>) context.getClient();
                     client.update(context, buildEditedDocument());
                     databasePanel.executeQuery();
-                    actionCallback.onOperationSuccess("Document saved...");
+                    actionCallback.onOperationSuccess(getResourceString("edition.messages.documentSaved"));
                 } catch (Exception exception) {
                     actionCallback.onOperationFailure(exception);
                 }
@@ -93,7 +101,7 @@ public class EditionPanel extends JPanel implements Disposable {
                     DatabaseClient<DatabaseElement> client = (DatabaseClient<DatabaseElement>) context.getClient();
                     client.delete(context, getDocumentId());
                     databasePanel.executeQuery();
-                    actionCallback.onOperationSuccess("Document deleted...");
+                    actionCallback.onOperationSuccess(getResourceString("edition.messages.documentDeleted"));
                 } catch (Exception exception) {
                     actionCallback.onOperationFailure(exception);
                 }
@@ -114,7 +122,7 @@ public class EditionPanel extends JPanel implements Disposable {
         return buildDBObject((NoSqlTreeNode) editTableView.getTree().getModel().getRoot());
     }
 
-    public void updateEditionTree(DatabaseElement document) {
+    public void updateEditionTree(DatabaseElement document, DataType[] dataTypes) {
         String panelTitle = "New document";
         if (document != null) {
             panelTitle = "Edition";
@@ -129,7 +137,7 @@ public class EditionPanel extends JPanel implements Disposable {
         editionTreePanel.add(new JBScrollPane(editTableView));
         editionTreePanel.validate();
 
-        buildPopupMenu();
+        buildPopupMenu(dataTypes);
     }
 
     private TreeNode buildJsonTree(DatabaseElement document) {
@@ -138,7 +146,7 @@ public class EditionPanel extends JPanel implements Disposable {
         return rootNode;
     }
 
-    boolean containsKey(String key) {
+    public boolean containsKey(String key) {
         NoSqlTreeNode parentNode = getParentNode();
         if (parentNode == null) {
             return false;
@@ -163,6 +171,22 @@ public class EditionPanel extends JPanel implements Disposable {
         return (NoSqlTreeNode) editTableView.getTree().getLastSelectedPathComponent();
     }
 
+    public List<String> getSelectionPath() {
+        return getSelectionPath((NoSqlTreeNode) getSelectedNode().getParent());
+    }
+
+    private List<String> getSelectionPath(NoSqlTreeNode treeNode) {
+        if (treeNode != null) {
+            Object userObject = treeNode.getUserObject();
+            if (userObject instanceof KeyValueDescriptor) {
+                List<String> parentPath = getSelectionPath((NoSqlTreeNode) treeNode.getParent());
+                parentPath.add(((KeyValueDescriptor) userObject).getKey());
+                return parentPath;
+            }
+        }
+        return new ArrayList<>();
+    }
+
     public void addKey(String key, DatabaseElement value) {
 
         List<TreeNode> node = new LinkedList<>();
@@ -181,11 +205,11 @@ public class EditionPanel extends JPanel implements Disposable {
         treeModel.reload(parentNode);
     }
 
-    private void buildPopupMenu() {
+    private void buildPopupMenu(DataType[] values) {
         DefaultActionGroup actionPopupGroup = new DefaultActionGroup("AbstractEditorPopupGroup", true); //NON-NLS
         if (ApplicationManager.getApplication() != null) {
-            actionPopupGroup.add(new AddKeyAction(this));
-            actionPopupGroup.add(new AddValueAction(this));
+            actionPopupGroup.add(new AddKeyAction(this, values));
+            actionPopupGroup.add(new AddValueAction(this, values));
             actionPopupGroup.add(new DeleteKeyAction(this));
         }
 
@@ -224,6 +248,13 @@ public class EditionPanel extends JPanel implements Disposable {
         if (selectedNode != null) {
             TreeUtil.removeSelected(editTableView.getTree());
         }
+    }
+
+    public SchemeItem getScheme() {
+        if (scheme == null) {
+            scheme = databasePanel.getScheme();
+        }
+        return scheme;
     }
 
     @Override

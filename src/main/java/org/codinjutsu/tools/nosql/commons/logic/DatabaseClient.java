@@ -21,6 +21,7 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem;
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.jetbrains.annotations.NotNull;
@@ -83,4 +84,8 @@ public interface DatabaseClient<DOCUMENT> {
                 .collect(Collectors.toList());
     }
 
+    @NotNull
+    default SchemeItem getScheme(@NotNull DatabaseContext context) {
+        return SchemeItem.Companion.getEMPTY_SCHEME();
+    }
 }

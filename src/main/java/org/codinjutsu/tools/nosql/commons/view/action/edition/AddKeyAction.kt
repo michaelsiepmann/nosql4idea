@@ -16,22 +16,22 @@
 
 package org.codinjutsu.tools.nosql.commons.view.action.edition
 
-import com.intellij.icons.AllIcons
+import com.intellij.icons.AllIcons.General.Add
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import org.codinjutsu.tools.nosql.commons.view.AddKeyDialog
+import org.codinjutsu.tools.nosql.commons.model.DataType
+import org.codinjutsu.tools.nosql.commons.view.add.AddKeyDialog
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
-
 import java.awt.event.KeyEvent
 
-class AddKeyAction(private val editionPanel: EditionPanel) : AnAction("Add a key", "Add a key", AllIcons.General.Add) {
+class AddKeyAction(private val editionPanel: EditionPanel, private val dataTypes : Array<DataType>) : AnAction("Add a key", "Add a key", Add) {
 
     init {
         registerCustomShortcutSet(KeyEvent.VK_INSERT, KeyEvent.ALT_MASK, editionPanel)
     }
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
-        val dialog = AddKeyDialog.createDialog(editionPanel)
+        val dialog = AddKeyDialog.createDialog(editionPanel, editionPanel.selectionPath, dataTypes)
         dialog.show()
 
         if (dialog.isOK) {
@@ -40,6 +40,6 @@ class AddKeyAction(private val editionPanel: EditionPanel) : AnAction("Add a key
     }
 
     override fun update(event: AnActionEvent) {
-        event.presentation.isVisible = editionPanel.canAddKey();
+        event.presentation.isVisible = editionPanel.canAddKey()
     }
 }

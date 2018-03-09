@@ -4,7 +4,7 @@ import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportPanelSettings
 
-interface DatabaseContext {
+internal interface DatabaseContext {
     val client: DatabaseClient<*>
     val serverConfiguration: ServerConfiguration
     fun getImportPanelSettings(): ImportPanelSettings?

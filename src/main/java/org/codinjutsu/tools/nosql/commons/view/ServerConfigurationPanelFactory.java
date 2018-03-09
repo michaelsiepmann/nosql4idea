@@ -33,7 +33,7 @@ public class ServerConfigurationPanelFactory {
     }
 
     public ServerConfigurationPanel create(DatabaseVendor databaseVendor) {
-        DatabaseUI databaseUI = databaseVendorUIManager.get(databaseVendor);
+        DatabaseUI databaseUI = databaseVendorUIManager.get(databaseVendor.getDatabaseVendorInformation());
         return new ServerConfigurationPanel(
                 project,
                 databaseVendor,

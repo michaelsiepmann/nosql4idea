@@ -30,6 +30,8 @@ import org.codinjutsu.tools.nosql.mongo.logic.MongoExtraSettings;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.jetbrains.annotations.NotNull;
 
+import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
+
 
 public class MongoConsoleRunner extends AbstractNoSQLConsoleRunner {
 
@@ -57,7 +59,7 @@ public class MongoConsoleRunner extends AbstractNoSQLConsoleRunner {
     @Override
     @NotNull
     protected DatabaseVendor getDatabaseVendor() {
-        return DatabaseVendor.MONGO;
+        return MONGO;
     }
 
     @Override

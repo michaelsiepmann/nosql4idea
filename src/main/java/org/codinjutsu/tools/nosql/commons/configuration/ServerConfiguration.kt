@@ -1,9 +1,10 @@
 package org.codinjutsu.tools.nosql.commons.configuration
 
 import org.codinjutsu.tools.nosql.DatabaseVendor
+import org.codinjutsu.tools.nosql.DatabaseVendorInformation
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 
-interface ServerConfiguration {
+internal interface ServerConfiguration {
     val label: String?
     val databaseVendor: DatabaseVendor
     val serverUrl: String
@@ -12,5 +13,8 @@ interface ServerConfiguration {
     val authenticationSettings: AuthenticationSettings
     val isSingleServer: Boolean
 
-    fun copy() : ServerConfiguration
+    val databaseVendorInformation: DatabaseVendorInformation
+        get() = databaseVendor.databaseVendorInformation
+
+    fun copy(): ServerConfiguration
 }

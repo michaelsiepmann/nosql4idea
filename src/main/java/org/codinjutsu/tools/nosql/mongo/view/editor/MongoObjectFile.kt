@@ -24,7 +24,7 @@ import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection
 import javax.swing.Icon
 
-class MongoObjectFile(
+internal class MongoObjectFile(
         project: Project,
         configuration: ServerConfiguration,
         val collection: MongoCollection

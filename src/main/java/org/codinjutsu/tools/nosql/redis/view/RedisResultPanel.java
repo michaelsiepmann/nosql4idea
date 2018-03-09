@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.redis.view;
 
 import com.intellij.openapi.project.Project;
+import org.codinjutsu.tools.nosql.commons.model.DataType;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView;
@@ -19,7 +20,7 @@ public class RedisResultPanel extends NoSQLResultPanel {
     private String separator;
 
     RedisResultPanel(@NotNull Project project, DatabasePanel databasePanel) {
-        super(project, databasePanel, true, new RedisNodeDescriptorFactory(), "_id"); //NON-NLS
+        super(project, databasePanel, true, new RedisNodeDescriptorFactory(), "_id", new DataType[0]); //NON-NLS
     }
 
     void prepareTable(boolean groupByPrefix, String separator) {

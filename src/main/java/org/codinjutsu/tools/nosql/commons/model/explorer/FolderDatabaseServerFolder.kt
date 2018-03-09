@@ -12,5 +12,5 @@ abstract class FolderDatabaseServerFolder<DOCUMENT, DATABASE : Database> constru
         get() = databaseClient.isDatabaseWithCollections
 
     internal val databaseClient
-        get() = configuration.databaseVendor.getClient(project) as DatabaseClient<DOCUMENT>
+        get() = configuration.databaseVendor.databaseVendorInformation.getClient(project) as DatabaseClient<DOCUMENT>
 }

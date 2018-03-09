@@ -27,7 +27,7 @@ class DatabaseVendorClientManager(private val project: Project) {
     fun cleanUpServers() {
         DatabaseVendor.values()
                 .mapNotNull {
-                    it.getClient(project)
+                    it.databaseVendorInformation.getClient(project)
                 }
                 .forEach {
                     it.cleanUpServers()
@@ -47,7 +47,7 @@ class DatabaseVendorClientManager(private val project: Project) {
     }
 
     private fun databaseClient(databaseServer: DatabaseServer): DatabaseClient<*>? =
-            databaseServer.vendor.getClient(project)
+            databaseServer.vendor.databaseVendorInformation.getClient(project)
 
     companion object {
         fun getInstance(project: Project): DatabaseVendorClientManager =

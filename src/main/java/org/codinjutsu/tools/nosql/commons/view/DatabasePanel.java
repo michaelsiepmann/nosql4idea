@@ -20,8 +20,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.NumberDocument;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import org.apache.commons.lang.StringUtils;
+import org.codinjutsu.tools.nosql.commons.model.DataType;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.action.AddDocumentAction;
 import org.codinjutsu.tools.nosql.commons.view.action.CloseFindEditorAction;
@@ -89,7 +91,7 @@ public abstract class DatabasePanel extends NoSqlResultView {
             queryPanel.setVisible(false);
         }
 
-        resultPanel = createResultPanel(project, idDescriptor);
+        resultPanel = createResultPanel(project, idDescriptor, DataType.values());
 
         loadingDecorator = new LoadingDecorator(resultPanel, this, 0);
 
@@ -103,7 +105,7 @@ public abstract class DatabasePanel extends NoSqlResultView {
         initToolBar();
     }
 
-    protected abstract NoSQLResultPanel createResultPanel(Project project, String idDescriptor);
+    protected abstract NoSQLResultPanel createResultPanel(Project project, String idDescriptor, DataType[] dataTypes);
 
     protected JPanel initToolBar() {
         toolBar.setLayout(new BorderLayout());
@@ -366,5 +368,9 @@ public abstract class DatabasePanel extends NoSqlResultView {
     @NotNull
     private JavascriptExecutor createJavascriptExecutor(String content, Project project, DatabaseContext context) {
         return new JavascriptExecutor(content, project, new ScriptingDatabaseWrapper(context), context);
+    }
+
+    SchemeItem getScheme() {
+        return context.getClient().getScheme(context);
     }
 }

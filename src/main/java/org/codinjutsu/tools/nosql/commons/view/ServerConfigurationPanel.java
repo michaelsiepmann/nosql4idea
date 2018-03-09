@@ -67,17 +67,17 @@ public class ServerConfigurationPanel extends JPanel {
     private final Project project;
 
     private final DatabaseClient databaseClient;
-    private final DatabaseVendor databaseVendor;
     private final AuthenticationView authenticationView;
+    private String databaseVendorName;
 
     public ServerConfigurationPanel(Project project,
                                     DatabaseVendor databaseVendor,
                                     AuthenticationView authenticationView,
                                     boolean hasOptionsPanel) {
         this.project = project;
-        this.databaseVendor = databaseVendor;
+        databaseVendorName = databaseVendor.getName();
         this.authenticationView = authenticationView;
-        databaseClient = databaseVendor.getClient(project);
+        databaseClient = databaseVendor.getDatabaseVendorInformation().getClient(project);
 
         setLayout(new BorderLayout());
         add(rootPanel, BorderLayout.CENTER);
@@ -85,11 +85,11 @@ public class ServerConfigurationPanel extends JPanel {
 
         labelField.setName("labelField"); //NON-NLS
         databaseVendorLabel.setName("databaseVendorLabel"); //NON-NLS
-        databaseVendorLabel.setText(databaseVendor.name);
-        databaseVendorLabel.setIcon(databaseVendor.icon);
+        databaseVendorLabel.setText(databaseVendor.getName());
+        databaseVendorLabel.setIcon(databaseVendor.getIcon());
 
         databaseTipsLabel.setName("databaseTipsLabel"); //NON-NLS
-        databaseTipsLabel.setText(databaseVendor.tips);
+        databaseTipsLabel.setText(databaseVendor.getTips());
 
         serverUrlField.setName("serverUrlField"); //NON-NLS
 
@@ -131,12 +131,12 @@ public class ServerConfigurationPanel extends JPanel {
                 } catch (Exception ex) {
                     excRef.set(ex);
                 }
-            }, "Testing connection for " + databaseVendor.name, true, project);
+            }, "Testing connection for " + databaseVendorName, true, project);
 
             if (!excRef.isNull()) {
                 Messages.showErrorDialog(rootPanel, excRef.get().getMessage(), "Connection test failed");
             } else {
-                Messages.showInfoMessage(rootPanel, "Connection test successful for " + databaseVendor.name, "Connection test successful");
+                Messages.showInfoMessage(rootPanel, "Connection test successful for " + databaseVendorName, "Connection test successful");
             }
         });
     }

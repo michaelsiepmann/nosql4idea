@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.mongo.view;
 
 import com.intellij.openapi.project.Project;
+import org.codinjutsu.tools.nosql.commons.model.DataType;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider;
@@ -20,8 +21,8 @@ public class MongoPanel extends DatabasePanel {
     }
 
     @Override
-    protected NoSQLResultPanel createResultPanel(Project project, String idDescriptor) {
-        return new NoSQLResultPanel(project, this, true, new MongoNodeDescriptorFactory(), idDescriptor) {
+    protected NoSQLResultPanel createResultPanel(Project project, String idDescriptor, DataType[] dataTypes) {
+        return new NoSQLResultPanel(project, this, true, new MongoNodeDescriptorFactory(), idDescriptor, dataTypes) {
             @NotNull
             @Override
             protected WriteableColumnInfoDecider writeableColumnInfoDecider() {

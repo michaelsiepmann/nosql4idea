@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 
-class SolrServerConfiguration(
+internal class SolrServerConfiguration(
         label: String? = null,
         serverUrl: String = SOLR.defaultUrl,
         userDatabase: String? = null,

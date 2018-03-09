@@ -136,7 +136,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
     @NotNull
     private DatabaseServerFolder createDatabaseServerFolder(DatabaseServer databaseServer) {
-        return databaseServer.getVendor().createDatabaseServerFolder(databaseServer, project);
+        return databaseServer.getVendor().getDatabaseVendorInformation().createDatabaseServerFolder(databaseServer, project);
     }
 
     private void reloadServerConfiguration(final DefaultMutableTreeNode serverNode, final boolean expandAfterLoading) {
@@ -224,7 +224,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
         });
 
 
-        DefaultActionGroup actionGroup = new DefaultActionGroup("NoSqlExplorerGroup", false);
+        DefaultActionGroup actionGroup = new DefaultActionGroup("NoSqlExplorerGroup", false); //NON-NLS
         AnAction viewCollectionValuesAction = new ViewCollectionValuesAction(this);
         AnAction refreshServerAction = new RefreshServerAction(this);
         AnAction addCollectionAction = new AddCollectionAction(this);
@@ -240,9 +240,9 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
             actionGroup.add(new OpenPluginSettingsAction());
         }
 
-        GuiUtils.installActionGroupInToolBar(actionGroup, toolBarPanel, ActionManager.getInstance(), "NoSqlExplorerActions", true);
+        GuiUtils.installActionGroupInToolBar(actionGroup, toolBarPanel, ActionManager.getInstance(), "NoSqlExplorerActions", true); //NON-NLS
 
-        DefaultActionGroup actionPopupGroup = new DefaultActionGroup("NoSqlExplorerPopupGroup", true);
+        DefaultActionGroup actionPopupGroup = new DefaultActionGroup("NoSqlExplorerPopupGroup", true); //NON-NLS
         if (ApplicationManager.getApplication() != null) {
             actionPopupGroup.add(refreshServerAction);
             actionPopupGroup.add(viewCollectionValuesAction);
@@ -251,7 +251,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
             actionPopupGroup.add(new DropDatabaseAction(this));
         }
 
-        PopupHandler.installPopupHandler(databaseTree, actionPopupGroup, "POPUP", ActionManager.getInstance());
+        PopupHandler.installPopupHandler(databaseTree, actionPopupGroup, "POPUP", ActionManager.getInstance()); //NON-NLS
 
         databaseTree.addMouseListener(new MouseAdapter() {
             @Override
@@ -373,7 +373,10 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     public void dropFolder() {
         Folder selectedFolder = getSelectedFolder();
         if (selectedFolder != null) {
-            selectedFolder.getParent().deleteChild(selectedFolder);
+            Folder parent = selectedFolder.getParent();
+            if (parent != null) {
+                parent.deleteChild(selectedFolder);
+            }
             reloadServerConfiguration(getSelectedServerNode(), true);
         }
     }

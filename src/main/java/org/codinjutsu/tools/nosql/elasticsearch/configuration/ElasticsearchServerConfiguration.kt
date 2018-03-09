@@ -7,7 +7,7 @@ import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfigura
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion
 
-class ElasticsearchServerConfiguration(
+internal class ElasticsearchServerConfiguration(
         version: ElasticsearchVersion = ElasticsearchVersion.VERSION_20,
         label: String? = null,
         serverUrl: String = ELASTICSEARCH.defaultUrl,

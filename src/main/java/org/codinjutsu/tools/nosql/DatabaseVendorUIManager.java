@@ -34,8 +34,8 @@ public class DatabaseVendorUIManager {
         return ServiceManager.getService(project, DatabaseVendorUIManager.class);
     }
 
-    public DatabaseUI get(DatabaseVendor databaseVendor) {
-        return ServiceManager.getService(project, databaseVendor.getDatabaseUIClass());
+    public DatabaseUI get(DatabaseVendorInformation databaseVendorInformation) {
+        return ServiceManager.getService(project, databaseVendorInformation.getDatabaseUIClass());
     }
 
     public boolean accept(VirtualFile file) {

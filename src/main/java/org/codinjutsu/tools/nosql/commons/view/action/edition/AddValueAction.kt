@@ -19,13 +19,14 @@ package org.codinjutsu.tools.nosql.commons.view.action.edition
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import org.codinjutsu.tools.nosql.commons.view.AddValueDialog
+import org.codinjutsu.tools.nosql.commons.model.DataType
+import org.codinjutsu.tools.nosql.commons.view.add.AddValueDialog
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
 
-class AddValueAction(private val editionPanel: EditionPanel) : AnAction("Add a value", "Add a value", AllIcons.General.Add) {
+class AddValueAction(private val editionPanel: EditionPanel, private val dataTypes : Array<DataType>) : AnAction("Add a value", "Add a value", AllIcons.General.Add) {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
-        val dialog = AddValueDialog.createDialog(editionPanel)
+        val dialog = AddValueDialog.createDialog(editionPanel, dataTypes)
         dialog.show()
 
         if (dialog.isOK) {

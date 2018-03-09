@@ -14,35 +14,32 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.commons.view;
+package org.codinjutsu.tools.nosql.commons.view.add;
 
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
+import org.codinjutsu.tools.nosql.commons.model.DataType;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
-import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
-import org.codinjutsu.tools.nosql.mongo.model.JsonDataType;
+import org.codinjutsu.tools.nosql.commons.view.EditionPanel;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+public class AddValueDialog extends AbstractAddDialog {
 
-public class AddKeyDialog extends AbstractAddDialog {
-
-    private JTextField nameTextfield;
-    private ComboBox<JsonDataType> typeCombobox;
+    private final DataType[] dataTypes;
+    private ComboBox<DataType> typeCombobox;
     private JPanel valuePanel;
     private JPanel mainPanel;
 
-    private AddKeyDialog(EditionPanel editionPanel) {
+    private AddValueDialog(EditionPanel editionPanel, DataType[] dataTypes) {
         super(editionPanel);
-        mainPanel.setPreferredSize(GuiUtils.enlargeWidth(mainPanel.getPreferredSize(), 1.5d));
         valuePanel.setLayout(new BorderLayout());
-        nameTextfield.setName("keyName");
-        typeCombobox.setName("valueType");
+        typeCombobox.setName("valueType"); //NON-NLS
+        typeCombobox.requestFocus();
+        this.dataTypes = dataTypes;
     }
 
     @Nullable
@@ -51,31 +48,23 @@ public class AddKeyDialog extends AbstractAddDialog {
         return mainPanel;
     }
 
-    public static AddKeyDialog createDialog(EditionPanel parentPanel) {
-        AddKeyDialog dialog = new AddKeyDialog(parentPanel);
+    public static AddValueDialog createDialog(EditionPanel parentPanel, DataType[] values) {
+        AddValueDialog dialog = new AddValueDialog(parentPanel, values);
         dialog.init();
-        dialog.setTitle("Add A Key");
+        dialog.setTitle("Add A Value");
         return dialog;
     }
 
     @Override
     protected void init() {
         super.init();
-        initCombo(typeCombobox, valuePanel);
+
+        initTypeComboBox(typeCombobox, valuePanel, dataTypes);
     }
 
     @Nullable
     @Override
     protected ValidationInfo doValidate() {
-        String keyName = getKey();
-        if (isBlank(keyName)) {
-            return new ValidationInfo("Key name is not set");
-        }
-
-        if (editionPanel.containsKey(keyName)) {
-            return new ValidationInfo(String.format("Key '%s' is already used", keyName));
-        }
-
         try {
             currentEditor.validate();
         } catch (Exception ex) {
@@ -85,18 +74,14 @@ public class AddKeyDialog extends AbstractAddDialog {
         return null;
     }
 
-    @Nullable
-    @Override
-    public JComponent getPreferredFocusedComponent() {
-        return nameTextfield;
-    }
-
-    public String getKey() {
-        return nameTextfield.getText();
-    }
-
     @Override
     public DatabaseElement getValue() {
         return currentEditor.getValue();
+    }
+
+    @Nullable
+    @Override
+    public JComponent getPreferredFocusedComponent() {
+        return typeCombobox;
     }
 }

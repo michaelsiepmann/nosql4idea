@@ -22,7 +22,7 @@ import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 
-class CouchbaseServerConfiguration(
+internal class CouchbaseServerConfiguration(
         label: String? = null,
         serverUrl: String = COUCHBASE.defaultUrl,
         userDatabase: String? = null,

@@ -8,12 +8,15 @@ import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.exceptions.ConfigurationException
 import org.codinjutsu.tools.nosql.commons.exceptions.DatabaseException
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
+import org.codinjutsu.tools.nosql.commons.model.DataType
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.JsonObjectObjectWrapper
 import org.codinjutsu.tools.nosql.commons.model.JsonSearchResult
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
+import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem
+import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem.Companion.EMPTY_SCHEME
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration
@@ -23,6 +26,7 @@ import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.DeleteElement
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.FetchAllDocuments
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.FetchDocument
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetIndices
+import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetMapping
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.GetTypes
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Insert
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.Search
@@ -131,6 +135,48 @@ internal class ElasticsearchClient : DatabaseClient<JsonObject> {
                 .map { ElasticsearchType(it.key, index, configuration.version) }
                 .toMutableList()
     }
+
+    override fun getScheme(context: DatabaseContext): SchemeItem {
+        val serverConfiguration = context.serverConfiguration
+        if (context is ElasticsearchContext) {
+            val type = context.type
+            if (type != null) {
+                val index = context.database.name
+                val indexType = type.name
+                return convertToScheme(
+                        GetMapping(serverConfiguration.serverUrl, index, indexType).execute(),
+                        index,
+                        indexType
+                )
+            }
+        }
+        return EMPTY_SCHEME
+    }
+
+    private fun convertToScheme(json: JsonObject, index: String, indexType: String): SchemeItem {
+        val typeProperties = json.getAsJsonObject(index).getAsJsonObject("mappings").getAsJsonObject(indexType).getAsJsonObject("properties")
+        return SchemeItem("_source", DataType.STRING, collectSchemes(typeProperties))
+    }
+
+    private fun collectSchemes(properties: JsonObject): List<SchemeItem> =
+            properties.entrySet()
+                    .map { (key, value) -> schemeItem(key, value.asJsonObject) }
+
+    private fun schemeItem(key: String, value: JsonObject): SchemeItem {
+        val properties = value.get("properties")
+        if (properties != null) {
+            return SchemeItem(key, DataType.STRING, collectSchemes(properties.asJsonObject))
+        }
+        return SchemeItem(key, calcDataType(value), emptyList())
+    }
+
+    private fun calcDataType(value: JsonObject) =
+            when (value.typeOf()) {
+                "long" -> DataType.NUMBER
+                else -> DataType.STRING
+            }
+
+    private fun JsonObject.typeOf() = get("type").asJsonPrimitive.asString
 
     override fun isDatabaseWithCollections() = true
 

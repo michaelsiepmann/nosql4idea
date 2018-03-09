@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableConsoleRunnerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 
-class RedisServerConfiguration(
+internal class RedisServerConfiguration(
         label: String? = null,
         serverUrl: String = REDIS.defaultUrl,
         userDatabase: String? = null,

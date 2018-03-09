@@ -10,7 +10,7 @@ abstract class DatabaseServerFolder<DATABASE : Database> constructor(override va
     override val name: String?
         get() = data.label
 
-    val configuration: ServerConfiguration
+    internal val configuration: ServerConfiguration
         get() = data.configuration
 
     override val databaseServer: DatabaseServer

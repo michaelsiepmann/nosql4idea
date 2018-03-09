@@ -24,7 +24,7 @@ import org.codinjutsu.tools.nosql.commons.view.editor.NoSQLFakeFileType
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import javax.swing.Icon
 
-class CouchbaseObjectFile(project: Project, configuration: ServerConfiguration, val database: Database) :
+internal class CouchbaseObjectFile(project: Project, configuration: ServerConfiguration, val database: Database) :
         NoSqlDatabaseObjectFile(project, configuration, String.format("%s/%s", configuration.label, database.name)) {
 
     override fun getFileType() = FILE_TYPE

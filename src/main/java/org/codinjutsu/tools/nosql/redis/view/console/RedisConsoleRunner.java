@@ -26,6 +26,8 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
 import org.jetbrains.annotations.NotNull;
 
+import static org.codinjutsu.tools.nosql.DatabaseVendor.REDIS;
+
 
 public class RedisConsoleRunner extends AbstractNoSQLConsoleRunner {
 
@@ -65,7 +67,7 @@ public class RedisConsoleRunner extends AbstractNoSQLConsoleRunner {
     @NotNull
     @Override
     protected DatabaseVendor getDatabaseVendor() {
-        return DatabaseVendor.REDIS;
+        return REDIS;
     }
 
     @Override

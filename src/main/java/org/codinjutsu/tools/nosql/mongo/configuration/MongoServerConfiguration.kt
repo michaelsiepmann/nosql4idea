@@ -6,7 +6,7 @@ import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableConsoleRunnerConfiguration
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
 
-class MongoServerConfiguration(
+internal class MongoServerConfiguration(
         label: String? = null,
         serverUrl: String = MONGO.defaultUrl,
         userDatabase: String? = null,

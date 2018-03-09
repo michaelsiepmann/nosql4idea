@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.view
 
 import com.intellij.openapi.project.Project
+import org.codinjutsu.tools.nosql.commons.model.DataType
 import org.codinjutsu.tools.nosql.commons.model.internal.json.JsonNodeDescriptorFactory
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseArray
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
@@ -10,8 +11,9 @@ import org.codinjutsu.tools.nosql.commons.view.panel.NoSQLResultPanel
 internal class DatabaseResultPanel(
         project: Project,
         databasePanel: DatabasePanel,
-        idDescriptorKey: String
-) : NoSQLResultPanel(project, databasePanel, true, JsonNodeDescriptorFactory(), idDescriptorKey) {
+        idDescriptorKey: String,
+        dataTypes: Array<DataType>
+) : NoSQLResultPanel(project, databasePanel, true, JsonNodeDescriptorFactory(), idDescriptorKey, dataTypes) {
 
     override fun writeableColumnInfoDecider() = object : WriteableColumnInfoDecider {
         override fun isNodeWriteable(treeNode: NoSqlTreeNode) =

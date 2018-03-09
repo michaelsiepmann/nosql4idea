@@ -50,4 +50,6 @@ internal class JsonDatabaseClient(private val delegate: DatabaseClient<JsonObjec
     }
 
     override fun getServers(): Collection<DatabaseServer> = delegate.servers
+
+    override fun getScheme(context: DatabaseContext) = delegate.getScheme(context.getDelegatedContext())
 }

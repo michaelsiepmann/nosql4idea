@@ -21,6 +21,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.panels.NonOpaquePanel;
+import org.codinjutsu.tools.nosql.commons.model.DataType;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
@@ -96,7 +97,7 @@ public class RedisPanel extends DatabasePanel {
     }
 
     @Override
-    protected NoSQLResultPanel createResultPanel(Project project, String idDescriptor) {
+    protected NoSQLResultPanel createResultPanel(Project project, String idDescriptor, DataType[] dataTypes) {
         return new RedisResultPanel(project, this);
     }
 

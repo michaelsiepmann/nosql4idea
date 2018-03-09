@@ -60,7 +60,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
+import static org.codinjutsu.tools.nosql.DatabaseVendor.REDIS;
+import static org.codinjutsu.tools.nosql.DatabaseVendor.SOLR;
 import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceString;
 
 public class NoSqlConfigurable extends BaseConfigurable {
@@ -108,16 +113,16 @@ public class NoSqlConfigurable extends BaseConfigurable {
     public JComponent createComponent() {
         JPanel databaseVendorShellOptionsPanel = new JPanel();
         databaseVendorShellOptionsPanel.setLayout(new BoxLayout(databaseVendorShellOptionsPanel, BoxLayout.Y_AXIS));
-        mongoShellPanel = new ShellPathPanel(DatabaseVendor.MONGO, "--version"); //NON-NLS
+        mongoShellPanel = new ShellPathPanel(MONGO, "--version"); //NON-NLS
         databaseVendorShellOptionsPanel.add(mongoShellPanel);
-        redisShellPanel = new ShellPathPanel(DatabaseVendor.REDIS, "--version"); //NON-NLS
+        redisShellPanel = new ShellPathPanel(REDIS, "--version"); //NON-NLS
         databaseVendorShellOptionsPanel.add(redisShellPanel);
-        solrShellPanel = new ShellPathPanel(DatabaseVendor.SOLR, "-V"); //NON-NLS
+        solrShellPanel = new ShellPathPanel(SOLR, "-V"); //NON-NLS
         databaseVendorShellOptionsPanel.add(solrShellPanel);
 
-        mainPanel.add(databaseVendorShellOptionsPanel, BorderLayout.NORTH);
+        mainPanel.add(databaseVendorShellOptionsPanel, NORTH);
 
-        mainPanel.add(new TablePanel(), BorderLayout.CENTER);
+        mainPanel.add(new TablePanel(), CENTER);
 
         return mainPanel;
     }
@@ -134,30 +139,30 @@ public class NoSqlConfigurable extends BaseConfigurable {
         }
 
         if (isMongoShellPathModified()) {
-            configuration.setShellPath(DatabaseVendor.MONGO, mongoShellPanel.getShellPath());
+            configuration.setShellPath(MONGO, mongoShellPanel.getShellPath());
         }
 
         if (isRedisShellPathModified()) {
-            configuration.setShellPath(DatabaseVendor.REDIS, redisShellPanel.getShellPath());
+            configuration.setShellPath(REDIS, redisShellPanel.getShellPath());
         }
 
         if (isSolrShellPathModified()) {
-            configuration.setShellPath(DatabaseVendor.SOLR, solrShellPanel.getShellPath());
+            configuration.setShellPath(SOLR, solrShellPanel.getShellPath());
         }
 
         NoSqlWindowManager.getInstance(project).apply();
     }
 
     private boolean isMongoShellPathModified() {
-        return mongoShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(DatabaseVendor.MONGO));
+        return mongoShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(MONGO));
     }
 
     private boolean isRedisShellPathModified() {
-        return redisShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(DatabaseVendor.REDIS));
+        return redisShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(REDIS));
     }
 
     private boolean isSolrShellPathModified() {
-        return solrShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(DatabaseVendor.SOLR));
+        return solrShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(SOLR));
     }
 
     private boolean areConfigurationsModified() {
@@ -198,8 +203,8 @@ public class NoSqlConfigurable extends BaseConfigurable {
             return;
         }
 
-        DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
-        DatabaseClient client = selectedDatabaseVendor.getClient(project);
+        DatabaseVendorInformation databaseVendorInformation = databaseVendorDialog.getSelectedDatabaseVendor().getDatabaseVendorInformation();
+        DatabaseClient client = databaseVendorInformation.getClient(project);
         if (client == null) {
             return;
         }
@@ -263,27 +268,28 @@ public class NoSqlConfigurable extends BaseConfigurable {
         private ShellPathPanel(DatabaseVendor databaseVendor, String testParameter) {
             this.testParameter = testParameter;
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-            add(createLabel(databaseVendor.name));
+            String vendorName = databaseVendor.getName();
+            add(createLabel(vendorName));
             shellPathField = createShellPathField(databaseVendor);
             add(shellPathField);
-            add(createTestButton(databaseVendor));
+            add(createTestButton(vendorName));
         }
 
         private JLabel createLabel(String databaseVendorName) {
             return new JLabel(getResourceString("settings.pathtocli.label", databaseVendorName));
         }
 
-        private JButton createTestButton(final DatabaseVendor databaseVendorName) {
+        private JButton createTestButton(String databaseVendorName) {
             JButton testButton = new JButton(getResourceString("settings.testbutton.label"));
             testButton.addActionListener(actionEvent -> testPath(databaseVendorName));
             return testButton;
         }
 
-        private void testPath(final DatabaseVendor databaseVendor) {
+        private void testPath(String databaseVendorName) {
             ProcessOutput processOutput;
             try {
                 processOutput = ProgressManager.getInstance()
-                        .runProcessWithProgressSynchronously(() -> checkShellPath(databaseVendor, getShellPath()), getResourceString("settings.testing.progresstitle", databaseVendor.name), true, project);
+                        .runProcessWithProgressSynchronously(() -> checkShellPath(databaseVendorName, getShellPath()), getResourceString("settings.testing.progresstitle", databaseVendorName), true, project);
             } catch (ProcessCanceledException pce) {
                 return;
             } catch (Exception e) {
@@ -291,11 +297,11 @@ public class NoSqlConfigurable extends BaseConfigurable {
                 return;
             }
             if (processOutput != null && processOutput.getExitCode() == 0) {
-                Messages.showInfoMessage(mainPanel, processOutput.getStdout(), getResourceString("settings.clipath.confirmed", databaseVendor.name));
+                Messages.showInfoMessage(mainPanel, processOutput.getStdout(), getResourceString("settings.clipath.confirmed", databaseVendorName));
             }
         }
 
-        ProcessOutput checkShellPath(DatabaseVendor databaseVendor, String shellPath) throws ExecutionException, TimeoutException {
+        ProcessOutput checkShellPath(String databaseVendorName, String shellPath) throws ExecutionException, TimeoutException {
             if (isBlank(shellPath)) {
                 return null;
             }
@@ -311,7 +317,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                     handler.runProcess(TIMEOUT_MS) :
                     handler.runProcessWithProgressIndicator(indicator);
             if (result.isTimeout()) {
-                throw new TimeoutException(getResourceString("settings.errormessages.clitimeout", databaseVendor.name));
+                throw new TimeoutException(getResourceString("settings.errormessages.clitimeout", databaseVendorName));
             }
             if (result.isCancelled()) {
                 throw new ProcessCanceledException();
@@ -340,7 +346,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
             TextFieldWithBrowseButton component = new TextFieldWithBrowseButton();
             component.getChildComponent().setName("shellPathField"); //NON-NLS
             shellPathField.setComponent(component);
-            shellPathField.getComponent().addBrowseFolderListener(getResourceString("settings.cliconfigbrowserdialog.title", databaseVendor.name), "", null,
+            shellPathField.getComponent().addBrowseFolderListener(getResourceString("settings.cliconfigbrowserdialog.title", databaseVendor.getName()), "", null,
                     new FileChooserDescriptor(true, false, false, false, false, false));
 
             shellPathField.getComponent().setText(configuration.getShellPath(databaseVendor));
@@ -381,8 +387,8 @@ public class NoSqlConfigurable extends BaseConfigurable {
                 @Override
                 protected void customizeCellRenderer(JTable jTable, Object value, boolean b, boolean b1, int i, int i1) {
                     DatabaseVendor databaseVendor = (DatabaseVendor) value;
-                    setIcon(databaseVendor.icon);
-                    append(databaseVendor.name);
+                    setIcon(databaseVendor.getIcon());
+                    append(databaseVendor.getName());
                 }
             });
 
