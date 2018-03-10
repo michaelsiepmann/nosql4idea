@@ -1,7 +1,15 @@
-# NoSql Plugin for IntelliJ IDEA version 0.1.0-SNAPSHOT
+# NoSql Plugin for IntelliJ IDEA version 0.2.0-SNAPSHOT
 
 ## Description
-This plugin is a fork from [mongo4idea](https://github.com/dboissier/mongo4idea) and intends to integrate Redis and Couchbase databases. Please note that the Couchbase integration is experimental because I am not a strong user of this database.
+This plugin is a fork from [nosqlidea](https://github.com/dboissier/nosql4idea) and intends to integrate Elasticseach and Solr databases. Please note that everything is still under construction. The internal structure will be changed to have one codebase for all databases.
+
+Currently it will support:
+
+* MongoDB
+* Couchbase
+* Redis
+* Elasticsearch
+* Solr
 
 ## Current status: EAP
 
@@ -10,12 +18,7 @@ This plugin is a fork from [mongo4idea](https://github.com/dboissier/mongo4idea)
 
 ## Plugin Compatibility
 
-This plugin is built with JDK 1.7 and idea 14.1 version.
-
-The plugin has been tested with the following databases:
-* MongoDB 2.7 and 3.0
-* Redis 2.8.21
-* Couchbase Community 4.0.0
+This plugin is built with JDK 1.8 and idea 17.1 version.
 
 ## Installation 
  
@@ -62,15 +65,10 @@ Double click on the database icon from your couchbase server and the results wil
 **Important note**
 To get the results from each bucket, an **Index** must be created. Otherwise an error message is raised.
 
-## Roadmap
+## Things, I'm currently working on
 
-### 0.1.0
-
-* integrate Redis : view results with 'Group by prefix' feature like **properties editor**
-* integrate Couchbase : view results 
-
-### 0.2.0
-
-* delete, update and add features for Redis and Couchbase
+* refactor the codebase to make it easier to update a function for all databases
+* add import and export of data
+* add a scripting-tool to make a bulk-update for all items of a database
 
 
