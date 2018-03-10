@@ -1,4 +1,4 @@
-package org.codinjutsu.tools.nosql.commons.model.internal.json
+package org.codinjutsu.tools.nosql.commons.model.internal.layer
 
 import com.intellij.icons.AllIcons.Json.Array
 import com.intellij.icons.AllIcons.Json.Object
@@ -17,7 +17,7 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.NumberKey
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.StringKeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor
 
-internal class JsonNodeDescriptorFactory : NodeDescriptorFactory {
+internal class DatabaseNodeDescriptorFactory : NodeDescriptorFactory {
 
     override fun createResultDescriptor(name: String) = DatabaseResultDescriptor(name)
 

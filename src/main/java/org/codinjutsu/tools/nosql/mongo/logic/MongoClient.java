@@ -47,6 +47,7 @@ import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
 import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult;
 import org.codinjutsu.tools.nosql.mongo.model.internal.DelegatingMongoSearchResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,6 +70,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
     public static final String ID_DESCRIPTOR_KEY = "_id"; //NON-NLS
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
+    @NotNull
     public static MongoClient getInstance(Project project) {
         return ServiceManager.getService(project, MongoClient.class);
     }
@@ -82,6 +84,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         }
     }
 
+    @NotNull
     private MongoIterable<String> getCollectionNames(com.mongodb.MongoClient mongo, String userDatabase) {
         if (isNotEmpty(userDatabase)) {
             return mongo.getDatabase(userDatabase).listCollectionNames();
@@ -116,6 +119,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         databaseServer.setStatus(DatabaseServer.Status.OK);
     }
 
+    @NotNull
     private List<Database> loadDatabaseCollections(ServerConfiguration configuration) {
         try (com.mongodb.MongoClient mongo = createMongoClient(configuration)) {
             String userDatabase = configuration.getUserDatabase();
@@ -134,6 +138,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         }
     }
 
+    @NotNull
     private Database createMongoDatabaseAndItsCollections(com.mongodb.client.MongoDatabase database) {
         return new MongoDatabase(database.getName(), new HashSet<>(toList(database.listCollectionNames())));
     }
@@ -170,6 +175,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         withMongoClient(configuration, mongo -> mongo.dropDatabase(database.getName()));
     }
 
+    @NotNull
     SearchResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
         return withMongoClient(context, mongo -> {
             MongoCollection mongoCollection = context.getMongoCollection();
@@ -189,6 +195,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         return new DelegatingMongoSearchResult(findOnMongoServer(context));
     }
 
+    @NotNull
     private SearchResult findOnMongoServer(DatabaseContext context) {
         return withMongoClient(context, mongo -> {
             MongoContext mongoContext = (MongoContext) context;
@@ -202,6 +209,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
     }
 
     @Override
+    @Nullable
     public DatabaseElement findDocument(DatabaseContext context, @NotNull Object _id) {
         return convert(findOneOnMongoServer(context, updateId(_id)));
     }
@@ -224,11 +232,13 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
     }
 
     @Override
+    @NotNull
     public SearchResult loadRecords(DatabaseContext context, QueryOptions query) {
         return new DelegatingMongoSearchResult(loadCollectionValues((MongoContext) context, new MongoQueryOptions(query)));
     }
 
-    private SearchResult aggregate(MongoQueryOptions mongoQueryOptions, MongoSearchResult mongoSearchResult, DBCollection collection) {
+    @NotNull
+    private SearchResult aggregate(MongoQueryOptions mongoQueryOptions, @NotNull MongoSearchResult mongoSearchResult, DBCollection collection) {
         AggregationOutput aggregate = collection.aggregate(mongoQueryOptions.getOperations());
         int index = 0;
         Iterator<DBObject> iterator = aggregate.results().iterator();
@@ -238,6 +248,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         return mongoSearchResult;
     }
 
+    @NotNull
     private SearchResult find(MongoQueryOptions mongoQueryOptions, MongoSearchResult mongoSearchResult, DBCollection collection) {
         try (DBCursor cursor = createCursor(mongoQueryOptions, collection)) {
             int index = 0;
@@ -249,18 +260,21 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         return mongoSearchResult;
     }
 
+    @NotNull
     private DBCursor createCursor(MongoQueryOptions mongoQueryOptions, DBCollection collection) {
         DBCursor cursor = findCursor(mongoQueryOptions, collection);
         DBObject sort = mongoQueryOptions.getSort();
         return sort != null ? cursor.sort(sort) : cursor;
     }
 
+    @NotNull
     private DBCursor findCursor(MongoQueryOptions mongoQueryOptions, DBCollection collection) {
         DBObject filter = mongoQueryOptions.getFilter();
         DBObject projection = mongoQueryOptions.getProjection();
         return projection == null ? collection.find(filter) : collection.find(filter, projection);
     }
 
+    @NotNull
     protected com.mongodb.MongoClient createMongoClient(ServerConfiguration configuration) {
         String serverUrl = configuration.getServerUrl();
         if (StringUtils.isEmpty(serverUrl)) {
@@ -293,12 +307,14 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
     }
 
     @Override
+    @NotNull
     public MongoCollection createFolder(ServerConfiguration serverConfiguration, String parentFolderName, String folderName) {
         com.mongodb.client.MongoDatabase database = createMongoClient(serverConfiguration).getDatabase(parentFolderName);
         database.createCollection(folderName);
         return new MongoCollection(folderName, parentFolderName);
     }
 
+    @NotNull
     private List<String> toList(MongoIterable<String> mongoIterable) {
         List<String> result = new ArrayList<>();
         mongoIterable.forEach((Consumer<String>) result::add);

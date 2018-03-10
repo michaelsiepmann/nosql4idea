@@ -11,7 +11,11 @@ internal class InternalDatabaseObject : InternalDatabaseElement(), DatabaseObjec
     override fun get(key: String) = map[key]
 
     override fun add(key: String, value: Any?) {
-        map[key] = InternalDatabasePrimitive(value)
+        if (value is InternalDatabaseElement) {
+            map[key] = value
+        } else {
+            map[key] = InternalDatabasePrimitive(value)
+        }
     }
 
     override fun addProperty(key: String, value: Boolean) {
@@ -29,6 +33,8 @@ internal class InternalDatabaseObject : InternalDatabaseElement(), DatabaseObjec
     override fun addProperty(key: String, value: String) {
         map[key] = InternalDatabasePrimitive(value)
     }
+
+    override fun asObject() = this
 
     override fun toString() = map.toString()
 }

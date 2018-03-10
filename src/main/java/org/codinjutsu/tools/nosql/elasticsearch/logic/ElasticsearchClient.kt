@@ -1,6 +1,5 @@
 package org.codinjutsu.tools.nosql.elasticsearch.logic
 
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
@@ -12,12 +11,17 @@ import org.codinjutsu.tools.nosql.commons.model.DataType
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
-import org.codinjutsu.tools.nosql.commons.model.JsonObjectObjectWrapper
-import org.codinjutsu.tools.nosql.commons.model.JsonSearchResult
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.JsonSearchResult
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
+import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
+import org.codinjutsu.tools.nosql.commons.model.internal.toDatabaseElement
+import org.codinjutsu.tools.nosql.commons.model.internal.toJsonElement
 import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem
 import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem.Companion.EMPTY_SCHEME
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseArray
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.BulkImport
@@ -37,7 +41,7 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion.VERSI
 import java.io.File
 import java.net.URL
 
-internal class ElasticsearchClient : DatabaseClient<JsonObject> {
+internal class ElasticsearchClient : DatabaseClient<DatabaseElement> {
 
     private val databaseServers = mutableListOf<DatabaseServer>()
 
@@ -81,14 +85,14 @@ internal class ElasticsearchClient : DatabaseClient<JsonObject> {
             ElasticsearchServerConfiguration(VERSION_20)
 
     override fun loadRecords(context: DatabaseContext, queryOptions: QueryOptions): SearchResult {
-        return jsonSearchResult(Search(context as ElasticsearchContext, queryOptions).execute(), context)
+        return jsonSearchResult(Search(context as ElasticsearchContext, queryOptions).execute().toDatabaseElement(), context)
     }
 
-    private fun jsonSearchResult(searchResult: JsonObject, context: ElasticsearchContext): JsonSearchResult {
-        val hits = searchResult.getAsJsonObject("hits")
-        val jsonArray = hits?.getAsJsonArray("hits") ?: JsonArray()
-        val objectWrappers = jsonArray.map { JsonObjectObjectWrapper(it.asJsonObject) }
-        val totalCount = hits?.get("total")?.asInt ?: 0
+    private fun jsonSearchResult(searchResult: DatabaseObject, context: ElasticsearchContext): JsonSearchResult {
+        val hits = searchResult.getAsDatabaseObject("hits")
+        val jsonArray = hits?.getAsDatabaseArray("hits") ?: InternalDatabaseArray()
+        val objectWrappers = jsonArray.map { DatabaseElementObjectWrapper(it.asObject()) }
+        val totalCount = hits?.get("total")?.asInt() ?: 0
         return JsonSearchResult(context.database.name, objectWrappers, totalCount)
     }
 
@@ -103,16 +107,17 @@ internal class ElasticsearchClient : DatabaseClient<JsonObject> {
     }
 
     override fun findAll(context: DatabaseContext): JsonSearchResult {
-        return jsonSearchResult(FetchAllDocuments(context as ElasticsearchContext).execute(), context)
+        return jsonSearchResult(FetchAllDocuments(context as ElasticsearchContext).execute().toDatabaseElement(), context)
     }
 
     override fun findDocument(context: DatabaseContext, id: Any) =
-            FetchDocument(context as ElasticsearchContext, id.toString()).execute()
+            FetchDocument(context as ElasticsearchContext, id.toString()).execute().toDatabaseElement()
 
-    override fun update(context: DatabaseContext, document: JsonObject) {
-        val id = document.getAsJsonPrimitive("_id").asString
-        val result = Insert(context as ElasticsearchContext, document.getAsJsonObject("_source")
-                ?: document, id).execute()
+    override fun update(context: DatabaseContext, document: DatabaseElement) {
+        val element = document.toJsonElement().asJsonObject
+        val id = element.getAsJsonPrimitive("_id").asString
+        val result = Insert(context as ElasticsearchContext, element.getAsJsonObject("_source")
+                ?: element, id).execute()
     }
 
     override fun delete(context: DatabaseContext, _id: Any) {

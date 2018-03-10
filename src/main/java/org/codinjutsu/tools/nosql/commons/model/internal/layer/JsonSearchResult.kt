@@ -1,5 +1,6 @@
-package org.codinjutsu.tools.nosql.commons.model
+package org.codinjutsu.tools.nosql.commons.model.internal.layer
 
+import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 
 internal class JsonSearchResult(

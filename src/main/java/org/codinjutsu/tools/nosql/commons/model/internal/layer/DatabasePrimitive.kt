@@ -12,6 +12,10 @@ internal interface DatabasePrimitive : DatabaseElement {
 
     fun asBoolean(): Boolean
 
+    override fun asInt(): Int {
+        return asNumber().toInt()
+    }
+
     fun asNumber(): Number
 
     fun asString(): String

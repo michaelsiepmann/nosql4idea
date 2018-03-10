@@ -1,6 +1,5 @@
 package org.codinjutsu.tools.nosql.solr.logic
 
-import com.google.gson.JsonObject
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
@@ -9,9 +8,13 @@ import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
-import org.codinjutsu.tools.nosql.commons.model.JsonObjectObjectWrapper
-import org.codinjutsu.tools.nosql.commons.model.JsonSearchResult
+import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.JsonSearchResult
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
+import org.codinjutsu.tools.nosql.commons.model.internal.toDatabaseElement
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
+import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.solr.configuration.SolrServerConfiguration
 import org.codinjutsu.tools.nosql.solr.logic.commands.GetDocument
@@ -22,7 +25,7 @@ import org.codinjutsu.tools.nosql.solr.model.SolrContext
 import java.io.File
 import java.net.URL
 
-internal class SolrClient : DatabaseClient<JsonObject> {
+internal class SolrClient : DatabaseClient<DatabaseElement> {
 
     private val databaseServers = mutableListOf<DatabaseServer>()
 
@@ -54,22 +57,22 @@ internal class SolrClient : DatabaseClient<JsonObject> {
 
     override fun defaultConfiguration() = SolrServerConfiguration()
 
-    override fun findAll(context: DatabaseContext) = jsonSearchResult(JsonObject(), context) // todo
+    override fun findAll(context: DatabaseContext) = jsonSearchResult(InternalDatabaseObject(), context) // todo
 
     override fun findDocument(context: DatabaseContext, _id: Any) =
-            GetDocument(context as SolrContext, _id.toString()).execute()
+            GetDocument(context as SolrContext, _id.toString()).execute().toDatabaseElement()
 
-    override fun update(context: DatabaseContext, document: JsonObject) {
+    override fun update(context: DatabaseContext, document: DatabaseElement) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun loadRecords(context: DatabaseContext, query: QueryOptions) =
-            jsonSearchResult(Search(context as SolrContext, query).execute(), context)
+            jsonSearchResult(Search(context as SolrContext, query).execute().toDatabaseElement(), context)
 
-    private fun jsonSearchResult(jsonObject: JsonObject, context: DatabaseContext): JsonSearchResult {
-        val response = jsonObject.getAsJsonObject("response")
-        val count = response.getAsJsonPrimitive("numFound").asInt
-        val objects = response.getAsJsonArray("docs").map { JsonObjectObjectWrapper(it.asJsonObject) }
+    private fun jsonSearchResult(jsonObject: DatabaseObject, context: DatabaseContext): JsonSearchResult {
+        val response = jsonObject.getAsDatabaseObject("response")
+        val count = response?.getAsDatabasePrimitive("numFound")?.asInt() ?: 0
+        val objects = response?.getAsDatabaseArray("docs")?.map { DatabaseElementObjectWrapper(it.asObject()) } ?: emptyList()
         return JsonSearchResult((context as SolrContext).solrDatabase.name, objects, count)
     }
 
