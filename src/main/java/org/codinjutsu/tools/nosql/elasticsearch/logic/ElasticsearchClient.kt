@@ -13,7 +13,7 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
-import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper
+import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseObjectObjectWrapper
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
 import org.codinjutsu.tools.nosql.commons.model.internal.toDatabaseElement
@@ -91,7 +91,7 @@ internal class ElasticsearchClient : DatabaseClient<DatabaseElement> {
     private fun jsonSearchResult(searchResult: DatabaseObject, context: ElasticsearchContext): DatabaseElementSearchResult {
         val hits = searchResult.getAsDatabaseObject("hits")
         val jsonArray = hits?.getAsDatabaseArray("hits") ?: InternalDatabaseArray()
-        val objectWrappers = jsonArray.map { DatabaseElementObjectWrapper(it.asObject()) }
+        val objectWrappers = jsonArray.map { DatabaseObjectObjectWrapper(it.asObject()) }
         val totalCount = hits?.get("total")?.asInt() ?: 0
         return DatabaseElementSearchResult(context.database.name, objectWrappers, totalCount)
     }

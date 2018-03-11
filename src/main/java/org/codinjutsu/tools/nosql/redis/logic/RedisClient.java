@@ -24,21 +24,23 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
-import org.codinjutsu.tools.nosql.redis.model.RedisSearchResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Tuple;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -104,34 +106,23 @@ public class RedisClient implements DatabaseClient<DatabaseElement> {
     public SearchResult loadRecords(DatabaseContext context, QueryOptions query) {
         Jedis jedis = createJedis(context.getServerConfiguration());
         jedis.connect();
-        RedisSearchResult redisSearchResult = new RedisSearchResult();
-        int index = Integer.parseInt(((RedisContext) context).getDatabase().getName());
+        String name = ((RedisContext) context).getDatabase().getName();
+        int index = Integer.parseInt(name);
         jedis.select(index);
 
+        List<ObjectWrapper> elements = new ArrayList<>();
         try {
             Set<String> keys = jedis.keys(query.getFilter());
             for (String key : keys) {
                 RedisKeyType keyType = RedisKeyType.getKeyType(jedis.type(key));
-                if (RedisKeyType.LIST.equals(keyType)) {
-                    List<String> values = jedis.lrange(key, 0, -1);
-                    redisSearchResult.addList(key, values);
-                } else if (RedisKeyType.SET.equals(keyType)) {
-                    Set<String> values = jedis.smembers(key);
-                    redisSearchResult.addSet(key, values);
-                } else if (RedisKeyType.HASH.equals(keyType)) {
-                    Map<String, String> values = jedis.hgetAll(key);
-                    redisSearchResult.addHash(key, values);
-                } else if (RedisKeyType.ZSET.equals(keyType)) {
-                    Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf", "+inf"); //NON-NLS
-                    redisSearchResult.addSortedSet(key, valuesWithScores);
-                } else if (RedisKeyType.STRING.equals(keyType)) {
-                    String value = jedis.get(key);
-                    redisSearchResult.addString(key, value);
+                if (keyType != null) {
+                    DatabaseElement databaseElement = keyType.toDatabaseElement(jedis, key);
+                    elements.add(new DatabaseElementObjectWrapper(key, databaseElement));
                 }
             }
         } catch (Exception ignored) {
         }
-        return redisSearchResult;
+        return new DatabaseElementSearchResult(name, elements, elements.size());
     }
 
     protected Jedis createJedis(ServerConfiguration serverConfiguration) {
@@ -145,8 +136,9 @@ public class RedisClient implements DatabaseClient<DatabaseElement> {
 
     @NotNull
     @Override
-    public SearchResult findAll(DatabaseContext redisContext) {
-        return new RedisSearchResult(); // todo
+    public SearchResult findAll(DatabaseContext context) {
+        String name = ((RedisContext) context).getDatabase().getName();
+        return new DatabaseElementSearchResult(name, Collections.emptyList(), 0); // todo
     }
 
     @Nullable

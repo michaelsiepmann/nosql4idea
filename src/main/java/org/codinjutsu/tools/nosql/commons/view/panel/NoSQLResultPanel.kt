@@ -27,7 +27,6 @@ import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider.Companion.DONT_WRITE
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.buildTree
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.ResultDescriptor
 import java.awt.BorderLayout
@@ -43,7 +42,9 @@ internal open class NoSQLResultPanel(
         val editable: Boolean,
         private val nodeDescriptorFactory: NodeDescriptorFactory,
         private val idDescriptorKey: String,
-        private val dataTypes: Array<DataType>
+        private val dataTypes: Array<DataType>,
+        private val treeBuilder: TreeBuilder = DefaultTreeBuilder(),
+        private val treePreparator: TreePreparator = TreePreparator.NOOP
 ) : JPanel(), Disposable {
 
     private val splitter: Splitter
@@ -115,8 +116,10 @@ internal open class NoSQLResultPanel(
         resultTreePanel.validate()
     }
 
-    protected open fun createTableView(searchResult: SearchResult) =
-            JsonTreeTableView(buildTree(searchResult, nodeDescriptorFactory), JsonTreeTableView.KEY, JsonTreeTableView.READONLY_VALUE)
+    protected open fun createTableView(searchResult: SearchResult): JsonTreeTableView {
+        val treeNode = treeBuilder.build(searchResult, nodeDescriptorFactory)
+        return JsonTreeTableView(treePreparator.prepare(treeNode), JsonTreeTableView.KEY, JsonTreeTableView.READONLY_VALUE)
+    }
 
     protected open fun buildPopupMenu() {
         val actionPopupGroup = DefaultActionGroup("NoSQLResultPopupGroup", true)

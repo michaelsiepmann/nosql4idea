@@ -8,7 +8,7 @@ import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
-import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper
+import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseObjectObjectWrapper
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
@@ -72,7 +72,7 @@ internal class SolrClient : DatabaseClient<DatabaseElement> {
     private fun jsonSearchResult(jsonObject: DatabaseObject, context: DatabaseContext): DatabaseElementSearchResult {
         val response = jsonObject.getAsDatabaseObject("response")
         val count = response?.getAsDatabasePrimitive("numFound")?.asInt() ?: 0
-        val objects = response?.getAsDatabaseArray("docs")?.map { DatabaseElementObjectWrapper(it.asObject()) } ?: emptyList()
+        val objects = response?.getAsDatabaseArray("docs")?.map { DatabaseObjectObjectWrapper(it.asObject()) } ?: emptyList()
         return DatabaseElementSearchResult((context as SolrContext).solrDatabase.name, objects, count)
     }
 

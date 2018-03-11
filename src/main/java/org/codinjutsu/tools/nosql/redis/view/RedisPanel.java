@@ -32,6 +32,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.view.action.EnableGroupingAction;
 import org.codinjutsu.tools.nosql.redis.view.action.SetSeparatorAction;
+import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisNodeDescriptorFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.Box;
@@ -43,6 +44,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class RedisPanel extends DatabasePanel {
 
+    private RedisTreePreparator treePreparator;
     private JBTextField filterField;
     private boolean groupData;
     private String groupSeparator;
@@ -85,10 +87,9 @@ public class RedisPanel extends DatabasePanel {
         return isNotBlank(filter) ? filter : "*";
     }
 
-    void updateResultTableTree(SearchResult redisSearchResult, boolean groupByPrefix, String separator) {
-        RedisResultPanel resultPanel = (RedisResultPanel) getResultPanel();
-        resultPanel.prepareTable(groupByPrefix, separator);
-        resultPanel.updateResultTableTree(redisSearchResult);
+    private void updateResultTableTree(SearchResult redisSearchResult, boolean groupByPrefix, String separator) {
+        treePreparator.prepareTable(groupByPrefix, separator);
+        getResultPanel().updateResultTableTree(redisSearchResult);
     }
 
     @Override
@@ -98,7 +99,8 @@ public class RedisPanel extends DatabasePanel {
 
     @Override
     protected NoSQLResultPanel createResultPanel(Project project, String idDescriptor, DataType[] dataTypes) {
-        return new RedisResultPanel(project, this);
+        treePreparator = new RedisTreePreparator();
+        return new NoSQLResultPanel(project, this, false, new RedisNodeDescriptorFactory(), idDescriptor, dataTypes, new RedisTreeBuilder(), treePreparator);
     }
 
     @NotNull

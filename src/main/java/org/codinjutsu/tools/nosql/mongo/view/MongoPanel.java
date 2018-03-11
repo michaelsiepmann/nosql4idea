@@ -5,7 +5,9 @@ import org.codinjutsu.tools.nosql.commons.model.DataType;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel;
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider;
+import org.codinjutsu.tools.nosql.commons.view.panel.DefaultTreeBuilder;
 import org.codinjutsu.tools.nosql.commons.view.panel.NoSQLResultPanel;
+import org.codinjutsu.tools.nosql.commons.view.panel.TreePreparator;
 import org.codinjutsu.tools.nosql.mongo.model.MongoContext;
 import org.codinjutsu.tools.nosql.mongo.view.columninfo.MongoWriteableColumnInfoDecider;
 import org.codinjutsu.tools.nosql.mongo.view.model.MongoNodeDescriptorFactory;
@@ -22,7 +24,7 @@ public class MongoPanel extends DatabasePanel {
 
     @Override
     protected NoSQLResultPanel createResultPanel(Project project, String idDescriptor, DataType[] dataTypes) {
-        return new NoSQLResultPanel(project, this, true, new MongoNodeDescriptorFactory(), idDescriptor, dataTypes) {
+        return new NoSQLResultPanel(project, this, true, new MongoNodeDescriptorFactory(), idDescriptor, dataTypes, new DefaultTreeBuilder(), TreePreparator.Companion.getNOOP()) {
             @NotNull
             @Override
             protected WriteableColumnInfoDecider writeableColumnInfoDecider() {
