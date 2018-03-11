@@ -34,8 +34,15 @@ repositories {
     mavenCentral()
 }
 
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile "com.couchbase.client:java-client:2.5.5"
     compile "org.mongodb:mongo-java-driver:3.6.3"
     compile "redis.clients:jedis:2.9.0"
