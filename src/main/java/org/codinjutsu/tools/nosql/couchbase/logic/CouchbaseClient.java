@@ -20,7 +20,6 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.cluster.ClusterManager;
-import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.env.DefaultCouchbaseEnvironment;
 import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
@@ -35,15 +34,20 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
-import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseSearchResult;
+import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseJsonConverterKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -144,19 +148,22 @@ public class CouchbaseClient implements DatabaseClient<DatabaseElement> {
         N1qlQueryResult queryResult = bucket.query(N1qlQuery.simple(select("*").from(i(database.getName())).limit(queryOptions.getResultLimit())));
 
 //TODO dirty zone :(
-        CouchbaseSearchResult result = new CouchbaseSearchResult(database.getName());
+        List<ObjectWrapper> elements = new ArrayList<>();
+/*
+todo
         List<JsonObject> errors = queryResult.errors();
         if (!errors.isEmpty()) {
             cluster.disconnect();
             result.addErrors(errors);
             return result;
         }
+*/
 
         for (N1qlQueryRow row : queryResult.allRows()) {
-            result.add(row.value());
+            elements.add(new DatabaseElementObjectWrapper(CouchbaseJsonConverterKt.toDatabaseElement(row.value())));
         }
         cluster.disconnect();
-        return result;
+        return new DatabaseElementSearchResult(database.getName(), elements, elements.size());
     }
 
     @NotNull
@@ -169,7 +176,7 @@ public class CouchbaseClient implements DatabaseClient<DatabaseElement> {
         Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment.builder().build(), configuration.getServerUrl());
         Bucket bucket = cluster.openBucket(database.getName(), 10, TimeUnit.SECONDS);
 */
-        return new CouchbaseSearchResult(((CouchbaseContext) context).getDatabase().getName());
+        return new DatabaseElementSearchResult(((CouchbaseContext) context).getDatabase().getName(), Collections.emptyList(), 0);
     }
 
     @Nullable
