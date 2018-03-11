@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal
 
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
+import java.util.*
 
 internal class InternalDatabasePrimitive(private val value: Any?) : InternalDatabaseElement(), DatabasePrimitive {
 
@@ -16,6 +17,13 @@ internal class InternalDatabasePrimitive(private val value: Any?) : InternalData
                 value.isNumber()
             } else {
                 value is Number
+            }
+
+    override fun isDate() =
+            if (value is DatabasePrimitive) {
+                value.isDate()
+            } else {
+                value is Date
             }
 
     override fun isString() =
@@ -37,6 +45,13 @@ internal class InternalDatabasePrimitive(private val value: Any?) : InternalData
                 value.asNumber()
             } else {
                 value as Number
+            }
+
+    override fun asDate() =
+            if (value is DatabasePrimitive) {
+                value.asDate()
+            } else {
+                value as Date
             }
 
     override fun asString() =

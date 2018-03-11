@@ -36,16 +36,17 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.model.MongoCollection;
 import org.codinjutsu.tools.nosql.mongo.model.MongoContext;
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase;
 import org.codinjutsu.tools.nosql.mongo.model.MongoQueryOptions;
-import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult;
-import org.codinjutsu.tools.nosql.mongo.model.internal.DelegatingMongoSearchResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,8 +62,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.convert;
 import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.revert;
+import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.toDatabaseElement;
+import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.toDatabaseObject;
 
 public class MongoClient implements DatabaseClient<DatabaseElement> {
 
@@ -176,42 +178,38 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
     }
 
     @NotNull
-    SearchResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
+    private SearchResult loadCollectionValues(MongoContext context, MongoQueryOptions mongoQueryOptions) {
         return withMongoClient(context, mongo -> {
             MongoCollection mongoCollection = context.getMongoCollection();
             DBCollection collection = getCollection(mongo, mongoCollection);
-            MongoSearchResult mongoSearchResult = new MongoSearchResult(mongoCollection.getName());
-            if (mongoQueryOptions.isAggregate()) {
-                return aggregate(mongoQueryOptions, mongoSearchResult, collection);
-            }
-
-            return find(mongoQueryOptions, mongoSearchResult, collection);
+            List<ObjectWrapper> objectWrappers = mongoQueryOptions.isAggregate() ? aggregate(mongoQueryOptions, collection) : find(mongoQueryOptions, collection);
+            return new DatabaseElementSearchResult(mongoCollection.getName(), objectWrappers, objectWrappers.size());
         });
     }
 
     @NotNull
     @Override
     public SearchResult findAll(DatabaseContext context) {
-        return new DelegatingMongoSearchResult(findOnMongoServer(context));
+        return findOnMongoServer(context);
     }
 
     @NotNull
     private SearchResult findOnMongoServer(DatabaseContext context) {
         return withMongoClient(context, mongo -> {
             MongoContext mongoContext = (MongoContext) context;
-            MongoSearchResult mongoSearchResult = new MongoSearchResult(mongoContext.getMongoCollection().getName());
+            List<ObjectWrapper> list = new ArrayList<>();
             getCollection(mongoContext, mongo)
                     .find()
                     .toArray()
-                    .forEach(mongoSearchResult::add);
-            return mongoSearchResult;
+                    .forEach(item -> list.add(new DatabaseElementObjectWrapper(toDatabaseObject(item))));
+            return new DatabaseElementSearchResult(mongoContext.getMongoCollection().getName(), list, list.size());
         });
     }
 
     @Override
     @Nullable
     public DatabaseElement findDocument(DatabaseContext context, @NotNull Object _id) {
-        return convert(findOneOnMongoServer(context, updateId(_id)));
+        return toDatabaseElement(findOneOnMongoServer(context, updateId(_id)));
     }
 
     private DBObject findOneOnMongoServer(DatabaseContext context, Object _id) {
@@ -234,30 +232,32 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
     @Override
     @NotNull
     public SearchResult loadRecords(DatabaseContext context, QueryOptions query) {
-        return new DelegatingMongoSearchResult(loadCollectionValues((MongoContext) context, new MongoQueryOptions(query)));
+        return loadCollectionValues((MongoContext) context, new MongoQueryOptions(query));
     }
 
     @NotNull
-    private SearchResult aggregate(MongoQueryOptions mongoQueryOptions, @NotNull MongoSearchResult mongoSearchResult, DBCollection collection) {
+    private List<ObjectWrapper> aggregate(MongoQueryOptions mongoQueryOptions, DBCollection collection) {
+        List<ObjectWrapper> result = new ArrayList<>();
         AggregationOutput aggregate = collection.aggregate(mongoQueryOptions.getOperations());
         int index = 0;
         Iterator<DBObject> iterator = aggregate.results().iterator();
         while (iterator.hasNext() && index++ < mongoQueryOptions.getResultLimit()) {
-            mongoSearchResult.add(iterator.next());
+            result.add(new DatabaseElementObjectWrapper(toDatabaseObject(iterator.next())));
         }
-        return mongoSearchResult;
+        return result;
     }
 
     @NotNull
-    private SearchResult find(MongoQueryOptions mongoQueryOptions, MongoSearchResult mongoSearchResult, DBCollection collection) {
+    private List<ObjectWrapper> find(MongoQueryOptions mongoQueryOptions, DBCollection collection) {
+        List<ObjectWrapper> result = new ArrayList<>();
         try (DBCursor cursor = createCursor(mongoQueryOptions, collection)) {
             int index = 0;
             while (cursor.hasNext() && index < mongoQueryOptions.getResultLimit()) {
-                mongoSearchResult.add(cursor.next());
+                result.add(new DatabaseElementObjectWrapper(toDatabaseObject(cursor.next())));
                 index++;
             }
         }
-        return mongoSearchResult;
+        return result;
     }
 
     @NotNull

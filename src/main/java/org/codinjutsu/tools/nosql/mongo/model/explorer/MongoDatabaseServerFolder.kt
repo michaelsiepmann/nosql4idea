@@ -5,12 +5,12 @@ import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.explorer.Folder
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderDatabaseServerFolder
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase
-import org.codinjutsu.tools.nosql.mongo.model.MongoSearchResult
 
 internal class MongoDatabaseServerFolder(databaseserver: DatabaseServer, project: Project)
-    : FolderDatabaseServerFolder<MongoSearchResult, MongoDatabase>(databaseserver, project) {
+    : FolderDatabaseServerFolder<DatabaseElementSearchResult, MongoDatabase>(databaseserver, project) {
     override fun createDatabaseFolder(database: Database) =
             MongoDatabaseFolder(database as MongoDatabase, this)
 

@@ -44,7 +44,7 @@ public class RedisKeyValueDescriptor extends TypedKeyValueDescriptor<Object> {
         return createDescriptor(null, key, value);
     }
 
-    public static RedisKeyValueDescriptor createDescriptor(RedisKeyType keyType, String key, Object value) {
+    public static RedisKeyValueDescriptor   createDescriptor(RedisKeyType keyType, String key, Object value) {
         return new RedisKeyValueDescriptor(keyType, key, value, getStringAttribute(), findIcon(value));
     }
 

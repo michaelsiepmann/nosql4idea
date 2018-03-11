@@ -11,7 +11,7 @@ import org.codinjutsu.tools.nosql.commons.model.DataType
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.JsonSearchResult
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
@@ -88,12 +88,12 @@ internal class ElasticsearchClient : DatabaseClient<DatabaseElement> {
         return jsonSearchResult(Search(context as ElasticsearchContext, queryOptions).execute().toDatabaseElement(), context)
     }
 
-    private fun jsonSearchResult(searchResult: DatabaseObject, context: ElasticsearchContext): JsonSearchResult {
+    private fun jsonSearchResult(searchResult: DatabaseObject, context: ElasticsearchContext): DatabaseElementSearchResult {
         val hits = searchResult.getAsDatabaseObject("hits")
         val jsonArray = hits?.getAsDatabaseArray("hits") ?: InternalDatabaseArray()
         val objectWrappers = jsonArray.map { DatabaseElementObjectWrapper(it.asObject()) }
         val totalCount = hits?.get("total")?.asInt() ?: 0
-        return JsonSearchResult(context.database.name, objectWrappers, totalCount)
+        return DatabaseElementSearchResult(context.database.name, objectWrappers, totalCount)
     }
 
     override fun dropFolder(configuration: ServerConfiguration, type: Any) {
@@ -106,7 +106,7 @@ internal class ElasticsearchClient : DatabaseClient<DatabaseElement> {
         DeleteElement("${configuration.serverUrl}/${database.name}").execute()
     }
 
-    override fun findAll(context: DatabaseContext): JsonSearchResult {
+    override fun findAll(context: DatabaseContext): DatabaseElementSearchResult {
         return jsonSearchResult(FetchAllDocuments(context as ElasticsearchContext).execute().toDatabaseElement(), context)
     }
 

@@ -12,7 +12,7 @@ internal class SchemeItem(val name: String, val type: DataType, val children: Co
         get() = children.map { it.name }
 
     fun findItem(path: List<String>): SchemeItem? {
-        if (name == path[0]) {
+        if (path.isNotEmpty() && name == path[0]) {
             val subpath = path.drop(1)
             if (subpath.isEmpty()) {
                 return this

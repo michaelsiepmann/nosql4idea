@@ -12,32 +12,39 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalD
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabasePrimitive
 
-internal fun convert(dbObject: DBObject?): DatabaseElement? {
-    return when (dbObject) {
-        null -> null
-        is BasicDBList -> convertToInternalArray(dbObject)
-        is BasicDBObject -> convertToInternalObject(dbObject)
-        else -> convertToInternalPrimitive(dbObject)
+internal fun DBObject.toDatabaseElement(): DatabaseElement {
+    return when (this) {
+        is BasicDBList -> convertToInternalArray()
+        is BasicDBObject -> convertToInternalObject()
+        else -> convertToInternalPrimitive(this)
     }
 }
 
-private fun convertToInternalArray(dbObject: BasicDBList): DatabaseElement {
+internal fun DBObject.toDatabaseObject(): DatabaseObject {
+    return if (this is BasicDBObject) {
+        convertToInternalObject()
+    } else {
+        toDatabaseElement() as DatabaseObject
+    }
+}
+
+private fun BasicDBList.convertToInternalArray(): DatabaseElement {
     val result = InternalDatabaseArray()
-    (0 until dbObject.size).forEach { i -> result.add(convertUnknown(dbObject[i])!!) }
+    (0 until size).forEach { i -> result.add(convertUnknown(get(i))) }
     return result
 }
 
-private fun convertToInternalObject(dbObject: BasicDBObject): DatabaseElement {
+private fun BasicDBObject.convertToInternalObject(): DatabaseObject {
     val result = InternalDatabaseObject()
-    dbObject.keys.forEach {
-        result.add(it, convertUnknown(dbObject.get(it)))
+    keys.forEach {
+        result.add(it, convertUnknown(get(it)))
     }
     return result
 }
 
 private fun convertUnknown(value: Any) =
         if (value is DBObject) {
-            convert(value)
+            value.toDatabaseElement()
         } else {
             InternalDatabasePrimitive(value)
         }

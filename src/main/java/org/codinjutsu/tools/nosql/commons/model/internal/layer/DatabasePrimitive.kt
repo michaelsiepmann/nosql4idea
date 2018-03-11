@@ -1,5 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.model.internal.layer
 
+import java.util.*
+
 internal interface DatabasePrimitive : DatabaseElement {
 
     override fun isPrimitive() = true
@@ -7,6 +9,8 @@ internal interface DatabasePrimitive : DatabaseElement {
     fun isBoolean(): Boolean
 
     fun isNumber(): Boolean
+
+    fun isDate(): Boolean
 
     fun isString(): Boolean
 
@@ -17,6 +21,8 @@ internal interface DatabasePrimitive : DatabaseElement {
     }
 
     fun asNumber(): Number
+
+    fun asDate(): Date
 
     fun asString(): String
 

@@ -9,7 +9,7 @@ import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.JsonSearchResult
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
 import org.codinjutsu.tools.nosql.commons.model.internal.toDatabaseElement
@@ -69,11 +69,11 @@ internal class SolrClient : DatabaseClient<DatabaseElement> {
     override fun loadRecords(context: DatabaseContext, query: QueryOptions) =
             jsonSearchResult(Search(context as SolrContext, query).execute().toDatabaseElement(), context)
 
-    private fun jsonSearchResult(jsonObject: DatabaseObject, context: DatabaseContext): JsonSearchResult {
+    private fun jsonSearchResult(jsonObject: DatabaseObject, context: DatabaseContext): DatabaseElementSearchResult {
         val response = jsonObject.getAsDatabaseObject("response")
         val count = response?.getAsDatabasePrimitive("numFound")?.asInt() ?: 0
         val objects = response?.getAsDatabaseArray("docs")?.map { DatabaseElementObjectWrapper(it.asObject()) } ?: emptyList()
-        return JsonSearchResult((context as SolrContext).solrDatabase.name, objects, count)
+        return DatabaseElementSearchResult((context as SolrContext).solrDatabase.name, objects, count)
     }
 
     override fun delete(context: DatabaseContext, _id: Any) {

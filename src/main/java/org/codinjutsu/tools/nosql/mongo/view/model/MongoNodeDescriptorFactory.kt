@@ -2,6 +2,7 @@ package org.codinjutsu.tools.nosql.mongo.view.model
 
 import com.mongodb.DBObject
 import org.bson.types.ObjectId
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFactory
@@ -45,6 +46,7 @@ internal class MongoNodeDescriptorFactory : NodeDescriptorFactory {
                 is Date -> DateKeyValueDescriptor(key, value)
                 is ObjectId -> TypedKeyValueDescriptor(key, value, StyleAttributesProvider.getObjectIdAttribute())
                 is DBObject -> TypedKeyValueDescriptor(key, value, StyleAttributesProvider.getObjectAttribute())
+                is DatabaseElement -> TypedKeyValueDescriptor(key, value, StyleAttributesProvider.getObjectAttribute(), findIcon(value))
                 else -> DefaultKeyValueDescriptor(key, value, StyleAttributesProvider.getStringAttribute())
             }
 

@@ -3,14 +3,14 @@ package org.codinjutsu.tools.nosql.elasticsearch.model.explorer
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.JsonSearchResult
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
 import org.codinjutsu.tools.nosql.commons.model.explorer.Folder
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderDatabaseServerFolder
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchDatabase
 
 internal class ElasticsearchDatabaseServerFolder(databaseserver: DatabaseServer, project: Project) :
-        FolderDatabaseServerFolder<JsonSearchResult, ElasticsearchDatabase>(databaseserver, project) {
+        FolderDatabaseServerFolder<DatabaseElementSearchResult, ElasticsearchDatabase>(databaseserver, project) {
     override fun createDatabaseFolder(database: Database) =
             ElasticsearchIndexFolder(database as ElasticsearchDatabase, this)
 
