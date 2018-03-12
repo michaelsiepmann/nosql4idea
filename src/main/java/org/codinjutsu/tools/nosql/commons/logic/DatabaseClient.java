@@ -21,6 +21,7 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
 import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem;
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
@@ -31,7 +32,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public interface DatabaseClient<DOCUMENT> {
+public interface DatabaseClient {
 
     void connect(ServerConfiguration serverConfiguration);
 
@@ -48,11 +49,11 @@ public interface DatabaseClient<DOCUMENT> {
     SearchResult findAll(DatabaseContext context);
 
     @Nullable
-    DOCUMENT findDocument(DatabaseContext context, @NotNull Object _id);
+    DatabaseElement findDocument(DatabaseContext context, @NotNull Object _id);
 
     SearchResult loadRecords(DatabaseContext context, QueryOptions query);
 
-    void update(DatabaseContext context, DOCUMENT document);
+    void update(DatabaseContext context, DatabaseElement document);
 
     void delete(@NotNull DatabaseContext context, @NotNull Object _id);
 

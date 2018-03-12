@@ -3,14 +3,13 @@ package org.codinjutsu.tools.nosql.mongo.model.explorer
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
-import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.model.explorer.Folder
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderDatabaseServerFolder
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.mongo.model.MongoDatabase
 
 internal class MongoDatabaseServerFolder(databaseserver: DatabaseServer, project: Project)
-    : FolderDatabaseServerFolder<SearchResult, MongoDatabase>(databaseserver, project) {
+    : FolderDatabaseServerFolder<MongoDatabase>(databaseserver, project) {
     override fun createDatabaseFolder(database: Database) =
             MongoDatabaseFolder(database as MongoDatabase, this)
 

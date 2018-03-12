@@ -24,7 +24,7 @@ import org.codinjutsu.tools.nosql.solr.model.SolrContext
 import java.io.File
 import java.net.URL
 
-internal class SolrClient : DatabaseClient<DatabaseElement> {
+internal class SolrClient : DatabaseClient {
 
     private val databaseServers = mutableListOf<DatabaseServer>()
 

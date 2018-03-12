@@ -39,7 +39,7 @@ import org.codinjutsu.tools.nosql.elasticsearch.model.ElasticsearchVersion.VERSI
 import java.io.File
 import java.net.URL
 
-internal class ElasticsearchClient : DatabaseClient<DatabaseElement> {
+internal class ElasticsearchClient : DatabaseClient {
 
     private val databaseServers = mutableListOf<DatabaseServer>()
 

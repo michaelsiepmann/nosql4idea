@@ -12,7 +12,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.tree.TreeUtil
-import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.DataType
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
@@ -150,8 +149,7 @@ internal open class NoSQLResultPanel(
         if (descriptor is KeyValueDescriptor) {
             if (descriptor.key == idDescriptorKey) {
                 val context = databasePanel.context
-                val client: DatabaseClient<DatabaseElement> = context.client as DatabaseClient<DatabaseElement>
-                return client.findDocument(context, descriptor.value!!)
+                return context.client.findDocument(context, descriptor.value!!)
             }
         }
 

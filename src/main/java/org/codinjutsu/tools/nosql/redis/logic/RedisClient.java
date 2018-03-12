@@ -46,7 +46,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
-public class RedisClient implements DatabaseClient<DatabaseElement> {
+public class RedisClient implements DatabaseClient {
 
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 

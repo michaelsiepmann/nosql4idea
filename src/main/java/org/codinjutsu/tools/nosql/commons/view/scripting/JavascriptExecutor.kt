@@ -13,7 +13,7 @@ import javax.swing.JScrollPane
 internal class JavascriptExecutor(
         private val script: String,
         private val project: Project,
-        private val wrapper: ScriptingDatabaseWrapper<*>,
+        private val wrapper: ScriptingDatabaseWrapper,
         private val context: DatabaseContext
 ) {
 

@@ -17,13 +17,15 @@
 package org.codinjutsu.tools.nosql.couchbase.view
 
 import com.intellij.openapi.command.impl.DummyProject
+import com.intellij.openapi.components.ServiceManager
 import org.codinjutsu.tools.nosql.DatabaseVendor
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings
-import org.codinjutsu.tools.nosql.commons.view.authentication.DefaultAuthenticationPanel
 import org.codinjutsu.tools.nosql.commons.view.ServerConfigurationPanel
+import org.codinjutsu.tools.nosql.commons.view.authentication.DefaultAuthenticationPanel
 import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration
+import org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient
 import org.fest.swing.edt.GuiActionRunner
 import org.fest.swing.edt.GuiQuery
 import org.fest.swing.fixture.Containers
@@ -38,16 +40,19 @@ import org.mockito.Mockito
 internal class ServerConfigurationPanelTest {
 
     private var configurationPanel: ServerConfigurationPanel? = null
-    private lateinit var databaseClientMock: DatabaseClient<*>
+    private lateinit var databaseClientMock: DatabaseClient
 
     private lateinit var frameFixture: FrameFixture
 
     @BeforeEach
     fun setUp() {
+        val project = DummyProject.getInstance()
+        val createLazyKey = ServiceManager.createLazyKey(DatabaseClient::class.java)
+        createLazyKey.set(project, CouchbaseClient())
         databaseClientMock = Mockito.mock(DatabaseClient::class.java)
         configurationPanel = GuiActionRunner.execute(object : GuiQuery<ServerConfigurationPanel>() {
             override fun executeInEDT(): ServerConfigurationPanel {
-                return ServerConfigurationPanel(DummyProject.getInstance(),
+                return ServerConfigurationPanel(project,
                         DatabaseVendor.COUCHBASE,
                         DefaultAuthenticationPanel(),
                         true

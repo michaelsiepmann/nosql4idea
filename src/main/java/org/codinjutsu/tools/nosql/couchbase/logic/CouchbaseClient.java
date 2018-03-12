@@ -57,7 +57,7 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-public class CouchbaseClient implements DatabaseClient<DatabaseElement> {
+public class CouchbaseClient implements DatabaseClient {
 
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 

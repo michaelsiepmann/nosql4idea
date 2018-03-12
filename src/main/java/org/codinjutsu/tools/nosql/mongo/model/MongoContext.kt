@@ -5,4 +5,4 @@ import org.codinjutsu.tools.nosql.commons.model.AbstractDatabaseContext
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient
 
 internal class MongoContext(mongoClient: MongoClient, serverConfiguration: ServerConfiguration, val mongoCollection: MongoCollection) :
-        AbstractDatabaseContext<MongoClient>(mongoClient, serverConfiguration)
+        AbstractDatabaseContext(mongoClient, serverConfiguration)

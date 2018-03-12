@@ -83,7 +83,7 @@ public class EditionPanel extends JPanel implements Disposable {
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     DatabaseContext context = databasePanel.getContext();
-                    DatabaseClient<DatabaseElement> client = (DatabaseClient<DatabaseElement>) context.getClient();
+                    DatabaseClient client = context.getClient();
                     client.update(context, buildEditedDocument());
                     databasePanel.executeQuery();
                     actionCallback.onOperationSuccess(getResourceString("edition.messages.documentSaved"));
@@ -98,7 +98,7 @@ public class EditionPanel extends JPanel implements Disposable {
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     DatabaseContext context = databasePanel.getContext();
-                    DatabaseClient<DatabaseElement> client = (DatabaseClient<DatabaseElement>) context.getClient();
+                    DatabaseClient client = context.getClient();
                     client.delete(context, getDocumentId());
                     databasePanel.executeQuery();
                     actionCallback.onOperationSuccess(getResourceString("edition.messages.documentDeleted"));

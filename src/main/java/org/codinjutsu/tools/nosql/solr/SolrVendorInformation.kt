@@ -18,6 +18,6 @@ internal object SolrVendorInformation : DatabaseVendorInformation() {
 
     override fun getDatabaseUIClass() = SolrUI::class.java
 
-    override fun getDatabaseClientClass(): Class<out DatabaseClient<*>> = SolrClient::class.java
+    override fun getDatabaseClientClass(): Class<out DatabaseClient> = SolrClient::class.java
 
 }

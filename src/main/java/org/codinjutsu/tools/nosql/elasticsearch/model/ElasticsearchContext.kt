@@ -10,7 +10,7 @@ internal class ElasticsearchContext(client: ElasticsearchClient,
                                     serverConfiguration: ServerConfiguration,
                                     val type: ElasticsearchType?,
                                     val database: ElasticsearchDatabase) :
-        AbstractDatabaseContext<ElasticsearchClient>(client, serverConfiguration) {
+        AbstractDatabaseContext(client, serverConfiguration) {
 
     override fun getImportPanelSettings() =
             object : ImportPanelSettings {

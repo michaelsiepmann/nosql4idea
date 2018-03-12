@@ -8,7 +8,7 @@ import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportPanelSettings
 import org.codinjutsu.tools.nosql.solr.logic.SolrClient
 
 internal class SolrContext(solrClient: SolrClient, serverConfiguration: ServerConfiguration, val solrDatabase: Database) :
-        AbstractDatabaseContext<SolrClient>(solrClient, serverConfiguration) {
+        AbstractDatabaseContext(solrClient, serverConfiguration) {
 
     override fun getImportPanelSettings() =
             object : ImportPanelSettings {

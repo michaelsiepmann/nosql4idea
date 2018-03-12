@@ -64,7 +64,7 @@ import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.reve
 import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.toDatabaseElement;
 import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.toDatabaseObject;
 
-public class MongoClient implements DatabaseClient<DatabaseElement> {
+public class MongoClient implements DatabaseClient {
 
     private static final Logger LOG = Logger.getLogger(MongoClient.class);
     public static final String ID_DESCRIPTOR_KEY = "_id"; //NON-NLS

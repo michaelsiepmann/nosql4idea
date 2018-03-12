@@ -46,7 +46,7 @@ class DatabaseVendorClientManager(private val project: Project) {
         }
     }
 
-    private fun databaseClient(databaseServer: DatabaseServer): DatabaseClient<*>? =
+    private fun databaseClient(databaseServer: DatabaseServer): DatabaseClient? =
             databaseServer.vendor.databaseVendorInformation.getClient(project)
 
     companion object {
