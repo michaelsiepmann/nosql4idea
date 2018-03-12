@@ -16,6 +16,7 @@
 
 package org.codinjutsu.tools.nosql.commons.view.add;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.ColoredListCellRenderer;
 import org.codinjutsu.tools.nosql.commons.model.DataType;
@@ -34,10 +35,12 @@ public abstract class AbstractAddDialog extends DialogWrapper {
 
     final EditionPanel editionPanel;
     TextFieldWrapper currentEditor = null;
+    private final Project project;
 
-    AbstractAddDialog(EditionPanel editionPanel) {
+    AbstractAddDialog(EditionPanel editionPanel, Project project) {
         super(editionPanel, true);
         this.editionPanel = editionPanel;
+        this.project = project;
     }
 
     void initTypeComboBox(final JComboBox<DataType> combobox, final JPanel parentPanel, DataType[] dataTypes) {
@@ -54,7 +57,7 @@ public abstract class AbstractAddDialog extends DialogWrapper {
         combobox.addItemListener(itemEvent -> {
             DataType selectedType = (DataType) combobox.getSelectedItem();
             if (selectedType != null) {
-                currentEditor = selectedType.getTextFieldWrapper();
+                currentEditor = selectedType.createTextFieldWrapper(project);
                 currentEditor.reset();
 
                 parentPanel.invalidate();

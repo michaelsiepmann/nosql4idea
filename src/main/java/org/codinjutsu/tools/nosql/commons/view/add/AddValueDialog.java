@@ -16,6 +16,7 @@
 
 package org.codinjutsu.tools.nosql.commons.view.add;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
 import org.codinjutsu.tools.nosql.commons.model.DataType;
@@ -36,8 +37,8 @@ public class AddValueDialog extends AbstractAddDialog {
     private JPanel valuePanel;
     private JPanel mainPanel;
 
-    private AddValueDialog(EditionPanel editionPanel, DataType[] dataTypes) {
-        super(editionPanel);
+    private AddValueDialog(EditionPanel editionPanel, DataType[] dataTypes, Project project) {
+        super(editionPanel, project);
         valuePanel.setLayout(new BorderLayout());
         typeCombobox.setName("valueType"); //NON-NLS
         typeCombobox.requestFocus();
@@ -50,8 +51,8 @@ public class AddValueDialog extends AbstractAddDialog {
         return mainPanel;
     }
 
-    public static AddValueDialog createDialog(EditionPanel parentPanel, DataType[] values) {
-        AddValueDialog dialog = new AddValueDialog(parentPanel, values);
+    public static AddValueDialog createDialog(EditionPanel parentPanel, DataType[] values, Project project) {
+        AddValueDialog dialog = new AddValueDialog(parentPanel, values, project);
         dialog.init();
         dialog.setTitle(getResourceString("dialog.addvalue.title"));
         return dialog;

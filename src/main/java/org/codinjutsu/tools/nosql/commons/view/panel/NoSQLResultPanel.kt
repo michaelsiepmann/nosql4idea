@@ -36,7 +36,7 @@ import javax.swing.JPanel
 import javax.swing.tree.DefaultMutableTreeNode
 
 internal open class NoSQLResultPanel(
-        project: Project,
+        private val project: Project,
         private val databasePanel: DatabasePanel,
         val editable: Boolean,
         private val nodeDescriptorFactory: NodeDescriptorFactory,
@@ -71,7 +71,7 @@ internal open class NoSQLResultPanel(
     }
 
     private fun createEditionPanel(): EditionPanel? {
-        val editionPanel = EditionPanel(databasePanel, nodeDescriptorFactory, writeableColumnInfoDecider())
+        val editionPanel = EditionPanel(databasePanel, nodeDescriptorFactory, writeableColumnInfoDecider(), project)
         editionPanel.init(object : ActionCallback {
             override fun onOperationSuccess(message: String) {
                 hideEditionPanel()

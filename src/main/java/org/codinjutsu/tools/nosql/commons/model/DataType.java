@@ -16,6 +16,7 @@
 
 package org.codinjutsu.tools.nosql.commons.model;
 
+import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.commons.view.add.BooleanFieldWrapper;
 import org.codinjutsu.tools.nosql.commons.view.add.DateTimeFieldWrapper;
 import org.codinjutsu.tools.nosql.commons.view.add.JsonFieldArrayWrapper;
@@ -29,27 +30,58 @@ import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceStrin
 
 public enum DataType {
 
-    STRING(getResourceString("datatype.string.name"), new StringFieldWrapper()),
-    NUMBER(getResourceString("datatype.number.name"), new NumberFieldWrapper()),
-    BOOLEAN(getResourceString("datatype.boolean.name"), new BooleanFieldWrapper()),
-    ARRAY(getResourceString("datatype.array.name"), new JsonFieldArrayWrapper()),
-    OBJECT(getResourceString("datatype.object.name"), new JsonFieldObjectWrapper()),
-    NULL(getResourceString("datatype.null.name"), new NullFieldWrapper()),
-    DATE(getResourceString("datatype.date.name"), new DateTimeFieldWrapper());
+    STRING(getResourceString("datatype.string.name")) {
+        @Override
+        public TextFieldWrapper createTextFieldWrapper(Project project) {
+            return new StringFieldWrapper();
+        }
+    },
+    NUMBER(getResourceString("datatype.number.name")) {
+        @Override
+        public TextFieldWrapper createTextFieldWrapper(Project project) {
+            return new NumberFieldWrapper();
+        }
+    },
+    BOOLEAN(getResourceString("datatype.boolean.name")) {
+        @Override
+        public TextFieldWrapper createTextFieldWrapper(Project project) {
+            return new BooleanFieldWrapper();
+        }
+    },
+    ARRAY(getResourceString("datatype.array.name")) {
+        @Override
+        public TextFieldWrapper createTextFieldWrapper(Project project) {
+            return new JsonFieldArrayWrapper(project);
+        }
+    },
+    OBJECT(getResourceString("datatype.object.name")) {
+        @Override
+        public TextFieldWrapper createTextFieldWrapper(Project project) {
+            return new JsonFieldObjectWrapper(project);
+        }
+    },
+    NULL(getResourceString("datatype.null.name")) {
+        @Override
+        public TextFieldWrapper createTextFieldWrapper(Project project) {
+            return new NullFieldWrapper();
+        }
+    },
+    DATE(getResourceString("datatype.date.name")) {
+        @Override
+        public TextFieldWrapper createTextFieldWrapper(Project project) {
+            return new DateTimeFieldWrapper();
+        }
+    };
 
     private final String type;
-    private final TextFieldWrapper textFieldWrapper;
 
-    DataType(String type, TextFieldWrapper textFieldWrapper) {
+    DataType(String type) {
         this.type = type;
-        this.textFieldWrapper = textFieldWrapper;
     }
 
     public String getType() {
         return type;
     }
 
-    public TextFieldWrapper getTextFieldWrapper() {
-        return textFieldWrapper;
-    }
+    public abstract TextFieldWrapper createTextFieldWrapper(Project project);
 }

@@ -17,6 +17,7 @@
 package org.codinjutsu.tools.nosql.commons.view.add;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.ui.CollectionComboBoxModel;
@@ -49,8 +50,8 @@ public class AddKeyDialog extends AbstractAddDialog {
     private JPanel nameTextfieldPanel;
     private final JComponent nameTextfield;
 
-    private AddKeyDialog(EditionPanel editionPanel, List<String> selectionPath, DataType[] dataTypes) {
-        super(editionPanel);
+    private AddKeyDialog(EditionPanel editionPanel, List<String> selectionPath, DataType[] dataTypes, Project project) {
+        super(editionPanel, project);
         mainPanel.setPreferredSize(GuiUtils.enlargeWidth(mainPanel.getPreferredSize(), 1.5d));
         valuePanel.setLayout(new BorderLayout());
         SchemeItem keysFromScheme = editionPanel.getScheme().findItem(selectionPath);
@@ -89,8 +90,8 @@ public class AddKeyDialog extends AbstractAddDialog {
         return mainPanel;
     }
 
-    public static AddKeyDialog createDialog(EditionPanel parentPanel, List<String> selectionPath, DataType[] dataTypes) {
-        AddKeyDialog dialog = new AddKeyDialog(parentPanel, selectionPath, dataTypes);
+    public static AddKeyDialog createDialog(EditionPanel parentPanel, List<String> selectionPath, DataType[] dataTypes, Project project) {
+        AddKeyDialog dialog = new AddKeyDialog(parentPanel, selectionPath, dataTypes, project);
         dialog.init();
         dialog.setTitle(getResourceString("edition.dialog.addkey.title"));
         return dialog;

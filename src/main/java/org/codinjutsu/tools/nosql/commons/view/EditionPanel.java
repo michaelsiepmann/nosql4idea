@@ -4,6 +4,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.components.JBScrollPane;
@@ -54,13 +55,15 @@ public class EditionPanel extends JPanel implements Disposable {
     private final DatabasePanel databasePanel;
     private final NodeDescriptorFactory nodeDescriptorFactory;
     private final WriteableColumnInfoDecider writeableColumnInfoDecider;
+    private final Project project;
 
-    public EditionPanel(DatabasePanel databasePanel, NodeDescriptorFactory nodeDescriptorFactory, WriteableColumnInfoDecider writeableColumnInfoDecider) {
+    public EditionPanel(DatabasePanel databasePanel, NodeDescriptorFactory nodeDescriptorFactory, WriteableColumnInfoDecider writeableColumnInfoDecider, Project project) {
         super(new BorderLayout());
         this.databasePanel = databasePanel;
 
         this.nodeDescriptorFactory = nodeDescriptorFactory;
         this.writeableColumnInfoDecider = writeableColumnInfoDecider;
+        this.project = project;
 
         add(mainPanel);
         editionTreePanel.setLayout(new BorderLayout());
@@ -208,8 +211,8 @@ public class EditionPanel extends JPanel implements Disposable {
     private void buildPopupMenu(DataType[] values) {
         DefaultActionGroup actionPopupGroup = new DefaultActionGroup("AbstractEditorPopupGroup", true); //NON-NLS
         if (ApplicationManager.getApplication() != null) {
-            actionPopupGroup.add(new AddKeyAction(this, values));
-            actionPopupGroup.add(new AddValueAction(this, values));
+            actionPopupGroup.add(new AddKeyAction(this, project, values));
+            actionPopupGroup.add(new AddValueAction(this, project, values));
             actionPopupGroup.add(new DeleteKeyAction(this));
         }
 

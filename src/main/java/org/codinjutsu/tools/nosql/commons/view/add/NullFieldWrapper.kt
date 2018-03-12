@@ -4,7 +4,7 @@ import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 
 import javax.swing.JLabel
 
-internal class NullFieldWrapper : TextFieldWrapper<JLabel>(JLabel("null")) {
+internal class NullFieldWrapper : AbstractTextFieldWrapper<JLabel>(JLabel("null")) {
 
     override fun getValue(): DatabaseElement? = null
 

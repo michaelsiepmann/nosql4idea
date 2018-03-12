@@ -4,7 +4,7 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalD
 import org.codinjutsu.tools.nosql.commons.view.table.DateTimePicker
 import java.util.*
 
-internal class DateTimeFieldWrapper : TextFieldWrapper<DateTimePicker>(DateTimePicker.create()) {
+internal class DateTimeFieldWrapper : AbstractTextFieldWrapper<DateTimePicker>(DateTimePicker.create()) {
     init {
         component.editor.isEditable = false
     }
