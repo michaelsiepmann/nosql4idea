@@ -5,7 +5,6 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptorFact
 import org.codinjutsu.tools.nosql.commons.view.panel.TreeBuilder
 import javax.swing.tree.TreeNode
 
-
 internal class RedisTreeBuilder : TreeBuilder {
 
     override fun build(searchResult: SearchResult, nodeDescriptorFactory: NodeDescriptorFactory): TreeNode {

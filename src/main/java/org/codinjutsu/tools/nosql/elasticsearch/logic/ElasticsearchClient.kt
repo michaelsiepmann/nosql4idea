@@ -11,9 +11,7 @@ import org.codinjutsu.tools.nosql.commons.model.DataType
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
-import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseObjectObjectWrapper
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
 import org.codinjutsu.tools.nosql.commons.model.internal.toDatabaseElement
@@ -23,6 +21,7 @@ import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem.Companion.EMPT
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseArray
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.BulkImport
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.CreateType
@@ -88,12 +87,12 @@ internal class ElasticsearchClient : DatabaseClient<DatabaseElement> {
         return jsonSearchResult(Search(context as ElasticsearchContext, queryOptions).execute().toDatabaseElement(), context)
     }
 
-    private fun jsonSearchResult(searchResult: DatabaseObject, context: ElasticsearchContext): DatabaseElementSearchResult {
+    private fun jsonSearchResult(searchResult: DatabaseObject, context: ElasticsearchContext): SearchResult {
         val hits = searchResult.getAsDatabaseObject("hits")
         val jsonArray = hits?.getAsDatabaseArray("hits") ?: InternalDatabaseArray()
-        val objectWrappers = jsonArray.map { DatabaseObjectObjectWrapper(it.asObject()) }
+        val objectWrappers = jsonArray.map { ObjectWrapper(it.asObject()) }
         val totalCount = hits?.get("total")?.asInt() ?: 0
-        return DatabaseElementSearchResult(context.database.name, objectWrappers, totalCount)
+        return SearchResult(context.database.name, objectWrappers, totalCount)
     }
 
     override fun dropFolder(configuration: ServerConfiguration, type: Any) {
@@ -106,7 +105,7 @@ internal class ElasticsearchClient : DatabaseClient<DatabaseElement> {
         DeleteElement("${configuration.serverUrl}/${database.name}").execute()
     }
 
-    override fun findAll(context: DatabaseContext): DatabaseElementSearchResult {
+    override fun findAll(context: DatabaseContext): SearchResult {
         return jsonSearchResult(FetchAllDocuments(context as ElasticsearchContext).execute().toDatabaseElement(), context)
     }
 

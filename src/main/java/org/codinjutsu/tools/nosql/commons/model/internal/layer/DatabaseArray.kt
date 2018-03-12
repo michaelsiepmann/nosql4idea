@@ -6,11 +6,5 @@ internal interface DatabaseArray : DatabaseElement, Iterable<DatabaseElement> {
 
     fun size(): Int
 
-    fun get(index: Int): DatabaseElement?
-
-    fun toArray(): Iterator<DatabaseElement>
-
-    override fun iterator(): Iterator<DatabaseElement> {
-        return toArray()
-    }
+    operator fun get(index: Int): DatabaseElement?
 }

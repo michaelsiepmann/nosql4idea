@@ -9,5 +9,5 @@ internal class RedisDatabaseList(private val values: List<DatabaseElement>) : Da
 
     override fun get(index: Int) = values[index]
 
-    override fun toArray() = values.iterator()
+    override fun iterator() = values.iterator()
 }

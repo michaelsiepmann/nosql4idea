@@ -320,7 +320,7 @@ public abstract class DatabasePanel extends NoSqlResultView {
     @NotNull
     public Page getCurrentPage() {
         if (currentPage == null) {
-            currentPage = new Page(10, 0, getSearchResult().getResultCount());
+            currentPage = new Page(10, 0, getSearchResult().getTotalCount());
         }
         return currentPage;
     }

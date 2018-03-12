@@ -34,9 +34,7 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
-import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseObjectObjectWrapper;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
@@ -160,10 +158,10 @@ todo
 */
 
         for (N1qlQueryRow row : queryResult.allRows()) {
-            elements.add(new DatabaseObjectObjectWrapper(CouchbaseJsonConverterKt.toDatabaseElement(row.value())));
+            elements.add(new ObjectWrapper(CouchbaseJsonConverterKt.toDatabaseElement(row.value())));
         }
         cluster.disconnect();
-        return new DatabaseElementSearchResult(database.getName(), elements, elements.size());
+        return new SearchResult(database.getName(), elements, elements.size());
     }
 
     @NotNull
@@ -176,7 +174,7 @@ todo
         Cluster cluster = CouchbaseCluster.create(DefaultCouchbaseEnvironment.builder().build(), configuration.getServerUrl());
         Bucket bucket = cluster.openBucket(database.getName(), 10, TimeUnit.SECONDS);
 */
-        return new DatabaseElementSearchResult(((CouchbaseContext) context).getDatabase().getName(), Collections.emptyList(), 0);
+        return new SearchResult(((CouchbaseContext) context).getDatabase().getName(), Collections.emptyList(), 0);
     }
 
     @Nullable

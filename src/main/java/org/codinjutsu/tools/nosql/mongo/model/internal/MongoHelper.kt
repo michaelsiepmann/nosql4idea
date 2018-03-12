@@ -69,14 +69,14 @@ private fun revertInternal(element: DatabaseElement?): Any? {
 private fun revertObject(element: DatabaseObject): DBObject? {
     val result = BasicDBObject()
     element.names().forEach {
-        result.append(it, revertInternal(element.get(it)))
+        result.append(it, revertInternal(element[it]))
     }
     return result
 }
 
 private fun revertArray(element: DatabaseArray): DBObject? {
     val result = BasicDBList()
-    element.toArray().forEach {
+    element.forEach {
         result.add(revertInternal(it))
     }
     return result

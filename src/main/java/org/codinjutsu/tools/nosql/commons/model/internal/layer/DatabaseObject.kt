@@ -6,34 +6,13 @@ internal interface DatabaseObject : DatabaseElement {
 
     fun names(): Collection<String>
 
-    fun get(key: String): DatabaseElement?
+    operator fun get(key: String): DatabaseElement?
 
-    fun getAsDatabaseObject(key: String): DatabaseObject? {
-        val result = get(key)
-        return if (result is DatabaseObject) {
-            result
-        } else {
-            null
-        }
-    }
+    fun getAsDatabaseObject(key: String) = get(key) as? DatabaseObject
 
-    fun getAsDatabaseArray(key: String): DatabaseArray? {
-        val result = get(key)
-        return if (result is DatabaseArray) {
-            result
-        } else {
-            null
-        }
-    }
+    fun getAsDatabaseArray(key: String) = get(key) as? DatabaseArray
 
-    fun getAsDatabasePrimitive(key: String): DatabasePrimitive? {
-        val result = get(key)
-        return if (result is DatabasePrimitive) {
-            result
-        } else {
-            null
-        }
-    }
+    fun getAsDatabasePrimitive(key: String) = get(key) as? DatabasePrimitive
 
     fun add(key: String, value: Any?) {
         throw UnsupportedOperationException("This is not supported")
@@ -53,5 +32,13 @@ internal interface DatabaseObject : DatabaseElement {
 
     fun addProperty(key: String, value: String) {
         throw UnsupportedOperationException("This is not supported")
+    }
+
+    fun toMap(): Map<String, DatabaseElement?> {
+        val result: MutableMap<String, DatabaseElement?> = mutableMapOf()
+        names().forEach {
+            result[it] = get(it)
+        }
+        return result
     }
 }

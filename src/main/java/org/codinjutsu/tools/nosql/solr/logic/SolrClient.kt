@@ -8,14 +8,14 @@ import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
 import org.codinjutsu.tools.nosql.commons.model.Database
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
-import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseObjectObjectWrapper
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
+import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
 import org.codinjutsu.tools.nosql.commons.model.internal.toDatabaseElement
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
+import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 import org.codinjutsu.tools.nosql.solr.configuration.SolrServerConfiguration
 import org.codinjutsu.tools.nosql.solr.logic.commands.GetDocument
 import org.codinjutsu.tools.nosql.solr.logic.commands.ImportData
@@ -69,11 +69,11 @@ internal class SolrClient : DatabaseClient<DatabaseElement> {
     override fun loadRecords(context: DatabaseContext, query: QueryOptions) =
             jsonSearchResult(Search(context as SolrContext, query).execute().toDatabaseElement(), context)
 
-    private fun jsonSearchResult(jsonObject: DatabaseObject, context: DatabaseContext): DatabaseElementSearchResult {
+    private fun jsonSearchResult(jsonObject: DatabaseObject, context: DatabaseContext): SearchResult {
         val response = jsonObject.getAsDatabaseObject("response")
         val count = response?.getAsDatabasePrimitive("numFound")?.asInt() ?: 0
-        val objects = response?.getAsDatabaseArray("docs")?.map { DatabaseObjectObjectWrapper(it.asObject()) } ?: emptyList()
-        return DatabaseElementSearchResult((context as SolrContext).solrDatabase.name, objects, count)
+        val objects = response?.getAsDatabaseArray("docs")?.map { ObjectWrapper(it.asObject()) } ?: emptyList()
+        return SearchResult((context as SolrContext).solrDatabase.name, objects, count)
     }
 
     override fun delete(context: DatabaseContext, _id: Any) {

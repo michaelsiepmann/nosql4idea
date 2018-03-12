@@ -24,9 +24,7 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
-import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseElementObjectWrapper;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
@@ -43,6 +41,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 public class RedisClient implements DatabaseClient<DatabaseElement> {
@@ -117,12 +117,12 @@ public class RedisClient implements DatabaseClient<DatabaseElement> {
                 RedisKeyType keyType = RedisKeyType.getKeyType(jedis.type(key));
                 if (keyType != null) {
                     DatabaseElement databaseElement = keyType.toDatabaseElement(jedis, key);
-                    elements.add(new DatabaseElementObjectWrapper(key, databaseElement));
+                    elements.add(new ObjectWrapper(singletonList(key), singletonMap(key, databaseElement)));
                 }
             }
         } catch (Exception ignored) {
         }
-        return new DatabaseElementSearchResult(name, elements, elements.size());
+        return new SearchResult(name, elements, elements.size());
     }
 
     protected Jedis createJedis(ServerConfiguration serverConfiguration) {
@@ -138,7 +138,7 @@ public class RedisClient implements DatabaseClient<DatabaseElement> {
     @Override
     public SearchResult findAll(DatabaseContext context) {
         String name = ((RedisContext) context).getDatabase().getName();
-        return new DatabaseElementSearchResult(name, Collections.emptyList(), 0); // todo
+        return new SearchResult(name, Collections.emptyList(), 0); // todo
     }
 
     @Nullable

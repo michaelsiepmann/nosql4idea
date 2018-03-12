@@ -36,9 +36,7 @@ import org.codinjutsu.tools.nosql.commons.model.Database;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
-import org.codinjutsu.tools.nosql.commons.model.internal.DatabaseObjectObjectWrapper;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
@@ -183,7 +181,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
             MongoCollection mongoCollection = context.getMongoCollection();
             DBCollection collection = getCollection(mongo, mongoCollection);
             List<ObjectWrapper> objectWrappers = mongoQueryOptions.isAggregate() ? aggregate(mongoQueryOptions, collection) : find(mongoQueryOptions, collection);
-            return new DatabaseElementSearchResult(mongoCollection.getName(), objectWrappers, objectWrappers.size());
+            return new SearchResult(mongoCollection.getName(), objectWrappers, objectWrappers.size());
         });
     }
 
@@ -201,8 +199,8 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
             getCollection(mongoContext, mongo)
                     .find()
                     .toArray()
-                    .forEach(item -> list.add(new DatabaseObjectObjectWrapper(toDatabaseObject(item))));
-            return new DatabaseElementSearchResult(mongoContext.getMongoCollection().getName(), list, list.size());
+                    .forEach(item -> list.add(new ObjectWrapper(toDatabaseObject(item))));
+            return new SearchResult(mongoContext.getMongoCollection().getName(), list, list.size());
         });
     }
 
@@ -242,7 +240,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         int index = 0;
         Iterator<DBObject> iterator = aggregate.results().iterator();
         while (iterator.hasNext() && index++ < mongoQueryOptions.getResultLimit()) {
-            result.add(new DatabaseObjectObjectWrapper(toDatabaseObject(iterator.next())));
+            result.add(new ObjectWrapper(toDatabaseObject(iterator.next())));
         }
         return result;
     }
@@ -253,7 +251,7 @@ public class MongoClient implements DatabaseClient<DatabaseElement> {
         try (DBCursor cursor = createCursor(mongoQueryOptions, collection)) {
             int index = 0;
             while (cursor.hasNext() && index < mongoQueryOptions.getResultLimit()) {
-                result.add(new DatabaseObjectObjectWrapper(toDatabaseObject(cursor.next())));
+                result.add(new ObjectWrapper(toDatabaseObject(cursor.next())));
                 index++;
             }
         }

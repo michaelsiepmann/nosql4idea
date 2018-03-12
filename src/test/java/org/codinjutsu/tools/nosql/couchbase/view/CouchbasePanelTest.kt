@@ -18,7 +18,7 @@ package org.codinjutsu.tools.nosql.couchbase.view
 
 import com.intellij.openapi.command.impl.DummyProject
 import org.codinjutsu.tools.nosql.commons.model.Database
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
+import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.TableCellReader
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration
@@ -44,7 +44,7 @@ internal class CouchbasePanelTest {
 
     @BeforeEach
     fun setUp() {
-        `when`(couchbaseClientMock.loadRecords(any(CouchbaseContext::class.java), any(QueryOptions::class.java))).thenReturn(DatabaseElementSearchResult("dummy", emptyList(), 0))
+        `when`(couchbaseClientMock.loadRecords(any(CouchbaseContext::class.java), any(QueryOptions::class.java))).thenReturn(SearchResult("dummy", emptyList(), 0))
 
         couchbasePanelWrapper = GuiActionRunner.execute(object : GuiQuery<CouchbasePanel>() {
             override fun executeInEDT(): CouchbasePanel? {

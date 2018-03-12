@@ -30,17 +30,13 @@ import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseString
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisIndexedValueDescriptor
 import org.codinjutsu.tools.nosql.redis.view.nodedescriptor.RedisKeyValueDescriptor
 
-fun buildTree(redisSearchResult: SearchResult?): NoSqlTreeNode {
+internal fun buildTree(searchResult: SearchResult): NoSqlTreeNode {
     val rootNode = NoSqlTreeNode(NullResultDescriptor())
-
-    if (redisSearchResult != null) {
-        for (redisRecord in redisSearchResult.records) {
-            for (name in redisRecord.names) {
-                processRecord(rootNode, name, (redisRecord.get(name) as DatabaseElement?)!!)
-            }
+    for (redisRecord in searchResult.records) {
+        for (name in redisRecord.names) {
+            processRecord(rootNode, name, redisRecord[name]!!)
         }
     }
-
     return rootNode
 }
 

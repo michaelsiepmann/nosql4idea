@@ -35,7 +35,7 @@ import com.intellij.openapi.editor.impl.SettingsImpl
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformLiteFixture
 import org.codinjutsu.tools.nosql.commons.model.Database
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElementSearchResult
+import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient
@@ -97,7 +97,7 @@ class RedisPanelTest : PlatformLiteFixture() {
         application.addComponent(ActionManager::class.java, actionManager)
         application.registerService(CommonActionsManager::class.java, commonActionsManager)
 
-        `when`(redisClientMock.loadRecords(any(RedisContext::class.java), any(QueryOptions::class.java))).thenReturn(DatabaseElementSearchResult("", emptyList(), 0))
+        `when`(redisClientMock.loadRecords(any(RedisContext::class.java), any(QueryOptions::class.java))).thenReturn(SearchResult("", emptyList(), 0))
 
         redisPanelWrapper = GuiActionRunner.execute(object : GuiQuery<RedisPanel>() {
             override fun executeInEDT(): RedisPanel? {

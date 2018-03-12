@@ -11,7 +11,7 @@ internal class InternalDatabaseArray : InternalDatabaseElement(), DatabaseArray 
 
     override fun get(index: Int) = list[index]
 
-    override fun toArray() = list.iterator()
+    override fun iterator() = list.iterator()
 
     fun add(element: DatabaseElement) {
         list.add(element)
