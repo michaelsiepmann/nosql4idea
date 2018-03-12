@@ -21,7 +21,6 @@ import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem.Companion.EMPT
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseArray
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
-import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.BulkImport
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.CreateType
@@ -90,7 +89,7 @@ internal class ElasticsearchClient : DatabaseClient<DatabaseElement> {
     private fun jsonSearchResult(searchResult: DatabaseObject, context: ElasticsearchContext): SearchResult {
         val hits = searchResult.getAsDatabaseObject("hits")
         val jsonArray = hits?.getAsDatabaseArray("hits") ?: InternalDatabaseArray()
-        val objectWrappers = jsonArray.map { ObjectWrapper(it.asObject()) }
+        val objectWrappers = jsonArray.map { it.asObject() }
         val totalCount = hits?.get("total")?.asInt() ?: 0
         return SearchResult(context.database.name, objectWrappers, totalCount)
     }

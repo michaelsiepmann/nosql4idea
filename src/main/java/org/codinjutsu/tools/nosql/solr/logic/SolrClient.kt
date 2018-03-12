@@ -15,7 +15,6 @@ import org.codinjutsu.tools.nosql.commons.model.internal.toDatabaseElement
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
-import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper
 import org.codinjutsu.tools.nosql.solr.configuration.SolrServerConfiguration
 import org.codinjutsu.tools.nosql.solr.logic.commands.GetDocument
 import org.codinjutsu.tools.nosql.solr.logic.commands.ImportData
@@ -72,7 +71,7 @@ internal class SolrClient : DatabaseClient<DatabaseElement> {
     private fun jsonSearchResult(jsonObject: DatabaseObject, context: DatabaseContext): SearchResult {
         val response = jsonObject.getAsDatabaseObject("response")
         val count = response?.getAsDatabasePrimitive("numFound")?.asInt() ?: 0
-        val objects = response?.getAsDatabaseArray("docs")?.map { ObjectWrapper(it.asObject()) } ?: emptyList()
+        val objects = response?.getAsDatabaseArray("docs")?.map { it.asObject() } ?: emptyList()
         return SearchResult((context as SolrContext).solrDatabase.name, objects, count)
     }
 

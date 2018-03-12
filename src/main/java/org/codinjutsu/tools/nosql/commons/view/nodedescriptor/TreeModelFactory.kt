@@ -16,7 +16,7 @@ import javax.swing.tree.TreeNode
 internal fun buildTree(searchResult: SearchResult, nodeDescriptorFactory: NodeDescriptorFactory): TreeNode {
     val root = NoSqlTreeNode(StandardResultDescriptor(searchResult.name))
     searchResult.records.forEach { wrapper ->
-        wrapper.names.forEach { name ->
+        wrapper.names().forEach { name ->
             val value = wrapper[name]
             if (value != null) {
                 val current = NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(name, value))

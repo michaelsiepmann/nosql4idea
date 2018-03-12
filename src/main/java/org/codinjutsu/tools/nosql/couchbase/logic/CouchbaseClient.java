@@ -35,8 +35,8 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
-import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseContext;
 import org.codinjutsu.tools.nosql.couchbase.model.CouchbaseJsonConverterKt;
@@ -146,7 +146,7 @@ public class CouchbaseClient implements DatabaseClient<DatabaseElement> {
         N1qlQueryResult queryResult = bucket.query(N1qlQuery.simple(select("*").from(i(database.getName())).limit(queryOptions.getResultLimit())));
 
 //TODO dirty zone :(
-        List<ObjectWrapper> elements = new ArrayList<>();
+        List<DatabaseObject> elements = new ArrayList<>();
 /*
 todo
         List<JsonObject> errors = queryResult.errors();
@@ -158,7 +158,7 @@ todo
 */
 
         for (N1qlQueryRow row : queryResult.allRows()) {
-            elements.add(new ObjectWrapper(CouchbaseJsonConverterKt.toDatabaseElement(row.value())));
+            elements.add(CouchbaseJsonConverterKt.toDatabaseElement(row.value()));
         }
         cluster.disconnect();
         return new SearchResult(database.getName(), elements, elements.size());

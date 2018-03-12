@@ -25,8 +25,9 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseContext;
 import org.codinjutsu.tools.nosql.commons.model.DatabaseServer;
 import org.codinjutsu.tools.nosql.commons.model.SearchResult;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.SingleDatabaseObject;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
-import org.codinjutsu.tools.nosql.commons.view.wrapper.ObjectWrapper;
 import org.codinjutsu.tools.nosql.redis.configuration.RedisServerConfiguration;
 import org.codinjutsu.tools.nosql.redis.model.RedisContext;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
@@ -110,14 +111,14 @@ public class RedisClient implements DatabaseClient<DatabaseElement> {
         int index = Integer.parseInt(name);
         jedis.select(index);
 
-        List<ObjectWrapper> elements = new ArrayList<>();
+        List<DatabaseObject> elements = new ArrayList<>();
         try {
             Set<String> keys = jedis.keys(query.getFilter());
             for (String key : keys) {
                 RedisKeyType keyType = RedisKeyType.getKeyType(jedis.type(key));
                 if (keyType != null) {
                     DatabaseElement databaseElement = keyType.toDatabaseElement(jedis, key);
-                    elements.add(new ObjectWrapper(singletonList(key), singletonMap(key, databaseElement)));
+                    elements.add(new SingleDatabaseObject(singletonList(key), singletonMap(key, databaseElement)));
                 }
             }
         } catch (Exception ignored) {
