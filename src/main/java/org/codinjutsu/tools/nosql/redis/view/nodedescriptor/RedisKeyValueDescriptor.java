@@ -18,9 +18,15 @@ package org.codinjutsu.tools.nosql.redis.view.nodedescriptor;
 
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyValueDescriptor;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
+import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseHash;
+import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseList;
+import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseSet;
+import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseSortedSet;
+import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseString;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Tuple;
 
@@ -35,17 +41,41 @@ import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.g
 import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getStringAttribute;
 import static org.codinjutsu.tools.nosql.redis.RedisUtils.stringifySet;
 import static org.codinjutsu.tools.nosql.redis.RedisUtils.stringifySortedSet;
+import static org.codinjutsu.tools.nosql.redis.model.RedisKeyType.HASH;
+import static org.codinjutsu.tools.nosql.redis.model.RedisKeyType.LIST;
+import static org.codinjutsu.tools.nosql.redis.model.RedisKeyType.SET;
+import static org.codinjutsu.tools.nosql.redis.model.RedisKeyType.STRING;
+import static org.codinjutsu.tools.nosql.redis.model.RedisKeyType.ZSET;
 
 public class RedisKeyValueDescriptor extends TypedKeyValueDescriptor<Object> {
 
     private final RedisKeyType keyType;
 
-    public static KeyValueDescriptor<?> createDescriptor(String key, String value) {
-        return createDescriptor(null, key, value);
+    public static KeyValueDescriptor<?> createDescriptor(String key, DatabaseElement value) {
+        return createDescriptor(findKeyType(value), key, value);
     }
 
-    public static RedisKeyValueDescriptor   createDescriptor(RedisKeyType keyType, String key, Object value) {
+    public static RedisKeyValueDescriptor createDescriptor(RedisKeyType keyType, String key, Object value) {
         return new RedisKeyValueDescriptor(keyType, key, value, getStringAttribute(), findIcon(value));
+    }
+
+    private static RedisKeyType findKeyType(DatabaseElement element) {
+        if (element instanceof RedisDatabaseList) {
+            return LIST;
+        }
+        if (element instanceof RedisDatabaseSet) {
+            return SET;
+        }
+        if (element instanceof RedisDatabaseSortedSet) {
+            return ZSET;
+        }
+        if (element instanceof RedisDatabaseHash) {
+            return HASH;
+        }
+        if (element instanceof RedisDatabaseString) {
+            return STRING;
+        }
+        return null;
     }
 
     private static Icon findIcon(Object object) {
@@ -79,10 +109,10 @@ public class RedisKeyValueDescriptor extends TypedKeyValueDescriptor<Object> {
         if (value == null) {
             return "";
         }
-        if (RedisKeyType.ZSET.equals(keyType)) {
+        if (ZSET.equals(keyType)) {
             return getValueAndAbbreviateIfNecessary(stringifySortedSet((Set<Tuple>) value));
         }
-        if (RedisKeyType.SET.equals(keyType)) {
+        if (SET.equals(keyType)) {
             return getValueAndAbbreviateIfNecessary(stringifySet((Set) value));
         }
         return super.getFormattedValue();

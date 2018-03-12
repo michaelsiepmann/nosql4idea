@@ -35,16 +35,15 @@ internal fun buildTree(searchResult: SearchResult): NoSqlTreeNode {
     searchResult.records.forEach { redisRecord ->
         redisRecord.names()
                 .forEach { name ->
-                    processRecord(rootNode, name, redisRecord[name]!!)
+                    val databaseElement = redisRecord[name]
+                    if (databaseElement != null) {
+                        databaseElement.createTreeNode(name)?.let {
+                            rootNode.add(it)
+                        }
+                    }
                 }
     }
     return rootNode
-}
-
-private fun processRecord(rootNode: NoSqlTreeNode, key: String, databaseElement: DatabaseElement) {
-    databaseElement.createTreeNode(key)?.let {
-        rootNode.add(it)
-    }
 }
 
 private fun DatabaseElement.createTreeNode(key: String) =
@@ -58,19 +57,19 @@ private fun DatabaseElement.createTreeNode(key: String) =
         }
 
 private fun RedisDatabaseList.createTreeNode(key: String) =
-        addChildElements(key, iterator(), RedisKeyType.LIST)
+        addChildElements(key, iterator())
 
 private fun RedisDatabaseSet.createTreeNode(key: String) =
-        addChildElements(key, iterator(), RedisKeyType.SET)
+        addChildElements(key, iterator())
 
 private fun RedisDatabaseSortedSet.createTreeNode(key: String) =
-        addChildElements(key, iterator(), RedisKeyType.ZSET)
+        addChildElements(key, iterator())
 
 private fun RedisDatabaseString.createTreeNode(key: String) =
         NoSqlTreeNode(RedisKeyValueDescriptor.createDescriptor(RedisKeyType.STRING, key, asString()))
 
-private fun DatabaseElement.addChildElements(key: String, iterator: Iterator<DatabaseElement>, keyType: RedisKeyType): NoSqlTreeNode {
-    val treeNode = NoSqlTreeNode(RedisKeyValueDescriptor.createDescriptor(keyType, key, asObject().toString()))
+private fun DatabaseElement.addChildElements(key: String, iterator: Iterator<DatabaseElement>): NoSqlTreeNode {
+    val treeNode = NoSqlTreeNode(RedisKeyValueDescriptor.createDescriptor(key, this))
     iterator.withIndex().forEach { (index, value) ->
         treeNode.add(NoSqlTreeNode(RedisIndexedValueDescriptor.createDescriptor(index, value)))
     }

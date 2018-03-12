@@ -16,14 +16,13 @@ import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.TypedKeyV
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.StandardResultDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.StandardDateIndexedValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.StandardIndexedValueDescriptor
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.StandardNullIndexedValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.StandardStringIndexedValueDescriptor
 import java.util.*
 
 internal class MongoNodeDescriptorFactory : NodeDescriptorFactory {
     override fun createResultDescriptor(name: String) = StandardResultDescriptor()
 
-    override fun createKeyValueDescriptor(key: String, value: Any?): TypedKeyValueDescriptor<out Any?> {
+    override fun createKeyValueDescriptor(key: String, value: DatabaseElement): TypedKeyValueDescriptor<out Any?> {
         return createTypedKeyValueDescriptor(key, toInternalValue(value))
     }
 
@@ -50,18 +49,14 @@ internal class MongoNodeDescriptorFactory : NodeDescriptorFactory {
                 else -> DefaultKeyValueDescriptor(key, value, StyleAttributesProvider.getStringAttribute())
             }
 
-    private fun toInternalValue(value: Any?) =
+    private fun toInternalValue(value: DatabaseElement) =
             if (value is DatabasePrimitive) {
                 value.value()
             } else {
                 value
             }
 
-    override fun createIndexValueDescriptor(index: Int, value: Any?): StandardIndexedValueDescriptor<*> {
-        if (value == null) {
-            return StandardNullIndexedValueDescriptor(index)
-        }
-
+    override fun createIndexValueDescriptor(index: Int, value: DatabaseElement): StandardIndexedValueDescriptor<*> {
         return createStandardIndexedValueDescriptor(index, toInternalValue(value)!!)
     }
 

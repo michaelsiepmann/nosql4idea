@@ -10,9 +10,9 @@ internal interface NodeDescriptorFactory {
 
     fun createResultDescriptor(name: String): ResultDescriptor<*>
 
-    fun createKeyValueDescriptor(key: String, value: Any?): KeyValueDescriptor<*>
+    fun createKeyValueDescriptor(key: String, value: DatabaseElement): KeyValueDescriptor<*>
 
-    fun createIndexValueDescriptor(index: Int, value: Any?): IndexedValueDescriptor<*>
+    fun createIndexValueDescriptor(index: Int, value: DatabaseElement): IndexedValueDescriptor<*>
 
     fun findIcon(value: DatabaseElement) =
             when {

@@ -38,11 +38,11 @@ private fun processDatabaseObject(parentNode: NoSqlTreeNode, databaseElement: Da
     } else if (databaseElement is DatabaseObject) {
         databaseElement.names().forEach {
             val value = databaseElement[it]
-            val currentNode = NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(it, value))
             if (value != null) {
+                val currentNode = NoSqlTreeNode(nodeDescriptorFactory.createKeyValueDescriptor(it, value))
                 processDatabaseObject(currentNode, value, nodeDescriptorFactory)
+                parentNode.add(currentNode)
             }
-            parentNode.add(currentNode)
         }
     }
 }
