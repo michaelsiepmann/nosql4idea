@@ -1,16 +1,16 @@
 package org.codinjutsu.tools.nosql.commons.view.scripting
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.impl.status.TextPanel
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
-import javax.script.ScriptContext
-import javax.script.ScriptEngineManager
-import javax.script.SimpleScriptContext
+import org.jetbrains.ide.script.IdeScriptEngineManager
 import javax.swing.JScrollPane
 
-internal class JavascriptExecutor(
+internal class ScriptExecutor(
+        private val extension: String,
         private val script: String,
         private val project: Project,
         private val wrapper: ScriptingDatabaseWrapper,
@@ -19,7 +19,7 @@ internal class JavascriptExecutor(
 
     fun execute() {
         val toolWindowManager = ToolWindowManager.getInstance(project)
-        val window = toolWindowManager.registerToolWindow("org.codinjutsu.tools.nosql.window", true, ToolWindowAnchor.BOTTOM)
+        val window = toolWindow(toolWindowManager)
         val contentManager = window.contentManager
         val textArea = MyTextPanel()
         val content = contentManager.factory.createContent(JScrollPane(textArea), "test", false)
@@ -28,18 +28,23 @@ internal class JavascriptExecutor(
         contentManager.addContent(content)
         val consoleLog = ConsoleLog(textArea)
         window.show {
-            val searchResult = context.client.findAll(context)
-            for (it in searchResult.records) {
-                val engine = ScriptEngineManager().getEngineByName("JavaScript")
-                val scriptContext = SimpleScriptContext()
-                val bindings = scriptContext.getBindings(ScriptContext.ENGINE_SCOPE)
-                bindings["data"] = it
-                bindings["database"] = wrapper
-                bindings["console"] = consoleLog
-                engine.eval("main(data, database, console);\n" + script, scriptContext)
+            val engine = IdeScriptEngineManager.getInstance().getEngineForFileExtension(extension, null)
+            if (engine != null) {
+                val searchResult = context.client.findAll(context)
+                for (it in searchResult.records) {
+                    engine.setBinding("data", it)
+                    engine.setBinding("database", wrapper)
+                    engine.setBinding("console", consoleLog)
+                    engine.eval(script)
+                }
             }
         }
-        //       toolWindowManager.unregisterToolWindow("org.con.nosql.window")
+        //toolWindowManager.unregisterToolWindow("org.codinjutsu.tools.nosql.window")
+    }
+
+    private fun toolWindow(toolWindowManager: ToolWindowManager): ToolWindow {
+        return toolWindowManager.getToolWindow("org.codinjutsu.tools.nosql.window")
+                ?: toolWindowManager.registerToolWindow("org.codinjutsu.tools.nosql.window", true, ToolWindowAnchor.BOTTOM)
     }
 
     internal class MyTextPanel : TextPanel() {

@@ -46,7 +46,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.query.Page;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptionsImpl;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel;
-import org.codinjutsu.tools.nosql.commons.view.scripting.JavascriptExecutor;
+import org.codinjutsu.tools.nosql.commons.view.scripting.ScriptExecutor;
 import org.codinjutsu.tools.nosql.commons.view.scripting.ScriptingDatabaseWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -358,7 +358,7 @@ public abstract class DatabasePanel extends NoSqlResultView {
         GuiUtils.runInSwingThread(() -> {
             try {
                 String content = new String(chooseFile.contentsToByteArray());
-                createJavascriptExecutor(content, project, context).execute();
+                createScriptExecutor(content, project, context, chooseFile.getExtension()).execute();
             } catch (IOException e) {
                 updateErrorPanel(e);
             }
@@ -366,8 +366,8 @@ public abstract class DatabasePanel extends NoSqlResultView {
     }
 
     @NotNull
-    private JavascriptExecutor createJavascriptExecutor(String content, Project project, DatabaseContext context) {
-        return new JavascriptExecutor(content, project, new ScriptingDatabaseWrapper(context), context);
+    private ScriptExecutor createScriptExecutor(String content, Project project, DatabaseContext context, String extension) {
+        return new ScriptExecutor(extension, content, project, new ScriptingDatabaseWrapper(context), context);
     }
 
     SchemeItem getScheme() {
