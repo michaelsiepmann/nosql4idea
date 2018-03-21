@@ -27,27 +27,39 @@ import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 public class MongoQueryOptions {
 
-    private static final int DEFAULT_RESULT_LIMIT = 300;
-
     private static final BasicDBObject EMPTY_FILTER = new BasicDBObject();
-    private final List<Object> operations = new LinkedList<Object>();
+    private final List<Object> operations = new LinkedList<>();
 
     private DBObject filter = EMPTY_FILTER;
     private DBObject projection = null;
     private DBObject sort;
 
-    private int resultLimit = DEFAULT_RESULT_LIMIT;
+    private int resultLimit;
 
     public MongoQueryOptions(QueryOptions queryOptions) {
-        if (queryOptions.getOperations() != null) {
-            setOperations(queryOptions.getOperations());
+        String operations = queryOptions.getOperations();
+        if (operations != null) {
+            this.operations.clear();
+            this.operations.addAll((BasicDBList) JSON.parse(operations));
         }
         setFilter(queryOptions.getFilter());
-        setProjection(queryOptions.getProjection());
-        setSort(queryOptions.getSort());
-        setResultLimit(queryOptions.getResultLimit());
+        String projection = queryOptions.getProjection();
+        if (isNotBlank(projection)) {
+            try {
+                this.projection = (DBObject) JSON.parse(projection);
+            } catch (Exception e) {
+                throw new NoSqlException("", e);
+            }
+        }
+        String sort = queryOptions.getSort();
+        if (isNotBlank(sort)) {
+            this.sort = (DBObject) JSON.parse(sort);
+        }
+        resultLimit = queryOptions.getResultLimit();
     }
 
     public boolean isAggregate() {
@@ -56,12 +68,6 @@ public class MongoQueryOptions {
 
     public List getOperations() {
         return operations;
-    }
-
-    public void setOperations(String aggregateQuery) {
-        operations.clear();
-        BasicDBList operations = (BasicDBList) JSON.parse(aggregateQuery);
-        this.operations.addAll(operations);
     }
 
     public void setFilter(String query) {
@@ -74,25 +80,8 @@ public class MongoQueryOptions {
         return filter;
     }
 
-    public void setProjection(String query) {
-        if (!StringUtils.isBlank(query)) {
-            try {
-                projection = (DBObject) JSON.parse(query);
-            } catch (Exception e) {
-                throw new NoSqlException("", e);
-            }
-        }
-    }
-
-
     public DBObject getProjection() {
         return projection;
-    }
-
-    public void setSort(String query) {
-        if (!StringUtils.isBlank(query)) {
-            sort = (DBObject) JSON.parse(query);
-        }
     }
 
     public DBObject getSort() {
@@ -101,9 +90,5 @@ public class MongoQueryOptions {
 
     public int getResultLimit() {
         return resultLimit;
-    }
-
-    public void setResultLimit(int resultLimit) {
-        this.resultLimit = resultLimit;
     }
 }

@@ -118,6 +118,7 @@ public class RedisKeyValueDescriptor extends TypedKeyValueDescriptor<Object> {
         return super.getFormattedValue();
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public void setValue(Object value) {
     }

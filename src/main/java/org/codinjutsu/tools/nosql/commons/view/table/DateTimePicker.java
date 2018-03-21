@@ -46,13 +46,13 @@ import java.util.TimeZone;
 
 public class DateTimePicker extends JXDatePicker {
 
-    private static Color backgroundColor = JBColor.background();
-    private static Color foregroundColor = JBColor.foreground();
-    private static Color selectionBackgroundColor = UIUtil.getTableSelectionBackground();
-    private static Color selectionForegroundColor = UIUtil.getTableSelectionForeground();
-    private static Color monthForegroundColor = StyleAttributesProvider.NUMBER_COLOR;
-    private static Color dayOfTheWeekForegroundColor = StyleAttributesProvider.KEY_COLOR;
-    private static Color todayBackgroundColor = JBColor.WHITE;
+    private static final Color backgroundColor = JBColor.background();
+    private static final Color foregroundColor = JBColor.foreground();
+    private static final Color selectionBackgroundColor = UIUtil.getTableSelectionBackground();
+    private static final Color selectionForegroundColor = UIUtil.getTableSelectionForeground();
+    private static final Color monthForegroundColor = StyleAttributesProvider.NUMBER_COLOR;
+    private static final Color dayOfTheWeekForegroundColor = StyleAttributesProvider.KEY_COLOR;
+    private static final Color todayBackgroundColor = JBColor.WHITE;
 
 
     private JSpinner timeSpinner;
@@ -146,7 +146,7 @@ public class DateTimePicker extends JXDatePicker {
         }
     }
 
-    public void setTimeFormat(DateFormat timeFormat) {
+    private void setTimeFormat(DateFormat timeFormat) {
         this.timeFormat = timeFormat;
         updateTextFieldFormat();
     }

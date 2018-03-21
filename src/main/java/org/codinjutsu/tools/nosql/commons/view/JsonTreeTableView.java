@@ -103,7 +103,7 @@ public class JsonTreeTableView extends TreeTable {
     private static class ReadOnlyValueColumnInfo extends ColumnInfo<NoSqlTreeNode, NodeDescriptor> {
         private final TableCellRenderer myRenderer = new ValueCellRenderer();
 
-        public ReadOnlyValueColumnInfo() {
+        ReadOnlyValueColumnInfo() {
             super("Value");
         }
 
