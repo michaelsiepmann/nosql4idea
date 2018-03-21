@@ -5,10 +5,10 @@ import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseArray
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseArrayImpl
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseObjectImpl
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabasePrimitiveImpl
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseArray
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabasePrimitive
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.keyvalue.KeyValueDescriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.result.StandardResultDescriptor
 import javax.swing.tree.TreeNode
@@ -47,14 +47,14 @@ private fun processDatabaseObject(parentNode: NoSqlTreeNode, databaseElement: Da
     }
 }
 
-internal fun processObject(parentNode: NoSqlTreeNode, value: Any?, nodeDescriptorFactory: NodeDescriptorFactory) {
-    if (value is DatabaseElement) {
-        processDatabaseObject(parentNode, value, nodeDescriptorFactory)
+internal fun processObject(parentNode: NoSqlTreeNode, value: DatabaseElement?, nodeDescriptorFactory: NodeDescriptorFactory) {
+    value?.let {
+        processDatabaseObject(parentNode, it, nodeDescriptorFactory)
     }
 }
 
 internal fun buildDBObject(rootNode: NoSqlTreeNode): DatabaseObject {
-    val result = InternalDatabaseObject()
+    val result = DatabaseObjectImpl()
     rootNode.forEach {
         val descriptor = it.descriptor
         if (descriptor is KeyValueDescriptor) {
@@ -69,14 +69,14 @@ private fun buildValue(node: NoSqlTreeNode, value: Any): DatabaseElement {
         is DatabaseElement -> when {
             value.isArray() -> buildArray(node)
             value.isObject() -> buildDBObject(node)
-            else -> InternalDatabasePrimitive((value as DatabasePrimitive).value())
+            else -> DatabasePrimitiveImpl((value as DatabasePrimitive).value())
         }
-        else -> InternalDatabasePrimitive(value)
+        else -> DatabasePrimitiveImpl(value)
     }
 }
 
 private fun buildArray(node: NoSqlTreeNode): DatabaseElement {
-    val result = InternalDatabaseArray()
+    val result = DatabaseArrayImpl()
     node.forEach {
         result.add(buildValue(it, it.descriptor.value))
     }

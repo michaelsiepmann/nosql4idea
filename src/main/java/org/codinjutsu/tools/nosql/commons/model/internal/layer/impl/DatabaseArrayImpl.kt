@@ -1,9 +1,9 @@
-package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal
+package org.codinjutsu.tools.nosql.commons.model.internal.layer.impl
 
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseArray
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 
-internal class InternalDatabaseArray : InternalDatabaseElement(), DatabaseArray {
+internal class DatabaseArrayImpl : DatabaseElementImpl(), DatabaseArray {
 
     private val list = mutableListOf<DatabaseElement>()
 

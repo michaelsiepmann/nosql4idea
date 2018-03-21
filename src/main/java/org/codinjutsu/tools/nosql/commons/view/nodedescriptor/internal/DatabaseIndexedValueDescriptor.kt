@@ -4,6 +4,7 @@ import com.intellij.ui.ColoredTableCellRenderer
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.SimpleTextAttributes
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider
+import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getObjectAttribute
 import org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getStringAttribute
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.AbstractNodeDecriptor
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.value.IndexedValueDescriptor
@@ -46,7 +47,7 @@ internal open class DatabaseIndexedValueDescriptor(
                 if (value is String) {
                     DatabaseStringIndexedValueDescriptor(index, value)
                 } else {
-                    DatabaseIndexedValueDescriptor(index, value, getStringAttribute())
+                    DatabaseIndexedValueDescriptor(index, value, getObjectAttribute())
                 }
     }
 }

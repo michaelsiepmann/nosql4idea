@@ -7,20 +7,20 @@ import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseArray
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseArray
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabasePrimitive
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseArrayImpl
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseObjectImpl
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabasePrimitiveImpl
 
 internal fun JsonValue.toDatabaseElement(): DatabaseElement {
     return when (this) {
         is JsonObject -> toDatabaseElement()
         is JsonArray -> toDatabaseElement()
-        else -> InternalDatabasePrimitive(toString())
+        else -> DatabasePrimitiveImpl(toString())
     }
 }
 
 internal fun JsonObject.toDatabaseElement(): DatabaseObject {
-    val result = InternalDatabaseObject()
+    val result = DatabaseObjectImpl()
     names.forEach {
         result.add(it, get(it).toDatabaseElement())
     }
@@ -28,7 +28,7 @@ internal fun JsonObject.toDatabaseElement(): DatabaseObject {
 }
 
 internal fun JsonArray.toDatabaseElement(): DatabaseArray {
-    val result = InternalDatabaseArray()
+    val result = DatabaseArrayImpl()
     (0 until size()).forEach {
         result.add(get(it).toDatabaseElement())
     }
@@ -40,7 +40,7 @@ private fun Any.toDatabaseElement(): DatabaseElement {
         is JsonObject -> toDatabaseElement()
         is JsonArray -> toDatabaseElement()
         is JsonValue -> toDatabaseElement()
-        else -> InternalDatabasePrimitive(this)
+        else -> DatabasePrimitiveImpl(this)
     }
 }
 

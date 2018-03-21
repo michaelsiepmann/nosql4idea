@@ -14,12 +14,12 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseArrayImpl
 import org.codinjutsu.tools.nosql.commons.model.internal.toDatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.toJsonElement
 import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem
 import org.codinjutsu.tools.nosql.commons.model.scheme.SchemeItem.Companion.EMPTY_SCHEME
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseArray
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration
 import org.codinjutsu.tools.nosql.elasticsearch.logic.commands.BulkImport
@@ -88,7 +88,7 @@ internal class ElasticsearchClient : DatabaseClient {
 
     private fun jsonSearchResult(searchResult: DatabaseObject, context: ElasticsearchContext): SearchResult {
         val hits = searchResult.getAsDatabaseObject("hits")
-        val jsonArray = hits?.getAsDatabaseArray("hits") ?: InternalDatabaseArray()
+        val jsonArray = hits?.getAsDatabaseArray("hits") ?: DatabaseArrayImpl()
         val objectWrappers = jsonArray.map { it.asObject() }
         val totalCount = hits?.get("total")?.asInt() ?: 0
         return SearchResult(context.database.name, objectWrappers, totalCount)
