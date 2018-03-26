@@ -29,7 +29,7 @@ public class DatabaseServer {
         OK, LOADING, ERROR
     }
 
-    private List<Database> databases = new LinkedList<Database>();
+    private List<Database> databases = new LinkedList<>();
 
     private final ServerConfiguration configuration;
 

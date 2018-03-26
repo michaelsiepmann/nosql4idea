@@ -8,9 +8,9 @@ import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseArray
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseArray
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabasePrimitive
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseArrayImpl
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseObjectImpl
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabasePrimitiveImpl
 
 internal fun DBObject.toDatabaseElement(): DatabaseElement {
     return when (this) {
@@ -29,13 +29,13 @@ internal fun DBObject.toDatabaseObject(): DatabaseObject {
 }
 
 private fun BasicDBList.convertToInternalArray(): DatabaseElement {
-    val result = InternalDatabaseArray()
+    val result = DatabaseArrayImpl()
     (0 until size).forEach { i -> result.add(convertUnknown(get(i))) }
     return result
 }
 
 private fun BasicDBObject.convertToInternalObject(): DatabaseObject {
-    val result = InternalDatabaseObject()
+    val result = DatabaseObjectImpl()
     keys.forEach {
         result.add(it, convertUnknown(get(it)))
     }
@@ -46,7 +46,7 @@ private fun convertUnknown(value: Any) =
         if (value is DBObject) {
             value.toDatabaseElement()
         } else {
-            InternalDatabasePrimitive(value)
+            DatabasePrimitiveImpl(value)
         }
 
 private fun convertToInternalPrimitive(dbObject: DBObject): DatabaseElement {

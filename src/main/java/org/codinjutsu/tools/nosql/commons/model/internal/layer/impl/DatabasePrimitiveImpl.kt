@@ -1,9 +1,9 @@
-package org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal
+package org.codinjutsu.tools.nosql.commons.model.internal.layer.impl
 
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
 import java.util.*
 
-internal class InternalDatabasePrimitive(private val value: Any?) : InternalDatabaseElement(), DatabasePrimitive {
+internal class DatabasePrimitiveImpl(private val value: Any?) : DatabaseElementImpl(), DatabasePrimitive {
 
     override fun isBoolean() =
             if (value is DatabasePrimitive) {
@@ -58,7 +58,7 @@ internal class InternalDatabasePrimitive(private val value: Any?) : InternalData
             if (value is DatabasePrimitive) {
                 value.asString()
             } else {
-                value as String
+                value.toString()
             }
 
     override fun value() = value

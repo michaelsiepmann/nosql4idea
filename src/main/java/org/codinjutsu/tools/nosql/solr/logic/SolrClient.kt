@@ -11,9 +11,9 @@ import org.codinjutsu.tools.nosql.commons.model.DatabaseServer
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseObjectImpl
 import org.codinjutsu.tools.nosql.commons.model.internal.toDatabaseElement
 import org.codinjutsu.tools.nosql.commons.view.filedialogs.ImportResultState
-import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.internal.InternalDatabaseObject
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.solr.configuration.SolrServerConfiguration
 import org.codinjutsu.tools.nosql.solr.logic.commands.GetDocument
@@ -56,7 +56,7 @@ internal class SolrClient : DatabaseClient {
 
     override fun defaultConfiguration() = SolrServerConfiguration()
 
-    override fun findAll(context: DatabaseContext) = jsonSearchResult(InternalDatabaseObject(), context) // todo
+    override fun findAll(context: DatabaseContext) = jsonSearchResult(DatabaseObjectImpl(), context) // todo
 
     override fun findDocument(context: DatabaseContext, _id: Any) =
             GetDocument(context as SolrContext, _id.toString()).execute().toDatabaseElement()

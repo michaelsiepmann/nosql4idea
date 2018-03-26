@@ -96,14 +96,10 @@ public class GuiUtils {
     }
 
     public static void showNotification(final JComponent component, final MessageType info, final String message, final Balloon.Position position) {
-        runInSwingThread(new Runnable() {
-            @Override
-            public void run() {
+        runInSwingThread(() ->
                 JBPopupFactory.getInstance().createBalloonBuilder(new JLabel(message))
                         .setFillColor(info.getPopupBackground())
                         .createBalloon()
-                        .show(new RelativePoint(component, new Point(0, 0)), position);
-            }
-        });
+                        .show(new RelativePoint(component, new Point(0, 0)), position));
     }
 }

@@ -44,7 +44,7 @@ public class OperatorCompletionAction extends AnAction implements Disposable {
 
 
     static {
-        List<String> operator = new LinkedList<String>();
+        List<String> operator = new LinkedList<>();
         for (MongoAggregateOperator aggregateOperator : MongoAggregateOperator.values()) {
             operator.add(aggregateOperator.getLabel());
         }
@@ -52,14 +52,13 @@ public class OperatorCompletionAction extends AnAction implements Disposable {
         for (Field field : QueryOperators.class.getFields()) {
             try {
                 operator.add((String) QueryOperators.class.getDeclaredField(field.getName()).get(String.class));
-            } catch (IllegalAccessException e) {
-
+            } catch (IllegalAccessException ignored) {
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
 
-        QUERY_OPERATOR_LIST = new JBList(operator);
+        QUERY_OPERATOR_LIST = new JBList<>(operator);
     }
 
     private final Project project;
@@ -79,18 +78,16 @@ public class OperatorCompletionAction extends AnAction implements Disposable {
         new PopupChooserBuilder(QUERY_OPERATOR_LIST)
                 .setMovable(false)
                 .setCancelKeyEnabled(true)
-                .setItemChoosenCallback(new Runnable() {
-                    public void run() {
-                        final String selectedQueryOperator = (String) QUERY_OPERATOR_LIST.getSelectedValue();
-                        if (selectedQueryOperator == null) return;
+                .setItemChoosenCallback(() -> {
+                    final String selectedQueryOperator = (String) QUERY_OPERATOR_LIST.getSelectedValue();
+                    if (selectedQueryOperator == null) return;
 
-                        new WriteCommandAction(project, MONGO_OPERATOR_COMPLETION) {
-                            @Override
-                            protected void run(@NotNull Result result) throws Throwable {
-                                document.insertString(offset, selectedQueryOperator);
-                            }
-                        }.execute();
-                    }
+                    new WriteCommandAction(project, MONGO_OPERATOR_COMPLETION) {
+                        @Override
+                        protected void run(@NotNull Result result) {
+                            document.insertString(offset, selectedQueryOperator);
+                        }
+                    }.execute();
                 })
                 .createPopup()
                 .showInBestPositionFor(editor);

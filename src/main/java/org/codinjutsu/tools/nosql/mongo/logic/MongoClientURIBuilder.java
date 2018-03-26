@@ -91,7 +91,7 @@ class MongoClientURIBuilder {
     }
 
     private static String buildOptions(Map<String, String> options) {
-        List<String> optionList = new LinkedList<String>();
+        List<String> optionList = new LinkedList<>();
         for (Map.Entry<String, String> keyValue : options.entrySet()) {
             optionList.add(String.format("%s=%s", keyValue.getKey(), keyValue.getValue())); //NON-NLS
         }

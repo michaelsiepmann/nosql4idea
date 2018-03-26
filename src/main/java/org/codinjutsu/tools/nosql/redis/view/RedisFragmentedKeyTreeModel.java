@@ -31,7 +31,7 @@ import java.util.Enumeration;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.codinjutsu.tools.nosql.commons.utils.StringUtilsKt.explode;
 
-public class RedisFragmentedKeyTreeModel extends DefaultTreeModel {
+class RedisFragmentedKeyTreeModel extends DefaultTreeModel {
 
     private String separator;
     private DefaultTreeModel fragmentedKeyModel;
