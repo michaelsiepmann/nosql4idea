@@ -8,6 +8,8 @@ internal interface DatabaseElement {
 
     fun isPrimitive(): Boolean = false
 
+    fun isNull(): Boolean = false
+
     fun asInt(): Int {
         throw IllegalStateException("Value can not be parsed as an object")
     }

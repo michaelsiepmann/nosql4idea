@@ -1,11 +1,9 @@
 package org.codinjutsu.tools.nosql.commons.model.internal
 
 import com.google.gson.*
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseArray
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
-import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabasePrimitive
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.*
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseArrayImpl
+import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseNullImpl
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabaseObjectImpl
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.impl.DatabasePrimitiveImpl
 
@@ -14,7 +12,7 @@ internal fun JsonElement.toDatabaseElement(): DatabaseElement {
         is JsonObject -> toDatabaseElement()
         is JsonArray -> toDatabaseElement()
         is JsonPrimitive -> toDatabaseElement()
-        is JsonNull -> DatabasePrimitiveImpl("")
+        is JsonNull -> DatabaseNullImpl()
         else -> DatabasePrimitiveImpl(asString)
     }
 }
@@ -48,6 +46,7 @@ internal fun DatabaseElement.toJsonElement(): JsonElement {
         is DatabaseObject -> toJsonElement()
         is DatabaseArray -> toJsonElement()
         is DatabasePrimitive -> toJsonElement()
+        is DatabaseNull -> JsonNull.INSTANCE
         else -> JsonPrimitive(asObject().toString())
     }
 }
