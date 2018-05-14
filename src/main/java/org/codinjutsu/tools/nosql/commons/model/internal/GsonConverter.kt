@@ -1,9 +1,6 @@
 package org.codinjutsu.tools.nosql.commons.model.internal
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import com.google.gson.*
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseArray
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseObject
@@ -17,6 +14,7 @@ internal fun JsonElement.toDatabaseElement(): DatabaseElement {
         is JsonObject -> toDatabaseElement()
         is JsonArray -> toDatabaseElement()
         is JsonPrimitive -> toDatabaseElement()
+        is JsonNull -> DatabasePrimitiveImpl("")
         else -> DatabasePrimitiveImpl(asString)
     }
 }
