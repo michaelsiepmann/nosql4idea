@@ -24,6 +24,8 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
+import org.codinjutsu.tools.nosql.commons.history.HistoryList;
+import org.codinjutsu.tools.nosql.commons.history.HistoryPanelMessages;
 import org.codinjutsu.tools.nosql.couchbase.configuration.CouchbaseServerConfiguration;
 import org.codinjutsu.tools.nosql.elasticsearch.configuration.ElasticsearchServerConfiguration;
 import org.codinjutsu.tools.nosql.mongo.configuration.MongoServerConfiguration;
@@ -47,8 +49,13 @@ import java.util.Map;
 )
 public class NoSqlConfiguration implements PersistentStateComponent<Element> {
 
+    private static final String ROOTTAGNAME_NOSQL = "nosql"; //NON-NLS
+    private static final String TAGNAME_CONFIGURATIONS = "configurations"; //NON-NLS
+    private static final String TAGNAME_SHELL = "shell"; //NON-NLS
+    private static final String TAGNAME_HISTORIES = "histories"; //NON-NLS
     private List<ServerConfiguration> serverConfigurations = new LinkedList<>();
     private Map<DatabaseVendor, String> shellPathByDatabaseVendor = new HashMap<>();
+    private List<HistoryList> historyLists = new LinkedList<>();
 
     public static NoSqlConfiguration getInstance(Project project) {
         return ServiceManager.getService(project, NoSqlConfiguration.class);
@@ -56,25 +63,36 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
 
     @Override
     public Element getState() {
-        Element rootElement = new Element("nosql"); //NON-NLS
-        Element configurations = new Element("configurations"); //NON-NLS
+        Element rootElement = new Element(ROOTTAGNAME_NOSQL);
+        Element configurations = new Element(TAGNAME_CONFIGURATIONS);
         rootElement.addContent(configurations);
         for (ServerConfiguration configuration : serverConfigurations) {
             configurations.addContent(XmlSerializer.serialize(configuration));
         }
-        Element shell = new Element("shell"); //NON-NLS
+        Element shell = new Element(TAGNAME_SHELL);
         rootElement.addContent(shell);
         shell.addContent(XmlSerializer.serialize(shellPathByDatabaseVendor));
+        Element histories = new Element(TAGNAME_HISTORIES);
+        rootElement.addContent(histories);
+        for (HistoryList historyList : historyLists) {
+            histories.addContent(XmlSerializer.serialize(historyList));
+        }
         return rootElement;
     }
 
     @Override
     public void loadState(Element element) {
-        for (Element child : element.getChild("configurations").getChildren()) { //NON-NLS
+        for (Element child : element.getChild(TAGNAME_CONFIGURATIONS).getChildren()) {
             Class<? extends ServerConfiguration> clazz = getServerConfigurationClass(child.getName());
             serverConfigurations.add(XmlSerializer.deserialize(child, clazz));
         }
-        shellPathByDatabaseVendor = XmlSerializer.deserialize(element.getChild("shell"), HashMap.class); //NON-NLS
+        shellPathByDatabaseVendor = XmlSerializer.deserialize(element.getChild(TAGNAME_SHELL), HashMap.class);
+        Element historyElements = element.getChild(TAGNAME_HISTORIES);
+        if (historyElements != null) {
+            for (Element child : historyElements.getChildren()) {
+                historyLists.add(XmlSerializer.deserialize(child, HistoryList.class));
+            }
+        }
     }
 
     @NotNull
@@ -95,7 +113,7 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
         }
     }
 
-    public void setServerConfigurations(List<ServerConfiguration> serverConfigurations) {
+    void setServerConfigurations(List<ServerConfiguration> serverConfigurations) {
         this.serverConfigurations = serverConfigurations;
     }
 
@@ -115,7 +133,27 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
         return shellPathByDatabaseVendor;
     }
 
-    public void setShellPath(DatabaseVendor databaseVendor, String shellPath) {
+    void setShellPath(DatabaseVendor databaseVendor, String shellPath) {
         shellPathByDatabaseVendor.put(databaseVendor, shellPath);
+    }
+
+    public List<HistoryList> getHistoryLists() {
+        return historyLists;
+    }
+
+    @NotNull
+    public HistoryList findListByVendor(DatabaseVendor vendor, Project project) {
+        String vendorName = vendor.getVendorName();
+        for (HistoryList historyList : historyLists) {
+            if (historyList.getVendor().equals(vendorName)) {
+                return historyList;
+            }
+        }
+        HistoryList historyList = new HistoryList(vendorName);
+        historyLists.add(historyList);
+        project.getMessageBus()
+                .syncPublisher(HistoryPanelMessages.Companion.getTOPIC())
+                .add(historyList);
+        return historyList;
     }
 }

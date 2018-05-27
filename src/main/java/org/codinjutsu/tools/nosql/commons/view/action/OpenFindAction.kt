@@ -20,21 +20,21 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
-import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
+import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
 
 import java.awt.event.KeyEvent
 
-class OpenFindAction(private val resultView: NoSqlResultView) : AnAction("Find", "Open Find editor", AllIcons.Actions.Find), DumbAware {
+class OpenFindAction(private val databasePanel: DatabasePanel) : AnAction("Find", "Open Find editor", AllIcons.Actions.Find), DumbAware {
 
     init {
-        registerCustomShortcutSet(KeyEvent.VK_F, KeyEvent.CTRL_MASK, resultView)
+        registerCustomShortcutSet(KeyEvent.VK_F, KeyEvent.CTRL_MASK, databasePanel)
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        if (!resultView.isFindEditorOpened) {
-            resultView.openFindEditor()
+        if (!databasePanel.isFindEditorOpened) {
+            databasePanel.openFindEditor()
         } else {
-            resultView.focusOnEditor()
+            databasePanel.focusOnEditor()
         }
     }
 }

@@ -18,7 +18,7 @@ package org.codinjutsu.tools.nosql.mongo
 
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.DatabaseUI
-import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
+import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.mongo.logic.MongoClient
 import org.codinjutsu.tools.nosql.mongo.model.MongoContext
@@ -30,7 +30,7 @@ class MongoUI : DatabaseUI {
 
     override fun createAuthenticationView() = MongoAuthenticationPanel()
 
-    override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView {
+    override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): DatabasePanel {
         return MongoPanel(project,
                 MongoContext(
                         MongoClient.getInstance(project),

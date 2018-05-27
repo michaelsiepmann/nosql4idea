@@ -15,7 +15,7 @@ internal class MongoDatabaseServerFolder(databaseserver: DatabaseServer, project
 
     override fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile? = null
 
-    override fun deleteChild(child: Folder<*, MongoDatabase>) {
+    override fun deleteChild(child: Folder<*, *>) {
         val configuration = configuration
         databaseClient.dropDatabase(configuration, child.data as MongoDatabase)
     }

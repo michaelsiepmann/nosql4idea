@@ -1,6 +1,6 @@
 package org.codinjutsu.tools.nosql.commons.view.panel.query
 
-data class QueryOptionsImpl @JvmOverloads constructor(
+internal data class QueryOptionsImpl @JvmOverloads constructor(
         override var operations: String? = null,
         override var resultLimit: Int = 300,
         override var filter: String? = null,

@@ -2,6 +2,7 @@ package org.codinjutsu.tools.nosql.commons.view;
 
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.TreeExpander;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -60,7 +61,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
 
-public abstract class DatabasePanel extends NoSqlResultView {
+public abstract class DatabasePanel extends JPanel implements Disposable {
 
     private final LoadingDecorator loadingDecorator;
     private JPanel rootPanel;
@@ -213,7 +214,6 @@ public abstract class DatabasePanel extends NoSqlResultView {
         return context;
     }
 
-    @Override
     public Object getRecords() {
         return null;
     }
@@ -292,7 +292,6 @@ public abstract class DatabasePanel extends NoSqlResultView {
         resultPanel.dispose();
     }
 
-    @Override
     public NoSQLResultPanel getResultPanel() {
         return resultPanel;
     }

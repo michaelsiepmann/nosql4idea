@@ -19,19 +19,19 @@ package org.codinjutsu.tools.nosql.commons.view.action
 import com.intellij.icons.AllIcons
 import com.intellij.ide.actions.CloseTabToolbarAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
+import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
 
 import java.awt.event.KeyEvent
 
-class CloseFindEditorAction(private val noSqlResultView: NoSqlResultView) : CloseTabToolbarAction() {
+class CloseFindEditorAction(private val databasePanel: DatabasePanel) : CloseTabToolbarAction() {
 
     init {
         templatePresentation.icon = AllIcons.Actions.Close
-        registerCustomShortcutSet(KeyEvent.VK_ESCAPE, 0, noSqlResultView)
+        registerCustomShortcutSet(KeyEvent.VK_ESCAPE, 0, databasePanel)
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        noSqlResultView.closeFindEditor()
+        databasePanel.closeFindEditor()
     }
 
     override fun update(event: AnActionEvent?) {

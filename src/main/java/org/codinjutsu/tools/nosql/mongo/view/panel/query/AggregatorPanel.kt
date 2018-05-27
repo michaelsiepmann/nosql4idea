@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.mongodb.util.JSONParseException
+import org.codinjutsu.tools.nosql.commons.history.HistoryItem
 import org.codinjutsu.tools.nosql.commons.view.action.OperatorCompletionAction
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
@@ -52,6 +53,10 @@ internal class AggregatorPanel(project: Project, updateAlarm: (JComponent) -> Un
     }
 
     override fun getRequestFocusComponent() = this.editor.contentComponent
+
+    override fun showHistoryItem(historyItem: HistoryItem) {
+        editor.document.setText(historyItem.filter)
+    }
 
     override fun dispose() {
         operatorCompletionAction.dispose()

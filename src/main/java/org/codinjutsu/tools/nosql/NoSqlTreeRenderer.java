@@ -18,7 +18,7 @@ package org.codinjutsu.tools.nosql;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ui.ColoredTreeCellRenderer;
-import org.codinjutsu.tools.nosql.commons.model.explorer.Folder;
+import org.codinjutsu.tools.nosql.commons.model.explorer.TreeCellItem;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,13 +29,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class NoSqlTreeRenderer extends ColoredTreeCellRenderer {
 
     public static final Icon DATABASE = GuiUtils.loadIcon("database.png"); //NON-NLS
-    public static final Icon MONGO_COLLECTION = AllIcons.Nodes.Folder;
+    public static final Icon ICON_COLLECTION = AllIcons.Nodes.Folder;
+    public static final Icon ICON_PINNED = AllIcons.General.Pin_tab;
 
     @Override
     public void customizeCellRenderer(@NotNull JTree mongoTree, Object value, boolean isSelected, boolean isExpanded, boolean isLeaf, int row, boolean focus) {
         Object object = ((DefaultMutableTreeNode) value).getUserObject();
-        if ((object instanceof Folder)) {
-            ((Folder) object).updateTreeCell(this);
+        if ((object instanceof TreeCellItem)) {
+            ((TreeCellItem) object).updateTreeCell(this);
         }
     }
 }

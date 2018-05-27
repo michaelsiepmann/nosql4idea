@@ -25,6 +25,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
+import org.codinjutsu.tools.nosql.commons.view.explorer.NoSqlExplorerPanel;
 
 import javax.swing.Icon;
 
@@ -62,6 +63,6 @@ public class NoSqlWindowManager {
     }
 
     public void apply() {
-        ApplicationManager.getApplication().invokeLater(noSqlExplorerPanel::reloadAllServerConfigurations);
+        ApplicationManager.getApplication().invokeLater(noSqlExplorerPanel::initializeExplorerPanel);
     }
 }

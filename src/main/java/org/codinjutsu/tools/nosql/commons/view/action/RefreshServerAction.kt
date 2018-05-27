@@ -20,20 +20,20 @@ import com.intellij.icons.AllIcons.Actions.Refresh
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
-import org.codinjutsu.tools.nosql.NoSqlExplorerPanel
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
+import org.codinjutsu.tools.nosql.commons.view.explorer.DatabaseListPanel
 
-class RefreshServerAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction(REFRESH_TEXT), DumbAware {
+internal class RefreshServerAction(private val databaseListPanel: DatabaseListPanel) : AnAction(REFRESH_TEXT), DumbAware {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
-        noSqlExplorerPanel.refreshSelectedServer()
+        databaseListPanel.refreshSelectedServer()
     }
 
     override fun update(event: AnActionEvent) {
-        val selected = noSqlExplorerPanel.isDatabaseServerSelected
+        val selected = databaseListPanel.isDatabaseServerSelected
         event.presentation.isVisible = selected
         if (selected) {
-            val isConnected = noSqlExplorerPanel.hasDatabaseServerChildren()
+            val isConnected = databaseListPanel.hasDatabaseServerChildren()
             event.presentation.icon = if (isConnected) REFRESH_ICON else CONNECT_ICON
             event.presentation.text = if (isConnected) REFRESH_TEXT else CONNECT_TEXT
         }

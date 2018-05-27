@@ -7,15 +7,20 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.util.Alarm
 import com.intellij.util.ui.UIUtil
+import org.codinjutsu.tools.nosql.DatabaseVendor
+import org.codinjutsu.tools.nosql.commons.history.CreateHistoryMessage
+import org.codinjutsu.tools.nosql.commons.history.HistoryItem
+import org.codinjutsu.tools.nosql.commons.history.HistorySelectedMessage
 import org.codinjutsu.tools.nosql.commons.view.action.EnableAggregateAction
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
+import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryPanel
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.awt.Font
 import javax.swing.JPanel
 
-internal class MongoQueryPanel(private val project: Project) : JPanel(), Disposable, QueryPanel {
+internal class MongoQueryPanel(private val project: Project) : JPanel(), Disposable, QueryPanel, HistorySelectedMessage {
 
     private val myUpdateAlarm = Alarm(Alarm.ThreadToUse.SWING_THREAD)
     private val queryCardLayout = CardLayout()
@@ -44,6 +49,14 @@ internal class MongoQueryPanel(private val project: Project) : JPanel(), Disposa
         toggleToFind()
 
         Disposer.register(project, this)
+
+        project.messageBus.connect().subscribe(HistorySelectedMessage.TOPIC, this)
+    }
+
+    override fun historyItemSelected(vendor: String, historyItem: HistoryItem) {
+        if (vendor == DatabaseVendor.MONGO.name) {
+            getCurrentOperatorPanel().showHistoryItem(historyItem)
+        }
     }
 
     override fun addActions(actionResultGroup: DefaultActionGroup) {
@@ -65,12 +78,21 @@ internal class MongoQueryPanel(private val project: Project) : JPanel(), Disposa
                 aggregationPanel
             }
 
-    override fun getQueryOptions(rowLimit: String, page: Page?) = getCurrentOperatorPanel().buildQueryOptions(rowLimit, page)
+    override fun getQueryOptions(rowLimit: String, page: Page?): QueryOptions {
+        val options = getCurrentOperatorPanel().buildQueryOptions(rowLimit, page)
+        val filter = options.filter
+        if (filter != null && filter.isNotEmpty()) {
+            project.messageBus.syncPublisher(CreateHistoryMessage.TOPIC)
+                    .createHistoryItem(DatabaseVendor.MONGO, HistoryItem(filter))
+        }
+        return options
+    }
 
     override fun dispose() {
         myUpdateAlarm.cancelAllRequests()
         filterPanel.dispose()
         aggregationPanel.dispose()
+        project.messageBus.dispose()
     }
 
     fun toggleToAggregation() {
@@ -90,7 +112,7 @@ internal class MongoQueryPanel(private val project: Project) : JPanel(), Disposa
     companion object {
         internal val COURIER_FONT = Font("Courier", Font.PLAIN, UIUtil.getLabelFont().size)
 
-        private val FILTER_PANEL = "FilterPanel"
-        private val AGGREGATION_PANEL = "AggregationPanel"
+        private const val FILTER_PANEL = "FilterPanel"
+        private const val AGGREGATION_PANEL = "AggregationPanel"
     }
 }

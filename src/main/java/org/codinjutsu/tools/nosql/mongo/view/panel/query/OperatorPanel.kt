@@ -11,6 +11,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.mongodb.util.JSON
 import com.mongodb.util.JSONParseException
+import org.codinjutsu.tools.nosql.commons.history.HistoryItem
 import org.codinjutsu.tools.nosql.commons.view.createJSONEditor
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
@@ -28,6 +29,8 @@ internal abstract class OperatorPanel(private val project: Project) : JPanel(), 
     abstract fun validateQuery()
 
     abstract fun buildQueryOptions(rowLimit: String, page: Page?): QueryOptions
+
+    abstract fun showHistoryItem(historyItem: HistoryItem)
 
     internal fun notifyOnErrorForOperator(component: JComponent, ex: Exception) {
         val message = if (ex is JSONParseException) {

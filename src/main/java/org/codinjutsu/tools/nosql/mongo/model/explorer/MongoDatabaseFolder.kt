@@ -55,7 +55,7 @@ internal class MongoDatabaseFolder(override val data: MongoDatabase, override va
         return null
     }
 
-    override fun deleteChild(child: Folder<*, MongoDatabase>) {
+    override fun deleteChild(child: Folder<*, *>) {
         parent.databaseClient.dropFolder(databaseServer.configuration, (child as CommonLeafFolder).data)
     }
 

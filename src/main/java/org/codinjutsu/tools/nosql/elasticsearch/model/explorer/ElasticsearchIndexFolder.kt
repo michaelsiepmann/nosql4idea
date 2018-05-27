@@ -53,7 +53,7 @@ internal class ElasticsearchIndexFolder(override val data: ElasticsearchDatabase
         return null
     }
 
-    override fun deleteChild(child: Folder<*, ElasticsearchDatabase>) {
+    override fun deleteChild(child: Folder<*, *>) {
         (parent as ElasticsearchDatabaseServerFolder).databaseClient.dropFolder(databaseServer.configuration, (child as CommonLeafFolder).data)
     }
 }

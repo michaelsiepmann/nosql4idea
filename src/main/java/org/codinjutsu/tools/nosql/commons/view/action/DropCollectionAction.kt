@@ -16,29 +16,25 @@
 
 package org.codinjutsu.tools.nosql.commons.view.action
 
-import com.intellij.icons.AllIcons
+import com.intellij.icons.AllIcons.Actions.Delete
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
-import org.codinjutsu.tools.nosql.NoSqlExplorerPanel
 import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType
+import org.codinjutsu.tools.nosql.commons.view.explorer.DatabaseListPanel
 import javax.swing.JOptionPane
 
-class DropCollectionAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction("Drop collection", "Drop the selected collection", REMOVE_ICON), DumbAware {
+internal class DropCollectionAction(private val databaseListPanel: DatabaseListPanel) : AnAction("Drop collection", "Drop the selected collection", Delete), DumbAware {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
-        val result = JOptionPane.showConfirmDialog(null, String.format("Do you REALLY want to drop the '%s' collection?", noSqlExplorerPanel.selectedFolder!!.name), "Warning", JOptionPane.YES_NO_OPTION)
+        val result = JOptionPane.showConfirmDialog(null, String.format("Do you REALLY want to drop the '%s' collection?", databaseListPanel.selectedFolder!!.name), "Warning", JOptionPane.YES_NO_OPTION)
         if (result == JOptionPane.YES_OPTION) {
-            noSqlExplorerPanel.dropFolder()
+            databaseListPanel.dropFolder()
         }
     }
 
-    override fun update(event: AnActionEvent?) {
-        event!!.presentation.isVisible = noSqlExplorerPanel.canFolderBeDeleted(FolderType.MONGO_COLLECTION) ||
-                noSqlExplorerPanel.canFolderBeDeleted(FolderType.ELASTICSEARCH_TYPE)
-    }
-
-    companion object {
-        private val REMOVE_ICON = AllIcons.Actions.Delete
+    override fun update(event: AnActionEvent) {
+        event.presentation.isVisible = databaseListPanel.canFolderBeDeleted(FolderType.MONGO_COLLECTION) ||
+                databaseListPanel.canFolderBeDeleted(FolderType.ELASTICSEARCH_TYPE)
     }
 }

@@ -20,15 +20,15 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
-import org.codinjutsu.tools.nosql.NoSqlExplorerPanel
+import org.codinjutsu.tools.nosql.commons.view.explorer.DatabaseListPanel
 
-class ViewCollectionValuesAction(private val noSqlExplorerPanel: NoSqlExplorerPanel) : AnAction("View collection content", "View collection content", AllIcons.Nodes.DataSchema), DumbAware {
+internal class ViewCollectionValuesAction(private val databaseListPanel: DatabaseListPanel) : AnAction("View collection content", "View collection content", AllIcons.Nodes.DataSchema), DumbAware {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
-        noSqlExplorerPanel.loadRecords()
+        databaseListPanel.loadRecords()
     }
 
     override fun update(event: AnActionEvent) {
-        event.presentation.isVisible = noSqlExplorerPanel.isDatabaseSelected
+        event.presentation.isVisible = databaseListPanel.isDatabaseSelected
     }
 }

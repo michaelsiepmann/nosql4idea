@@ -25,10 +25,10 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.DatabaseVendorInformation;
 import org.codinjutsu.tools.nosql.NoSqlConfiguration;
-import org.codinjutsu.tools.nosql.NoSqlExplorerPanel;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
+import org.codinjutsu.tools.nosql.commons.view.explorer.DatabaseListPanel;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
@@ -36,11 +36,11 @@ import static org.codinjutsu.tools.nosql.DatabaseVendor.REDIS;
 
 public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
 
-    private final NoSqlExplorerPanel noSqlExplorerPanel;
+    private final DatabaseListPanel databaseListPanel;
 
-    public NoSqlDatabaseConsoleAction(NoSqlExplorerPanel noSqlExplorerPanel) {
+    public NoSqlDatabaseConsoleAction(DatabaseListPanel databaseListPanel) {
         super("DB Shell...", "DB Shell", GuiUtils.loadIcon("toolConsole.png")); //NON-NLS
-        this.noSqlExplorerPanel = noSqlExplorerPanel;
+        this.databaseListPanel = databaseListPanel;
     }
 
     @Override
@@ -59,10 +59,10 @@ public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
                         (isNotBlank(configuration.getShellPath(MONGO)) ||
                                 isNotBlank(configuration.getShellPath(REDIS))
                         ) &&
-                        (noSqlExplorerPanel.getConfiguration() != null) &&
-                        noSqlExplorerPanel.getConfiguration().isSingleServer()
+                        (databaseListPanel.getConfiguration() != null) &&
+                        databaseListPanel.getConfiguration().isSingleServer()
         );
-        presentation.setEnabled(noSqlExplorerPanel.hasDatabaseConsoleApplication());
+        presentation.setEnabled(databaseListPanel.hasDatabaseConsoleApplication());
     }
 
     @Override
@@ -73,10 +73,10 @@ public class NoSqlDatabaseConsoleAction extends AnAction implements DumbAware {
     }
 
     private void runShell(Project project) {
-        ServerConfiguration configuration = noSqlExplorerPanel.getConfiguration();
+        ServerConfiguration configuration = databaseListPanel.getConfiguration();
         DatabaseVendorInformation databaseVendorInformation = configuration.getDatabaseVendorInformation();
         if (databaseVendorInformation.getHasConsoleWindow()) {
-            AbstractNoSQLConsoleRunner consoleRunner = databaseVendorInformation.createConsoleRunner(project, configuration, noSqlExplorerPanel.getSelectedDatabase());
+            AbstractNoSQLConsoleRunner consoleRunner = databaseVendorInformation.createConsoleRunner(project, configuration, databaseListPanel.getSelectedDatabase());
             try {
                 if (consoleRunner != null) {
                     consoleRunner.initAndRun();

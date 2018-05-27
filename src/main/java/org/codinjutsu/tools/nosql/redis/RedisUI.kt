@@ -18,7 +18,7 @@ package org.codinjutsu.tools.nosql.redis
 
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.DatabaseUI
-import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
+import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient
 import org.codinjutsu.tools.nosql.redis.model.RedisContext
@@ -29,7 +29,7 @@ import org.codinjutsu.tools.nosql.redis.view.editor.RedisObjectFile
 class RedisUI : DatabaseUI {
     override fun createAuthenticationView() = RedisAuthenticationPanel()
 
-    override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView {
+    override fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): DatabasePanel {
         val redisObjectFile = objectFile as RedisObjectFile
         return RedisPanel(project, RedisContext(RedisClient.getInstance(project), redisObjectFile.configuration, redisObjectFile.database))
     }

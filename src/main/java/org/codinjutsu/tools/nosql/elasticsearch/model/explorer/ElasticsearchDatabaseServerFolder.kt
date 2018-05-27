@@ -15,7 +15,7 @@ internal class ElasticsearchDatabaseServerFolder(databaseserver: DatabaseServer,
 
     override fun createNoSqlObjectFile(project: Project): NoSqlDatabaseObjectFile? = null
 
-    override fun deleteChild(child: Folder<*, ElasticsearchDatabase>) {
+    override fun deleteChild(child: Folder<*, *>) {
         databaseClient.dropDatabase(configuration, child.data as ElasticsearchDatabase)
     }
 }

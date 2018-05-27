@@ -19,22 +19,22 @@ package org.codinjutsu.tools.nosql.commons.view.action
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
+import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
 
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 
-class ExecuteQuery(private val resultView: NoSqlResultView) : AnAction("Execute query", "Execute query with options", AllIcons.Actions.Execute) {
+class ExecuteQuery(private val databasePanel: DatabasePanel) : AnAction("Execute query", "Execute query with options", AllIcons.Actions.Execute) {
 
     init {
-        registerCustomShortcutSet(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK, resultView)
+        registerCustomShortcutSet(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK, databasePanel)
     }
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
-        resultView.executeQuery()
+        databasePanel.executeQuery()
     }
 
     override fun update(event: AnActionEvent?) {
-        event!!.presentation.isEnabled = resultView.records != null
+        event!!.presentation.isEnabled = databasePanel.records != null
     }
 }

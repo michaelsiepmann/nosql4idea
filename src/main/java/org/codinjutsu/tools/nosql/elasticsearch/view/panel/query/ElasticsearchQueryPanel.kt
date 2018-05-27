@@ -6,6 +6,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.components.panels.NonOpaquePanel
+import org.codinjutsu.tools.nosql.DatabaseVendor
+import org.codinjutsu.tools.nosql.commons.history.CreateHistoryMessage
+import org.codinjutsu.tools.nosql.commons.history.HistoryItem
+import org.codinjutsu.tools.nosql.commons.history.HistorySelectedMessage
 import org.codinjutsu.tools.nosql.commons.view.createJSONEditor
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions
@@ -15,7 +19,7 @@ import java.awt.Dimension
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-internal class ElasticsearchQueryPanel(private val project: Project) : JPanel(), Disposable, QueryPanel {
+internal class ElasticsearchQueryPanel(private val project: Project) : JPanel(), Disposable, QueryPanel, HistorySelectedMessage {
 
     private val filterEditor = createJSONEditor(project)
 
@@ -31,6 +35,13 @@ internal class ElasticsearchQueryPanel(private val project: Project) : JPanel(),
         panel.maximumSize = Dimension(Short.MAX_VALUE.toInt(), Short.MAX_VALUE.toInt())
         add(panel)
         Disposer.register(project, this)
+        project.messageBus.connect().subscribe(HistorySelectedMessage.TOPIC, this)
+    }
+
+    override fun historyItemSelected(vendor: String, historyItem: HistoryItem) {
+        if (vendor == DatabaseVendor.ELASTICSEARCH.name) {
+            filterEditor.document.setText(historyItem.filter)
+        }
     }
 
     override fun getQueryOptions(rowLimit: String, page: Page?): QueryOptions {
@@ -40,8 +51,10 @@ internal class ElasticsearchQueryPanel(private val project: Project) : JPanel(),
                 } else {
                     0
                 }
-
-        return ElasticsearchQueryOptions(limit, filterEditor.document.text, page)
+        val text = filterEditor.document.text
+        project.messageBus.syncPublisher(CreateHistoryMessage.TOPIC)
+                .createHistoryItem(DatabaseVendor.ELASTICSEARCH, HistoryItem(text))
+        return ElasticsearchQueryOptions(limit, text, page)
     }
 
     override fun validateQuery() {
@@ -59,5 +72,6 @@ internal class ElasticsearchQueryPanel(private val project: Project) : JPanel(),
     override fun dispose() {
         val editorFactory = EditorFactory.getInstance()
         editorFactory.releaseEditor(filterEditor)
+        project.messageBus.dispose()
     }
 }

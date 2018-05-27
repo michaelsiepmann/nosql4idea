@@ -37,7 +37,7 @@ internal class CommonLeafFolder<out TYPE : NamedObject, DATABASE : Database>(
     override fun updateTreeCell(renderer: ColoredTreeCellRenderer) {
         renderer.apply {
             append(data.name)
-            icon = NoSqlTreeRenderer.MONGO_COLLECTION
+            icon = NoSqlTreeRenderer.ICON_COLLECTION
         }
     }
 }

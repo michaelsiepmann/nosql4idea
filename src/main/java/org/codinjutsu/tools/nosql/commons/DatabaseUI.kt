@@ -17,14 +17,14 @@
 package org.codinjutsu.tools.nosql.commons
 
 import com.intellij.openapi.project.Project
-import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView
+import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
 import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView
 import org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseObjectFile
 
 interface DatabaseUI {
     fun createAuthenticationView(): AuthenticationView
 
-    fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): NoSqlResultView
+    fun createResultPanel(project: Project, objectFile: NoSqlDatabaseObjectFile): DatabasePanel
 
     fun hasOptionsPanel(): Boolean = true
 }
