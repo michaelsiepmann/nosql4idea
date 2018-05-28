@@ -18,4 +18,6 @@ internal class HistoryItem(
             }
         }
     }
+
+    fun isNotEmpty() = filter.isNotEmpty()
 }

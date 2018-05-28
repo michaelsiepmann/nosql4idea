@@ -41,18 +41,26 @@ internal class HistoryListPanel(private val project: Project) : AbstractListPane
                 }
             }
         }
-        messageBus.connect().subscribe(CreateHistoryMessage.TOPIC, this)
+        val messageBusConnection = messageBus.connect()
+        messageBusConnection.subscribe(CreateHistoryMessage.TOPIC, this)
+        messageBusConnection.subscribe(HistoryPanelMessages.TOPIC, this)
     }
 
     override fun createHistoryItem(vendor: DatabaseVendor, historyItem: HistoryItem) {
-        val noSqlConfiguration = NoSqlConfiguration.getInstance(project)
-        val historyList = noSqlConfiguration.findListByVendor(vendor, project)
-        historyList.addItem(historyItem.filter, project)
+        if (historyItem.isNotEmpty()) {
+            val noSqlConfiguration = NoSqlConfiguration.getInstance(project)
+            val historyList = noSqlConfiguration.findListByVendor(vendor, project)
+            historyList.addItem(historyItem, project)
+        }
     }
 
     override fun add(historyList: HistoryList) {
+        val databaseTree = databaseTree ?: return
         if (findHistoryListNode(historyList.vendor) == null) {
-            databaseTree?.rootNode?.add(DefaultMutableTreeNode(historyList))
+            if (databaseTree.model == null) {
+                databaseTree.model = DefaultTreeModel(DefaultMutableTreeNode())
+            }
+            databaseTree.rootNode?.add(DefaultMutableTreeNode(historyList))
         }
     }
 

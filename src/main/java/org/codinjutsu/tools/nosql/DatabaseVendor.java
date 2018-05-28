@@ -28,7 +28,9 @@ import org.codinjutsu.tools.nosql.solr.SolrVendorInformation;
 import org.codinjutsu.tools.nosql.solr.view.editor.SolrObjectFile;
 
 import javax.swing.Icon;
+import java.util.Arrays;
 
+import static java.util.Arrays.stream;
 import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceString;
 
 @SuppressWarnings("HardCodedStringLiteral")
@@ -102,5 +104,12 @@ public enum DatabaseVendor {
     @Override
     public String toString() {
         return "DatabaseVendor{name='" + name + "'}";
+    }
+
+    public static DatabaseVendor findByName(String name) {
+        return stream(values())
+                .filter(vendor -> vendor.getName().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No vendor with name " + name + " found."));
     }
 }

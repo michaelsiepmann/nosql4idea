@@ -20,11 +20,10 @@ internal class ExplorerTree internal constructor() : Tree() {
         emptyText.clear()
         getSelectionModel().selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
         setCellRenderer(NoSqlTreeRenderer())
-        name = "databaseTree" //NON-NLS
     }
 
-    val rootNode
-        get() = model.root as DefaultMutableTreeNode?
+    val rootNode: DefaultMutableTreeNode?
+        get() = model?.root as DefaultMutableTreeNode?
 
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
@@ -49,9 +48,8 @@ internal class ExplorerTree internal constructor() : Tree() {
         }
     }
 
-    fun getParentOf(folder: Folder<*, *>): DefaultMutableTreeNode? {
-        return getParentOf(model.root as DefaultMutableTreeNode, folder)
-    }
+    fun getParentOf(folder: Folder<*, *>) =
+            getParentOf(rootNode, folder)
 
     private fun getParentOf(node: DefaultMutableTreeNode?, folder: Folder<*, *>): DefaultMutableTreeNode? {
         if (node != null) {

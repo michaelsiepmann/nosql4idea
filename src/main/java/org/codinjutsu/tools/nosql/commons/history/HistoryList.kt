@@ -11,15 +11,15 @@ internal class HistoryList(val vendor: String) : TreeCellItem {
 
     override fun updateTreeCell(renderer: ColoredTreeCellRenderer) {
         renderer.apply {
-            val databaseVendor = DatabaseVendor.valueOf(vendor)
+            val databaseVendor = DatabaseVendor.findByName(vendor)
             append(databaseVendor.vendorName)
             icon = databaseVendor.icon
         }
     }
 
-    fun addItem(filter: String, project: Project) {
-        if (items.none { it.filter == filter }) {
-            items.add(0, HistoryItem(filter), vendor, project)
+    fun addItem(historyItem: HistoryItem, project: Project) {
+        if (items.none { it.filter == historyItem.filter }) {
+            items.add(0, historyItem, vendor, project)
             while (items.unpinnedSize > MAX_SIZE) {
                 items.removeFirstUnpinned(vendor, project)
             }
