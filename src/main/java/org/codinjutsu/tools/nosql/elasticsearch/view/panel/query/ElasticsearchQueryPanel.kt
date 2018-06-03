@@ -39,7 +39,7 @@ internal class ElasticsearchQueryPanel(private val project: Project) : JPanel(),
     }
 
     override fun historyItemSelected(vendor: String, historyItem: HistoryItem) {
-        if (vendor == DatabaseVendor.ELASTICSEARCH.name) {
+        if (vendor == DatabaseVendor.ELASTICSEARCH.vendorName) {
             filterEditor.document.setText(historyItem.filter)
         }
     }

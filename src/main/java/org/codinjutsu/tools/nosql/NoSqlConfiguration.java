@@ -75,7 +75,7 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
         Element histories = new Element(TAGNAME_HISTORIES);
         rootElement.addContent(histories);
         for (HistoryList historyList : historyLists) {
-            histories.addContent(XmlSerializer.serialize(historyList));
+            histories.addContent(historyList.createElement());
         }
         return rootElement;
     }
@@ -90,7 +90,9 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
         Element historyElements = element.getChild(TAGNAME_HISTORIES);
         if (historyElements != null) {
             for (Element child : historyElements.getChildren()) {
-                historyLists.add(XmlSerializer.deserialize(child, HistoryList.class));
+                HistoryList list = new HistoryList();
+                list.readElement(child);
+                historyLists.add(list);
             }
         }
     }
