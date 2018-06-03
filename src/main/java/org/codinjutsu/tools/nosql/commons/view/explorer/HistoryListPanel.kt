@@ -121,9 +121,19 @@ internal class HistoryListPanel(private val project: Project) : AbstractListPane
     }
 
     fun pinSelectedHistoryItem() {
+        val selected = getSelectedItem<Any>()
+        if (selected is HistoryItem) {
+            selected.pinned = !selected.pinned
+        }
     }
 
-    fun isHistoryItemSelected() = false
+    fun isHistoryItemSelected() = getSelectedItem<Any>() is HistoryItem
 
-    fun isSelectedHistoryItemPinned() = false
+    fun isSelectedHistoryItemPinned(): Boolean {
+        val selected = getSelectedItem<Any>()
+        if (selected is HistoryItem) {
+            return selected.pinned
+        }
+        return false
+    }
 }
