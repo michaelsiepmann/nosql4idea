@@ -1,6 +1,7 @@
 package org.codinjutsu.tools.nosql.elasticsearch.view.panel.query
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -40,7 +41,9 @@ internal class ElasticsearchQueryPanel(private val project: Project) : JPanel(),
 
     override fun historyItemSelected(vendor: String, historyItem: HistoryItem) {
         if (vendor == DatabaseVendor.ELASTICSEARCH.vendorName) {
-            filterEditor.document.setText(historyItem.filter)
+            ApplicationManager.getApplication().runWriteAction {
+                filterEditor.document.setText(historyItem.filter)
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package org.codinjutsu.tools.nosql.mongo.view.panel.query
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
@@ -64,7 +65,9 @@ internal class FilterPanel(project: Project, private val updateAlarm: (JComponen
     }
 
     override fun showHistoryItem(historyItem: HistoryItem) {
-        selectEditor.document.setText(historyItem.filter)
+        ApplicationManager.getApplication().runWriteAction {
+            selectEditor.document.setText(historyItem.filter)
+        }
     }
 
     override fun dispose() {
