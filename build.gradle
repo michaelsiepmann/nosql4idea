@@ -24,6 +24,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 intellij {
     version '173.3942.4'
+    updateSinceUntilBuild false
     pluginName 'nosql4idea'
 }
 
