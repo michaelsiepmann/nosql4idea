@@ -22,7 +22,7 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunConfigurationModule;
 import com.intellij.openapi.project.Project;
-import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
+import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +47,7 @@ public class MongoRunConfigurationType implements ConfigurationType {
 
     @Override
     public Icon getIcon() {
-        return GuiUtils.loadIcon("mongodb.png"); //NON-NLS
+        return MongoObjectFile.Companion.getIcon();
     }
 
     @Override
