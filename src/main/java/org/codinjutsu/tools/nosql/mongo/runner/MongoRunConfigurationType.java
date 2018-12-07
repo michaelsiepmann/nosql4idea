@@ -35,24 +35,29 @@ public class MongoRunConfigurationType implements ConfigurationType {
         myConfigurationFactory = new MongoFactory(this);
     }
 
+    @Override
     public String getDisplayName() {
         return "Mongo";
     }
 
+    @Override
     public String getConfigurationTypeDescription() {
         return "Mongo configuration";
     }
 
+    @Override
     public Icon getIcon() {
-        return GuiUtils.loadIcon("mongo_logo.png"); //NON-NLS
+        return GuiUtils.loadIcon("mongodb.png"); //NON-NLS
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getId() {
         return "MongoRunConfiguration";
     }
 
+    @Override
     public MongoFactory[] getConfigurationFactories() {
         return new MongoFactory[]{myConfigurationFactory};
     }
@@ -68,7 +73,7 @@ public class MongoRunConfigurationType implements ConfigurationType {
 
         @Override
         @NotNull
-        public RunConfiguration createTemplateConfiguration(Project project) {
+        public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
             return new MongoRunConfiguration(new RunConfigurationModule(project), this);
         }
     }
