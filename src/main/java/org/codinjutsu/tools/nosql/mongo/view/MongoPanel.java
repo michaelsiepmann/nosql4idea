@@ -35,6 +35,6 @@ public class MongoPanel extends DatabasePanel {
 
     @Override
     public Object getRecords() {
-        return ((MongoContext) getContext().getDelegatedContext()).getMongoCollection();
+        return ((MongoContext) getContext()).getMongoCollection();
     }
 }

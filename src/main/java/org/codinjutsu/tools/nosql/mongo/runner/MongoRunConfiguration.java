@@ -51,7 +51,7 @@ import java.util.Collection;
 import static java.util.Arrays.asList;
 import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
 
-class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> {
+class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule, RunProfileState> {
 
     private final String mongoShell;
     private String scriptPath;
@@ -93,11 +93,6 @@ class MongoRunConfiguration extends ModuleBasedConfiguration<RunConfigurationMod
 //        JDOMExternalizer.write(element, "serverConfiguration", serverConfiguration);
 
         PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
-    }
-
-    @Override
-    protected MongoRunConfiguration createInstance() {
-        return new MongoRunConfiguration(getConfigurationModule(), getFactory());
     }
 
     @Nullable

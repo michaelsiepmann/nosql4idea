@@ -9,8 +9,7 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.panels.NonOpaquePanel
-import com.mongodb.util.JSON
-import com.mongodb.util.JSONParseException
+import com.mongodb.BasicDBObject
 import org.codinjutsu.tools.nosql.commons.history.HistoryItem
 import org.codinjutsu.tools.nosql.commons.view.createJSONEditor
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
@@ -33,11 +32,7 @@ internal abstract class OperatorPanel(private val project: Project) : JPanel(), 
     abstract fun showHistoryItem(historyItem: HistoryItem)
 
     internal fun notifyOnErrorForOperator(component: JComponent, ex: Exception) {
-        val message = if (ex is JSONParseException) {
-            ex.message?.removePrefix("\n") ?: ""
-        } else {
-            String.format("%s: %s", ex.javaClass.simpleName, ex.message)
-        }
+        val message = String.format("%s: %s", ex.javaClass.simpleName, ex.message)
         val nonOpaquePanel = NonOpaquePanel()
         val textPane = Messages.configureMessagePaneUi(JTextPane(), message)
         textPane.font = MongoQueryPanel.COURIER_FONT
@@ -58,10 +53,8 @@ internal abstract class OperatorPanel(private val project: Project) : JPanel(), 
     protected fun validateQuery(query: String, editor: Editor) {
         try {
             if (query.isNotEmpty()) {
-                JSON.parse(query)
+                BasicDBObject.parse(query)
             }
-        } catch (ex: JSONParseException) {
-            notifyOnErrorForOperator(editor.component, ex)
         } catch (ex: NumberFormatException) {
             notifyOnErrorForOperator(editor.component, ex)
         }

@@ -69,7 +69,10 @@ private fun revertInternal(element: DatabaseElement?): Any? {
 private fun revertObject(element: DatabaseObject): DBObject? {
     val result = BasicDBObject()
     element.names().forEach {
-        result.append(it, revertInternal(element[it]))
+        val revertInternal = revertInternal(element[it])
+        if (revertInternal != null) {
+            result.append(it, revertInternal)
+        }
     }
     return result
 }

@@ -15,6 +15,6 @@ public class ElasticsearchPanel extends SimpleDatabasePanel implements Pageable 
 
     @Override
     public Object getRecords() {
-        return ((ElasticsearchContext) getContext().getDelegatedContext()).getType();
+        return ((ElasticsearchContext) getContext()).getType();
     }
 }

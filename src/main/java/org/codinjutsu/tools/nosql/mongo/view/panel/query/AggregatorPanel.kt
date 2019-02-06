@@ -5,7 +5,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.panels.NonOpaquePanel
-import com.mongodb.util.JSONParseException
 import org.codinjutsu.tools.nosql.commons.history.HistoryItem
 import org.codinjutsu.tools.nosql.commons.view.action.OperatorCompletionAction
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
@@ -42,7 +41,7 @@ internal class AggregatorPanel(project: Project, updateAlarm: (JComponent) -> Un
         val queryOptions = QueryOptionsImpl(page = page)
         try {
             queryOptions.operations = query
-        } catch (ex: JSONParseException) {
+        } catch (ex: Exception) {
             notifyOnErrorForOperator(editor.component, ex)
         }
 

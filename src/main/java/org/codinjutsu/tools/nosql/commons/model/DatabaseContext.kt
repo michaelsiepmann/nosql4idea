@@ -8,6 +8,4 @@ internal interface DatabaseContext {
     val client: DatabaseClient
     val serverConfiguration: ServerConfiguration
     fun getImportPanelSettings(): ImportPanelSettings?
-
-    fun getDelegatedContext() = this
 }

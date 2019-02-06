@@ -66,6 +66,7 @@ internal class HistoryListPanel(private val project: Project) : AbstractListPane
 
     override fun add(vendorName: String, index: Int, element: HistoryItem) {
         findHistoryListNode(vendorName)?.add(DefaultMutableTreeNode(element))
+        databaseTree?.invalidate()
     }
 
     override fun removeAt(vendorName: String, index: Int) {

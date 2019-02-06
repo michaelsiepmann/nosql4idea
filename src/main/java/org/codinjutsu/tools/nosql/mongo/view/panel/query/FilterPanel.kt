@@ -5,7 +5,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.panels.NonOpaquePanel
-import com.mongodb.util.JSONParseException
 import org.codinjutsu.tools.nosql.commons.history.HistoryItem
 import org.codinjutsu.tools.nosql.commons.view.action.OperatorCompletionAction
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
@@ -53,7 +52,7 @@ internal class FilterPanel(project: Project, private val updateAlarm: (JComponen
             queryOptions.filter = getQueryFrom(selectEditor)
             queryOptions.projection = getQueryFrom(projectionEditor)
             queryOptions.sort = getQueryFrom(sortEditor)
-        } catch (ex: JSONParseException) {
+        } catch (ex: Exception) {
             notifyOnErrorForOperator(selectEditor.component, ex)
         }
 
