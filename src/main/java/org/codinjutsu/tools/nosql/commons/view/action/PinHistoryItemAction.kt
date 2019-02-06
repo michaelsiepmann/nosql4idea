@@ -7,7 +7,7 @@ import org.codinjutsu.tools.nosql.NoSqlTreeRenderer
 import org.codinjutsu.tools.nosql.commons.view.explorer.HistoryListPanel
 
 internal class PinHistoryItemAction(private val historyListPanel: HistoryListPanel) : AnAction("Pin item", "", NoSqlTreeRenderer.ICON_PINNED) {
-    override fun actionPerformed(e: AnActionEvent?) {
+    override fun actionPerformed(e: AnActionEvent) {
         historyListPanel.pinSelectedHistoryItem()
     }
 

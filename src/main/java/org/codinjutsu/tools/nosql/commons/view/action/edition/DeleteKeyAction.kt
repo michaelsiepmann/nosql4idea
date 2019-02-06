@@ -33,7 +33,7 @@ class DeleteKeyAction(private val editionPanel: EditionPanel) : AnAction("Delete
         editionPanel.removeSelectedKey()
     }
 
-    override fun update(event: AnActionEvent?) {
-        event!!.presentation.isVisible = editionPanel.selectedNode != null
+    override fun update(event: AnActionEvent) {
+        event.presentation.isVisible = editionPanel.selectedNode != null
     }
 }

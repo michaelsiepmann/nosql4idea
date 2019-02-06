@@ -34,7 +34,7 @@ class CloseFindEditorAction(private val databasePanel: DatabasePanel) : CloseTab
         databasePanel.closeFindEditor()
     }
 
-    override fun update(event: AnActionEvent?) {
-        event!!.presentation.isVisible = false
+    override fun update(event: AnActionEvent) {
+        event.presentation.isVisible = false
     }
 }

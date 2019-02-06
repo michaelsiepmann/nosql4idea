@@ -7,7 +7,7 @@ import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
 
 internal class ImportAction(private val databasePanel: DatabasePanel) : AnAction(AllIcons.Actions.Menu_open) {
 
-    override fun actionPerformed(e: AnActionEvent?) {
+    override fun actionPerformed(e: AnActionEvent) {
         databasePanel.startImport()
     }
 }

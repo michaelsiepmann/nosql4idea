@@ -10,7 +10,7 @@ import org.codinjutsu.tools.nosql.i18n.getResourceString
 
 internal class AddCollectionAction(private val databaseListPanel: DatabaseListPanel) : AnAction(getResourceString("action.addcollection.text"), getResourceString("action.addcollection.description"), AllIcons.General.Add), DumbAware {
 
-    override fun actionPerformed(e: AnActionEvent?) {
+    override fun actionPerformed(e: AnActionEvent) {
         databaseListPanel.createCollection()
     }
 

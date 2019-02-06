@@ -35,7 +35,7 @@ class AddValueAction(private val editionPanel: EditionPanel, private val project
         }
     }
 
-    override fun update(event: AnActionEvent?) {
-        event!!.presentation.isVisible = editionPanel.canAddValue()
+    override fun update(event: AnActionEvent) {
+        event.presentation.isVisible = editionPanel.canAddValue()
     }
 }

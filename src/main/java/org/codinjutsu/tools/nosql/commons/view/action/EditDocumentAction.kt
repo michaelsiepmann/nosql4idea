@@ -28,8 +28,8 @@ internal class EditDocumentAction(private val resultPanel: NoSQLResultPanel) : A
         resultPanel.editSelectedDocument()
     }
 
-    override fun update(event: AnActionEvent?) {
+    override fun update(event: AnActionEvent) {
         super.update(event)
-        event!!.presentation.isVisible = resultPanel.isSelectedNodeId()
+        event.presentation.isVisible = resultPanel.isSelectedNodeId()
     }
 }

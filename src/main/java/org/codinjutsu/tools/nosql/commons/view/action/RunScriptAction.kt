@@ -9,7 +9,7 @@ import org.codinjutsu.tools.nosql.i18n.getResourceString
 internal class RunScriptAction(private val noSqlExplorerPanel: DatabasePanel) :
         AnAction(getResourceString("action.runscript.text"), getResourceString("action.runscript.description"), AllIcons.General.Run) {
 
-    override fun actionPerformed(event: AnActionEvent?) {
+    override fun actionPerformed(event: AnActionEvent) {
         noSqlExplorerPanel.runScript()
     }
 }
