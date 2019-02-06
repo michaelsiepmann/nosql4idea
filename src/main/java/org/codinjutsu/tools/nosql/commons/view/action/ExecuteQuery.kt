@@ -34,7 +34,7 @@ class ExecuteQuery(private val databasePanel: DatabasePanel) : AnAction("Execute
         databasePanel.executeQuery()
     }
 
-    override fun update(event: AnActionEvent?) {
-        event!!.presentation.isEnabled = databasePanel.records != null
+    override fun update(event: AnActionEvent) {
+        event.presentation.isEnabled = databasePanel.records != null
     }
 }
