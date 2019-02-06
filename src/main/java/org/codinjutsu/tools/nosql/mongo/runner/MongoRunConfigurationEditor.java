@@ -56,8 +56,6 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
     public MongoRunConfigurationEditor(Project project) {
         mongoShellOptionsPanel.setBorder(IdeBorderFactory.createTitledBorder("Mongo shell options", true));
 
-        shellParametersField.setDialogCaption("Mongo arguments");
-
         Collection<DatabaseServer> mongoServers = MongoClient.getInstance(project).filterAvailableServers();
 
         if (mongoServers.isEmpty()) {

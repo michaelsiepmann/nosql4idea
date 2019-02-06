@@ -22,7 +22,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorLocation
 import com.intellij.openapi.fileEditor.FileEditorState
-import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.util.UserDataHolderBase
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
 import java.beans.PropertyChangeListener
@@ -50,8 +49,6 @@ internal class NoSqlDatabaseDataEditor internal constructor(private var panel: D
         }
     }
 
-    override fun getState(level: FileEditorStateLevel): FileEditorState = FileEditorState.INSTANCE
-
     //    Unused methods
 
     override fun setState(state: FileEditorState) {}
@@ -71,6 +68,4 @@ internal class NoSqlDatabaseDataEditor internal constructor(private var panel: D
     override fun getBackgroundHighlighter(): BackgroundEditorHighlighter? = null
 
     override fun getCurrentLocation(): FileEditorLocation? = null
-
-    override fun getStructureViewBuilder(): StructureViewBuilder? = null
 }

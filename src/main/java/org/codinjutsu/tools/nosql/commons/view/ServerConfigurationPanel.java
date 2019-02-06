@@ -104,8 +104,6 @@ public class ServerConfigurationPanel extends JPanel {
         } else {
             shellOptionsPanel.setVisible(false);
         }
-        shellArgumentsLineField.setDialogCaption(getResourceString("configuration.shellarguments.label", vendorName));
-
         testConnectionButton.setName("testConnection"); //NON-NLS
 
         shellWorkingDirField.setText(null);

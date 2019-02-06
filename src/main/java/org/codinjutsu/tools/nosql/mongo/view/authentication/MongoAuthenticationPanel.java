@@ -36,7 +36,6 @@ public class MongoAuthenticationPanel implements AuthenticationView {
     private JPasswordField passwordField;
     private JTextField authenticationDatabaseField;
     private JRadioButton scramSHA1AuthRadioButton;
-    private JRadioButton mongoCRAuthRadioButton;
     private JRadioButton defaultAuthMethodRadioButton;
     private JCheckBox sslConnectionField;
 
@@ -44,13 +43,11 @@ public class MongoAuthenticationPanel implements AuthenticationView {
         usernameField.setName("usernameField"); //NON-NLS
         passwordField.setName("passwordField"); //NON-NLS
         authenticationDatabaseField.setName("authenticationDatabaseField"); //NON-NLS
-        mongoCRAuthRadioButton.setName("mongoCRAuthField"); //NON-NLS
         scramSHA1AuthRadioButton.setName("scramSHA1AuthField"); //NON-NLS
         defaultAuthMethodRadioButton.setName("defaultAuthMethod"); //NON-NLS
         sslConnectionField.setName("sslConnectionField"); //NON-NLS
 
         ButtonGroup authMethodGroup = new ButtonGroup();
-        authMethodGroup.add(mongoCRAuthRadioButton);
         authMethodGroup.add(scramSHA1AuthRadioButton);
         authMethodGroup.add(defaultAuthMethodRadioButton);
 
@@ -88,9 +85,7 @@ public class MongoAuthenticationPanel implements AuthenticationView {
         authenticationDatabaseField.setText(mongoExtraSettings.getAuthenticationDatabase());
         sslConnectionField.setSelected(mongoExtraSettings.isSsl());
         AuthenticationMechanism authentificationMethod = mongoExtraSettings.getAuthenticationMechanism();
-        if (AuthenticationMechanism.MONGODB_CR.equals(authentificationMethod)) {
-            mongoCRAuthRadioButton.setSelected(true);
-        } else if (AuthenticationMechanism.SCRAM_SHA_1.equals(authentificationMethod)) {
+        if (AuthenticationMechanism.SCRAM_SHA_1.equals(authentificationMethod)) {
             scramSHA1AuthRadioButton.setSelected(true);
         } else {
             defaultAuthMethodRadioButton.setSelected(true);
@@ -126,12 +121,6 @@ public class MongoAuthenticationPanel implements AuthenticationView {
     }
 
     private AuthenticationMechanism getAuthenticationMechanism() {
-        if (mongoCRAuthRadioButton.isSelected()) {
-            return AuthenticationMechanism.MONGODB_CR;
-        } else if (scramSHA1AuthRadioButton.isSelected()) {
-            return AuthenticationMechanism.SCRAM_SHA_1;
-        }
-        return null;
+        return scramSHA1AuthRadioButton.isSelected() ? AuthenticationMechanism.SCRAM_SHA_1 : null;
     }
-
 }

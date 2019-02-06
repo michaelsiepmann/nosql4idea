@@ -16,22 +16,20 @@
 
 package org.codinjutsu.tools.nosql.commons.view.editor;
 
-import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
-import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.codinjutsu.tools.nosql.DatabaseVendorInformation;
 import org.codinjutsu.tools.nosql.DatabaseVendorUIManager;
 import org.codinjutsu.tools.nosql.commons.DatabaseUI;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class NoSqlDatabaseDataEditorProvider implements FileEditorProvider, ApplicationComponent, DumbAware {
+import static com.intellij.openapi.fileEditor.FileEditorPolicy.HIDE_DEFAULT_EDITOR;
 
+public class NoSqlDatabaseDataEditorProvider implements FileEditorProvider, DumbAware {
 
     @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
@@ -49,29 +47,6 @@ public class NoSqlDatabaseDataEditorProvider implements FileEditorProvider, Appl
         return new NoSqlDatabaseDataEditor(databaseUI.createResultPanel(project, (NoSqlDatabaseObjectFile) file));
     }
 
-    @Override
-    public void disposeEditor(@NotNull FileEditor editor) {
-        editor.dispose();
-    }
-
-    @Override
-    public void initComponent() {
-    }
-
-    @Override
-    public void disposeComponent() {
-    }
-
-    @NotNull
-    @Override
-    public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile file) {
-        return FileEditorState.INSTANCE;
-    }
-
-    @Override
-    public void writeState(@NotNull FileEditorState state, @NotNull Project project, @NotNull Element targetElement) {
-    }
-
     @NotNull
     @Override
     public String getEditorTypeId() {
@@ -81,12 +56,6 @@ public class NoSqlDatabaseDataEditorProvider implements FileEditorProvider, Appl
     @NotNull
     @Override
     public FileEditorPolicy getPolicy() {
-        return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
-    }
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "NoSqlPlugin.NoSqlEditorProvider";
+        return HIDE_DEFAULT_EDITOR;
     }
 }

@@ -17,7 +17,6 @@
 package org.codinjutsu.tools.nosql.commons.view.editor;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileListener;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NoSqlDatabaseFileSystem extends VirtualFileSystem implements ApplicationComponent {
+public class NoSqlDatabaseFileSystem extends VirtualFileSystem {
 
     private static final String PROTOCOL = "nosql"; //NON-NLS
 
@@ -36,27 +35,11 @@ public class NoSqlDatabaseFileSystem extends VirtualFileSystem implements Applic
 
     @NotNull
     @Override
-    public String getComponentName() {
-        return "NoSqlPlugin.NoSqlDatabaseFileSystem";
-    }
-
-    @NotNull
-    @Override
     public String getProtocol() {
         return PROTOCOL;
     }
 
-    @Override
-    public void initComponent() {
-
-    }
-
-    @Override
-    public void disposeComponent() {
-
-    }
-
-    public void openEditor(final NoSqlDatabaseObjectFile databaseObjectFile) {
+    public void openEditor(@NotNull final NoSqlDatabaseObjectFile databaseObjectFile) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(databaseObjectFile.getProject());
         fileEditorManager.openFile(databaseObjectFile, true);
     }
@@ -71,7 +54,6 @@ public class NoSqlDatabaseFileSystem extends VirtualFileSystem implements Applic
 
     @Override
     public void refresh(boolean asynchronous) {
-
     }
 
     @Nullable

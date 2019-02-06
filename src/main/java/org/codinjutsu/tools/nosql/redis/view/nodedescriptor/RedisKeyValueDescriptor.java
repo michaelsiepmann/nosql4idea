@@ -16,6 +16,7 @@
 
 package org.codinjutsu.tools.nosql.redis.view.nodedescriptor;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
@@ -27,6 +28,7 @@ import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseList;
 import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseSet;
 import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseSortedSet;
 import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseString;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Tuple;
 
@@ -35,8 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.intellij.icons.AllIcons.Json.Property_braces;
-import static com.intellij.icons.AllIcons.Json.Property_brackets;
 import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getIndexAttribute;
 import static org.codinjutsu.tools.nosql.commons.style.StyleAttributesProvider.getStringAttribute;
 import static org.codinjutsu.tools.nosql.redis.RedisUtils.stringifySet;
@@ -78,12 +78,13 @@ public class RedisKeyValueDescriptor extends TypedKeyValueDescriptor<Object> {
         return null;
     }
 
+    @Contract(value = "null -> null", pure = true)
     private static Icon findIcon(Object object) {
         if (object instanceof List) {
-            return Property_brackets;
+            return AllIcons.Json.Array;
         }
         if (object instanceof Set || object instanceof Map) {
-            return Property_braces;
+            return AllIcons.Json.Object;
         }
         return null;
     }

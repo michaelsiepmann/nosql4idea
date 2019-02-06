@@ -48,8 +48,8 @@ public class DateTimePicker extends JXDatePicker {
 
     private static final Color backgroundColor = JBColor.background();
     private static final Color foregroundColor = JBColor.foreground();
-    private static final Color selectionBackgroundColor = UIUtil.getTableSelectionBackground();
-    private static final Color selectionForegroundColor = UIUtil.getTableSelectionForeground();
+    private static final Color selectionBackgroundColor = UIUtil.getTableSelectionBackground(true);
+    private static final Color selectionForegroundColor = UIUtil.getTableSelectionForeground(true);
     private static final Color monthForegroundColor = StyleAttributesProvider.NUMBER_COLOR;
     private static final Color dayOfTheWeekForegroundColor = StyleAttributesProvider.KEY_COLOR;
     private static final Color todayBackgroundColor = JBColor.WHITE;
