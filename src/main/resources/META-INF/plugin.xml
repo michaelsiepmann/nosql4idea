@@ -66,6 +66,9 @@
                              id="preferences.mongoOptions"/>
         <configurationType implementation="org.codinjutsu.tools.nosql.mongo.runner.MongoRunConfigurationType"/>
         <configurationProducer implementation="org.codinjutsu.tools.nosql.mongo.runner.MongoScriptRunConfigurationProducer"/>
+
+        <fileEditorProvider implementation="org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseDataEditorProvider"/>
+        <virtualFileSystem key="nosqldatabase" implementationClass="org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseFileSystem"/>
     </extensions>
 
     <extensionPoints>
