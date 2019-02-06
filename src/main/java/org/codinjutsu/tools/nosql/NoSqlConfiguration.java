@@ -20,7 +20,6 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
@@ -43,8 +42,8 @@ import java.util.Map;
 @State(
         name = "NoSqlConfiguration",
         storages = {
-                @Storage(file = "$PROJECT_FILE$"),
-                @Storage(file = "$PROJECT_CONFIG_DIR$/noSqlSettings.xml", scheme = StorageScheme.DIRECTORY_BASED)
+                @Storage("$PROJECT_FILE$"),
+                @Storage("$PROJECT_CONFIG_DIR$/noSqlSettings.xml")
         }
 )
 public class NoSqlConfiguration implements PersistentStateComponent<Element> {
@@ -154,8 +153,8 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
         HistoryList historyList = new HistoryList(vendorName);
         historyLists.add(historyList);
         project.getMessageBus()
-                .syncPublisher(HistoryPanelMessages.Companion.getTOPIC())
-                .add(historyList);
+               .syncPublisher(HistoryPanelMessages.Companion.getTOPIC())
+               .add(historyList);
         return historyList;
     }
 }
