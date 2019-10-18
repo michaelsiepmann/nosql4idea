@@ -1,12 +1,12 @@
 package org.codinjutsu.tools.nosql.commons.view.scripting
 
+import com.intellij.ide.script.IdeScriptEngineManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.impl.status.TextPanel
 import org.codinjutsu.tools.nosql.commons.model.DatabaseContext
-import org.jetbrains.ide.script.IdeScriptEngineManager
 import javax.swing.JScrollPane
 
 internal class ScriptExecutor(
@@ -28,7 +28,7 @@ internal class ScriptExecutor(
         contentManager.addContent(content)
         val consoleLog = ConsoleLog(textArea)
         window.show {
-            val engine = IdeScriptEngineManager.getInstance().getEngineForFileExtension(extension, null)
+            val engine = IdeScriptEngineManager.getInstance().getEngineByFileExtension(extension, null)
             if (engine != null) {
                 val searchResult = context.client.findAll(context)
                 for (it in searchResult.records) {

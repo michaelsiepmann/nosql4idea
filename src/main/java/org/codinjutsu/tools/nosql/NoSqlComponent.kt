@@ -16,19 +16,19 @@
 
 package org.codinjutsu.tools.nosql
 
-import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
 
-class NoSqlComponent(project: Project) : AbstractProjectComponent(project) {
+class NoSqlComponent(private val project: Project) : ProjectComponent {
 
     override fun getComponentName() = COMPONENT_NAME
 
     override fun projectOpened() {
-        NoSqlWindowManager.getInstance(myProject)
+        NoSqlWindowManager.getInstance(project)
     }
 
     override fun projectClosed() {
-        NoSqlWindowManager.getInstance(myProject).unregisterMyself()
+        NoSqlWindowManager.getInstance(project).unregisterMyself()
     }
 
     companion object {

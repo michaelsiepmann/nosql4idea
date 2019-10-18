@@ -11,6 +11,6 @@ internal interface HistoryPanelMessages {
     fun removeAt(vendorName: String, index: Int)
 
     companion object {
-        val TOPIC: Topic<HistoryPanelMessages> = Topic.create("Messages for history panel", HistoryPanelMessages::class.java)!!
+        val TOPIC = Topic.create("Messages for history panel", HistoryPanelMessages::class.java)
     }
 }

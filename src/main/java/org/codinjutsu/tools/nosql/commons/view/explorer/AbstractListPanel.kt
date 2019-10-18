@@ -93,7 +93,7 @@ internal abstract class AbstractListPanel : JPanel(), Disposable {
     protected fun <T> getSelectedItem(): T? {
         val treeNode = databaseTree!!.lastSelectedPathComponent as DefaultMutableTreeNode?
         return if (treeNode != null) {
-            treeNode.userObject as T
+            treeNode.userObject as? T
         } else {
             null
         }

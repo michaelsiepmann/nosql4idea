@@ -16,7 +16,7 @@
 
 package org.codinjutsu.tools.nosql.commons.view.action
 
-import com.intellij.icons.AllIcons.Actions.Delete
+import com.intellij.icons.AllIcons.General.Remove
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
@@ -24,7 +24,7 @@ import org.codinjutsu.tools.nosql.commons.model.explorer.FolderType
 import org.codinjutsu.tools.nosql.commons.view.explorer.DatabaseListPanel
 import javax.swing.JOptionPane
 
-internal class DropCollectionAction(private val databaseListPanel: DatabaseListPanel) : AnAction("Drop collection", "Drop the selected collection", Delete), DumbAware {
+internal class DropCollectionAction(private val databaseListPanel: DatabaseListPanel) : AnAction("Drop collection", "Drop the selected collection", Remove), DumbAware {
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
         val result = JOptionPane.showConfirmDialog(null, String.format("Do you REALLY want to drop the '%s' collection?", databaseListPanel.selectedFolder!!.name), "Warning", JOptionPane.YES_NO_OPTION)
