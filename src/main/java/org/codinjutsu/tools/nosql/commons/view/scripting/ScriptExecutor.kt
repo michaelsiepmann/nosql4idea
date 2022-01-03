@@ -44,7 +44,7 @@ internal class ScriptExecutor(
 
     private fun toolWindow(toolWindowManager: ToolWindowManager): ToolWindow {
         return toolWindowManager.getToolWindow("org.codinjutsu.tools.nosql.window")
-                ?: toolWindowManager.registerToolWindow("org.codinjutsu.tools.nosql.window", true, ToolWindowAnchor.BOTTOM)
+                ?: throw IllegalStateException("Toolwindow not found")
     }
 
     internal class MyTextPanel : TextPanel() {

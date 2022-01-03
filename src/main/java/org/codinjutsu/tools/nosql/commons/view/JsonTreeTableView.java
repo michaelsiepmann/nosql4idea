@@ -67,7 +67,6 @@ public class JsonTreeTableView extends TreeTable {
 
         tree.setShowsRootHandles(true);
         tree.setRootVisible(false);
-        UIUtil.setLineStyleAngled(tree);
         setTreeCellRenderer(new KeyCellRenderer());
 
         TreeUtil.expand(tree, 2);

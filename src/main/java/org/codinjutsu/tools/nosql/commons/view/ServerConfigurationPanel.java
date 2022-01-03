@@ -67,7 +67,7 @@ public class ServerConfigurationPanel extends JPanel {
 
     private final DatabaseClient databaseClient;
     private final AuthenticationView authenticationView;
-    private String databaseVendorName;
+    private final String databaseVendorName;
 
     public ServerConfigurationPanel(Project project,
                                     DatabaseVendor databaseVendor,

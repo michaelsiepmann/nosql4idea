@@ -21,6 +21,7 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.BaseConfigurable;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -150,7 +151,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
             configuration.setShellPath(SOLR, solrShellPanel.getShellPath());
         }
 
-        NoSqlWindowManager.getInstance(project).apply();
+        ServiceManager.getService(project, NoSqlWindowManager.class).apply();
     }
 
     private boolean isMongoShellPathModified() {

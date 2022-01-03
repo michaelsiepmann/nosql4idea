@@ -22,7 +22,8 @@ import javax.swing.JPanel
 
 internal class MongoQueryPanel(private val project: Project) : JPanel(), Disposable, QueryPanel, HistorySelectedMessage {
 
-    private val myUpdateAlarm = Alarm(Alarm.ThreadToUse.SWING_THREAD)
+    private lateinit var myUpdateAlarm : Alarm
+    private lateinit var myAggregateAlarm : Alarm
     private val queryCardLayout = CardLayout()
 
     private val queryContainerPanel = JPanel()
@@ -37,12 +38,12 @@ internal class MongoQueryPanel(private val project: Project) : JPanel(), Disposa
         queryContainerPanel.layout = queryCardLayout
 
         filterPanel = FilterPanel(project) {
-            myUpdateAlarm.setActivationComponent(it)
+            myUpdateAlarm = Alarm(it, this)
         }
         queryContainerPanel.add(filterPanel, FILTER_PANEL)
 
         aggregationPanel = AggregatorPanel(project) {
-            myUpdateAlarm.setActivationComponent(it)
+            myAggregateAlarm = Alarm(it, this)
         }
         queryContainerPanel.add(aggregationPanel, AGGREGATION_PANEL)
 
@@ -90,6 +91,7 @@ internal class MongoQueryPanel(private val project: Project) : JPanel(), Disposa
 
     override fun dispose() {
         myUpdateAlarm.cancelAllRequests()
+        myAggregateAlarm.cancelAllRequests()
         filterPanel.dispose()
         aggregationPanel.dispose()
         project.messageBus.dispose()

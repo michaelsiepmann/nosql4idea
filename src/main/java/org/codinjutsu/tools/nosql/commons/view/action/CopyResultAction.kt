@@ -29,7 +29,7 @@ import java.awt.event.KeyEvent
 internal class CopyResultAction(private val resultPanel: NoSQLResultPanel) : AnAction("Copy", "Copy results to clipboard", Copy), DumbAware {
 
     init {
-        registerCustomShortcutSet(KeyEvent.VK_C, Toolkit.getDefaultToolkit().menuShortcutKeyMask, resultPanel)
+        registerCustomShortcutSet(KeyEvent.VK_C, Toolkit.getDefaultToolkit().menuShortcutKeyMaskEx, resultPanel)
     }
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {

@@ -16,12 +16,8 @@
 
 package org.codinjutsu.tools.nosql.mongo.runner;
 
-import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RunConfigurationModule;
-import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.mongo.view.editor.MongoObjectFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +31,7 @@ public class MongoRunConfigurationType implements ConfigurationType {
         myConfigurationFactory = new MongoFactory(this);
     }
 
+    @NotNull
     @Override
     public String getDisplayName() {
         return "Mongo";
@@ -62,19 +59,8 @@ public class MongoRunConfigurationType implements ConfigurationType {
         return new MongoFactory[]{myConfigurationFactory};
     }
 
+    @NotNull
     public static MongoRunConfigurationType getInstance() {
         return ConfigurationTypeUtil.findConfigurationType(MongoRunConfigurationType.class);
-    }
-
-    private static class MongoFactory extends ConfigurationFactory {
-        MongoFactory(ConfigurationType type) {
-            super(type);
-        }
-
-        @Override
-        @NotNull
-        public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-            return new MongoRunConfiguration(new RunConfigurationModule(project), this);
-        }
     }
 }

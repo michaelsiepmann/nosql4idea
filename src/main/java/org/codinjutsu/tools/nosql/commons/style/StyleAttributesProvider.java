@@ -20,8 +20,11 @@ import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
+
+import static com.intellij.ui.SimpleTextAttributes.STYLE_BOLD;
+import static com.intellij.ui.SimpleTextAttributes.STYLE_ITALIC;
+import static com.intellij.ui.SimpleTextAttributes.STYLE_PLAIN;
 
 public class StyleAttributesProvider {
 
@@ -30,13 +33,13 @@ public class StyleAttributesProvider {
     public static final Color KEY_COLOR = new JBColor(new Color(102, 14, 122), new Color(204, 120, 50));
     public static final Color NUMBER_COLOR = JBColor.BLUE;
 
-    private static final SimpleTextAttributes INDEX = new SimpleTextAttributes(Font.BOLD, JBColor.BLACK);
-    private static final SimpleTextAttributes KEY_VALUE = new SimpleTextAttributes(Font.BOLD, KEY_COLOR);
-    private static final SimpleTextAttributes INTEGER_TEXT_ATTRIBUTE = new SimpleTextAttributes(Font.PLAIN, NUMBER_COLOR);
+    private static final SimpleTextAttributes INDEX = new SimpleTextAttributes(STYLE_BOLD, JBColor.BLACK);
+    private static final SimpleTextAttributes KEY_VALUE = new SimpleTextAttributes(STYLE_BOLD, KEY_COLOR);
+    private static final SimpleTextAttributes INTEGER_TEXT_ATTRIBUTE = new SimpleTextAttributes(STYLE_PLAIN, NUMBER_COLOR);
     private static final SimpleTextAttributes BOOLEAN_TEXT_ATTRIBUTE = INTEGER_TEXT_ATTRIBUTE;
-    private static final SimpleTextAttributes STRING_TEXT_ATTRIBUTE = new SimpleTextAttributes(Font.PLAIN, LIGHT_GREEN);
-    private static final SimpleTextAttributes NULL_TEXT_ATTRIBUTE = new SimpleTextAttributes(Font.ITALIC, LIGHT_GRAY);
-    private static final SimpleTextAttributes OBJECT_TEXT_ATTRIBUTE = new SimpleTextAttributes(Font.BOLD, LIGHT_GRAY);
+    private static final SimpleTextAttributes STRING_TEXT_ATTRIBUTE = new SimpleTextAttributes(STYLE_PLAIN, LIGHT_GREEN);
+    private static final SimpleTextAttributes NULL_TEXT_ATTRIBUTE = new SimpleTextAttributes(STYLE_ITALIC, LIGHT_GRAY);
+    private static final SimpleTextAttributes OBJECT_TEXT_ATTRIBUTE = new SimpleTextAttributes(STYLE_BOLD, LIGHT_GRAY);
     private static final SimpleTextAttributes OBJECT_ID_TEXT_ATTRIBUTE = INTEGER_TEXT_ATTRIBUTE;
 
     public static SimpleTextAttributes getIndexAttribute() {

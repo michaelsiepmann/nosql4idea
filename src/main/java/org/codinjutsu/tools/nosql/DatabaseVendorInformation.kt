@@ -1,6 +1,5 @@
 package org.codinjutsu.tools.nosql
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.DatabaseUI
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
@@ -21,7 +20,7 @@ internal abstract class DatabaseVendorInformation(val hasConsoleWindow: Boolean 
     abstract fun getDatabaseUIClass(): Class<out DatabaseUI>
 
     fun getClient(project: Project): DatabaseClient? {
-        return ServiceManager.getService(project, getDatabaseClientClass() as Class<DatabaseClient>)
+        return project.getService(getDatabaseClientClass() as Class<DatabaseClient>)
     }
 
     protected abstract fun getDatabaseClientClass(): Class<out DatabaseClient>

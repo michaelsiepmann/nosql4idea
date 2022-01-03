@@ -3,10 +3,12 @@ package org.codinjutsu.tools.nosql.commons.view.action
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Toggleable
+import com.intellij.openapi.util.Key
 import org.codinjutsu.tools.nosql.NoSqlTreeRenderer
 import org.codinjutsu.tools.nosql.commons.view.explorer.HistoryListPanel
 
-internal class PinHistoryItemAction(private val historyListPanel: HistoryListPanel) : AnAction("Pin item", "", NoSqlTreeRenderer.ICON_PINNED) {
+internal class PinHistoryItemAction(private val historyListPanel: HistoryListPanel) :
+    AnAction("Pin item", "", NoSqlTreeRenderer.ICON_PINNED) {
     override fun actionPerformed(e: AnActionEvent) {
         historyListPanel.pinSelectedHistoryItem()
     }

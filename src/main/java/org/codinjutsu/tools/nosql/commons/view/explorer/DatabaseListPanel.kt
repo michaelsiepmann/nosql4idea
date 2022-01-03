@@ -171,7 +171,7 @@ internal class DatabaseListPanel(private val project: Project, private val datab
             actionPopupGroup.add(DropDatabaseAction(this))
         }
 
-        PopupHandler.installPopupHandler(databaseTree, actionPopupGroup, "POPUP", ActionManager.getInstance()) //NON-NLS
+        PopupHandler.installPopupMenu(databaseTree, actionPopupGroup, "POPUP") //NON-NLS
 
         databaseTree.addDoubleClickListener {
             val folderItem = it.userObject

@@ -1,7 +1,6 @@
 package org.codinjutsu.tools.nosql.commons.view.panel
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -16,11 +15,7 @@ import org.codinjutsu.tools.nosql.commons.model.DataType
 import org.codinjutsu.tools.nosql.commons.model.SearchResult
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils
-import org.codinjutsu.tools.nosql.commons.view.ActionCallback
-import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
-import org.codinjutsu.tools.nosql.commons.view.EditionPanel
-import org.codinjutsu.tools.nosql.commons.view.JsonTreeTableView
-import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode
+import org.codinjutsu.tools.nosql.commons.view.*
 import org.codinjutsu.tools.nosql.commons.view.action.CopyResultAction
 import org.codinjutsu.tools.nosql.commons.view.action.EditDocumentAction
 import org.codinjutsu.tools.nosql.commons.view.columninfo.WriteableColumnInfoDecider
@@ -36,14 +31,14 @@ import javax.swing.JPanel
 import javax.swing.tree.DefaultMutableTreeNode
 
 internal open class NoSQLResultPanel(
-        private val project: Project,
-        private val databasePanel: DatabasePanel,
-        val editable: Boolean,
-        private val nodeDescriptorFactory: NodeDescriptorFactory,
-        private val idDescriptorKey: String,
-        private val dataTypes: Array<DataType>,
-        private val treeBuilder: TreeBuilder = DefaultTreeBuilder(),
-        private val treePreparator: TreePreparator = TreePreparator.NOOP
+    private val project: Project,
+    private val databasePanel: DatabasePanel,
+    val editable: Boolean,
+    private val nodeDescriptorFactory: NodeDescriptorFactory,
+    private val idDescriptorKey: String,
+    private val dataTypes: Array<DataType>,
+    private val treeBuilder: TreeBuilder = DefaultTreeBuilder(),
+    private val treePreparator: TreePreparator = TreePreparator.NOOP
 ) : JPanel(), Disposable {
 
     private val splitter: Splitter
@@ -70,7 +65,7 @@ internal open class NoSQLResultPanel(
         Disposer.register(project, this)
     }
 
-    private fun createEditionPanel(): EditionPanel? {
+    private fun createEditionPanel(): EditionPanel {
         val editionPanel = EditionPanel(databasePanel, nodeDescriptorFactory, writeableColumnInfoDecider(), project)
         editionPanel.init(object : ActionCallback {
             override fun onOperationSuccess(message: String) {
@@ -93,18 +88,16 @@ internal open class NoSQLResultPanel(
 
     fun updateResultTableTree(searchResult: SearchResult) {
         resultTableView = createTableView(searchResult)
-        with(resultTableView) {
-            name = "resultTreeTable"
+        name = "resultTreeTable"
 
-            if (editable) {
-                addMouseListener(object : MouseAdapter() {
-                    override fun mouseClicked(mouseEvent: MouseEvent?) {
-                        if (mouseEvent!!.clickCount == 2 && isSelectedNodeId()) {
-                            editSelectedDocument()
-                        }
+        if (editable) {
+            addMouseListener(object : MouseAdapter() {
+                override fun mouseClicked(mouseEvent: MouseEvent?) {
+                    if (mouseEvent!!.clickCount == 2 && isSelectedNodeId()) {
+                        editSelectedDocument()
                     }
-                })
-            }
+                }
+            })
         }
 
         buildPopupMenu()
@@ -117,7 +110,11 @@ internal open class NoSQLResultPanel(
 
     protected open fun createTableView(searchResult: SearchResult): JsonTreeTableView {
         val treeNode = treeBuilder.build(searchResult, nodeDescriptorFactory)
-        return JsonTreeTableView(treePreparator.prepare(treeNode), JsonTreeTableView.KEY, JsonTreeTableView.READONLY_VALUE)
+        return JsonTreeTableView(
+            treePreparator.prepare(treeNode),
+            JsonTreeTableView.KEY,
+            JsonTreeTableView.READONLY_VALUE
+        )
     }
 
     protected open fun buildPopupMenu() {
@@ -127,7 +124,7 @@ internal open class NoSQLResultPanel(
             actionPopupGroup.add(CopyResultAction(this))
         }
 
-        PopupHandler.installPopupHandler(resultTableView, actionPopupGroup, "POPUP", ActionManager.getInstance())
+        PopupHandler.installPopupMenu(resultTableView!!, actionPopupGroup, "POPUP")
     }
 
     fun editSelectedDocument() {
@@ -157,11 +154,13 @@ internal open class NoSQLResultPanel(
     }
 
     fun isSelectedNodeId() =
-            when {
-                !editable -> false
-                resultTableView != null && resultTableView!!.tree.lastSelectedPathComponent != null -> isSelectedNodeId(resultTableView!!.tree.lastSelectedPathComponent as NoSqlTreeNode)
-                else -> false
-            }
+        when {
+            !editable -> false
+            resultTableView != null && resultTableView!!.tree.lastSelectedPathComponent != null -> isSelectedNodeId(
+                resultTableView!!.tree.lastSelectedPathComponent as NoSqlTreeNode
+            )
+            else -> false
+        }
 
     private fun isSelectedNodeId(treeNode: NoSqlTreeNode): Boolean {
         val descriptor = treeNode.descriptor
@@ -195,10 +194,10 @@ internal open class NoSQLResultPanel(
 
     private fun stringifyResult(selectedResultNode: DefaultMutableTreeNode): String {
         return (0 until selectedResultNode.childCount)
-                .asSequence()
-                .map { selectedResultNode.getChildAt(it) as DefaultMutableTreeNode }
-                .mapTo(LinkedList()) { it.userObject }
-                .joinToString(", ", "[ ", " ]")
+            .asSequence()
+            .map { selectedResultNode.getChildAt(it) as DefaultMutableTreeNode }
+            .mapTo(LinkedList()) { it.userObject }
+            .joinToString(", ", "[ ", " ]")
     }
 
     override fun dispose() {

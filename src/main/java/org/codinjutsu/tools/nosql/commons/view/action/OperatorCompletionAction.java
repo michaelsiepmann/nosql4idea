@@ -19,17 +19,17 @@ package org.codinjutsu.tools.nosql.commons.view.action;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.ui.components.JBList;
+import com.intellij.util.ThrowableRunnable;
 import com.mongodb.QueryOperators;
 import org.codinjutsu.tools.nosql.mongo.model.MongoAggregateOperator;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
@@ -38,9 +38,11 @@ import java.util.List;
 
 public class OperatorCompletionAction extends AnAction implements Disposable {
 
+    private static final Logger LOG = Logger.getInstance(OperatorCompletionAction.class);
+
     private static final String MONGO_OPERATOR_COMPLETION = "MONGO_OPERATOR_COMPLETION"; //NON-NLS
 
-    private static final JBList QUERY_OPERATOR_LIST;
+    private static final JBList<String> QUERY_OPERATOR_LIST;
 
 
     static {
@@ -75,19 +77,22 @@ public class OperatorCompletionAction extends AnAction implements Disposable {
         final Document document = editor.getDocument();
         CaretModel caretModel = editor.getCaretModel();
         final int offset = caretModel.getOffset();
-        new PopupChooserBuilder(QUERY_OPERATOR_LIST)
+        new PopupChooserBuilder<>(QUERY_OPERATOR_LIST)
                 .setMovable(false)
                 .setCancelKeyEnabled(true)
                 .setItemChoosenCallback(() -> {
-                    final String selectedQueryOperator = (String) QUERY_OPERATOR_LIST.getSelectedValue();
-                    if (selectedQueryOperator == null) return;
+                    final String selectedQueryOperator = QUERY_OPERATOR_LIST.getSelectedValue();
+                    if (selectedQueryOperator == null) {
+                        return;
+                    }
 
-                    new WriteCommandAction(project, MONGO_OPERATOR_COMPLETION) {
-                        @Override
-                        protected void run(@NotNull Result result) {
-                            document.insertString(offset, selectedQueryOperator);
-                        }
-                    }.execute();
+                    try {
+                        WriteCommandAction.writeCommandAction(project)
+                                .withName(MONGO_OPERATOR_COMPLETION)
+                                .run((ThrowableRunnable<Throwable>) () -> document.insertString(offset, selectedQueryOperator));
+                    } catch (Throwable e) {
+                        LOG.warn("", e);
+                    }
                 })
                 .createPopup()
                 .showInBestPositionFor(editor);

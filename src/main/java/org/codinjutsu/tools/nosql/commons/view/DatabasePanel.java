@@ -69,7 +69,7 @@ public abstract class DatabasePanel extends JPanel implements Disposable {
     private JPanel toolBar;
     private JPanel errorPanel;
     private final JTextField rowLimitField = new JTextField("");
-    private NoSQLResultPanel resultPanel;
+    private final NoSQLResultPanel resultPanel;
     private final QueryPanel queryPanel;
 
     private final Project project;

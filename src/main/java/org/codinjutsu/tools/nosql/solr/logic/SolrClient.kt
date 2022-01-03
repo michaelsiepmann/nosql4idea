@@ -1,6 +1,5 @@
 package org.codinjutsu.tools.nosql.solr.logic
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration
 import org.codinjutsu.tools.nosql.commons.exceptions.ConfigurationException
@@ -38,10 +37,10 @@ internal class SolrClient : DatabaseClient {
 
     override fun loadServer(databaseServer: DatabaseServer) {
         databaseServer.databases = LoadCores(databaseServer)
-                .execute()
-                .getAsJsonObject("status")
-                .keySet()
-                .map { Database(it) }
+            .execute()
+            .getAsJsonObject("status")
+            .keySet()
+            .map { Database(it) }
     }
 
     override fun cleanUpServers() {
@@ -59,14 +58,14 @@ internal class SolrClient : DatabaseClient {
     override fun findAll(context: DatabaseContext) = jsonSearchResult(DatabaseObjectImpl(), context) // todo
 
     override fun findDocument(context: DatabaseContext, _id: Any) =
-            GetDocument(context as SolrContext, _id.toString()).execute().toDatabaseElement()
+        GetDocument(context as SolrContext, _id.toString()).execute().toDatabaseElement()
 
     override fun update(context: DatabaseContext, document: DatabaseElement) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun loadRecords(context: DatabaseContext, query: QueryOptions) =
-            jsonSearchResult(Search(context as SolrContext, query).execute().toDatabaseElement(), context)
+        jsonSearchResult(Search(context as SolrContext, query).execute().toDatabaseElement(), context)
 
     private fun jsonSearchResult(jsonObject: DatabaseObject, context: DatabaseContext): SearchResult {
         val response = jsonObject.getAsDatabaseObject("response")
@@ -86,7 +85,7 @@ internal class SolrClient : DatabaseClient {
 
     companion object {
         fun instance(project: Project): SolrClient {
-            return ServiceManager.getService(project, SolrClient::class.java)
+            return project.getService(SolrClient::class.java)
         }
     }
 }

@@ -155,11 +155,14 @@ public class EditionPanel extends JPanel implements Disposable {
             return false;
         }
 
-        Enumeration<NoSqlTreeNode> children = parentNode.children();
+        Enumeration<TreeNode> children = parentNode.children();
         while (children.hasMoreElements()) {
-            NodeDescriptor descriptor = children.nextElement().getDescriptor();
-            if (descriptor.isSameKey(key)) {
-                return true;
+            TreeNode element = children.nextElement();
+            if (element instanceof NoSqlTreeNode) {
+                NodeDescriptor descriptor = ((NoSqlTreeNode) element).getDescriptor();
+                if (descriptor.isSameKey(key)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -216,7 +219,7 @@ public class EditionPanel extends JPanel implements Disposable {
             actionPopupGroup.add(new DeleteKeyAction(this));
         }
 
-        PopupHandler.installPopupHandler(editTableView, actionPopupGroup, "POPUP", ActionManager.getInstance()); //NON-NLS
+        PopupHandler.installPopupMenu(editTableView, actionPopupGroup, "POPUP"); //NON-NLS
     }
 
     public void addValue(DatabaseElement value) {

@@ -16,7 +16,6 @@
 
 package org.codinjutsu.tools.nosql
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.codinjutsu.tools.nosql.commons.exceptions.DatabaseException
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient
@@ -51,6 +50,6 @@ class DatabaseVendorClientManager(private val project: Project) {
 
     companion object {
         fun getInstance(project: Project): DatabaseVendorClientManager =
-                ServiceManager.getService(project, DatabaseVendorClientManager::class.java)
+                project.getService(DatabaseVendorClientManager::class.java)
     }
 }

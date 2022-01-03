@@ -17,49 +17,17 @@
 package org.codinjutsu.tools.nosql;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
-import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
-import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.explorer.NoSqlExplorerPanel;
-
-import javax.swing.Icon;
 
 
 public class NoSqlWindowManager {
 
-    private static final Icon NOSQL_ICON = GuiUtils.loadIcon("nosql_13x13.png"); //NON-NLS
-
-    private static final String NOSQL_RUNNER = "NoSql Runner";
-    private static final String NOSQL_EXPLORER = "NoSql Explorer";
-
-    private final Project project;
     private final NoSqlExplorerPanel noSqlExplorerPanel;
 
-    public static NoSqlWindowManager getInstance(Project project) {
-        return ServiceManager.getService(project, NoSqlWindowManager.class);
-    }
-
     public NoSqlWindowManager(Project project) {
-        this.project = project;
-
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         noSqlExplorerPanel = new NoSqlExplorerPanel(project, DatabaseVendorClientManager.Companion.getInstance(project));
         noSqlExplorerPanel.installActions();
-        Content nosqlExplorer = ContentFactory.SERVICE.getInstance().createContent(noSqlExplorerPanel, null, false);
-
-        ToolWindow toolNoSqlExplorerWindow = toolWindowManager.registerToolWindow(NOSQL_EXPLORER, false, ToolWindowAnchor.RIGHT);
-        toolNoSqlExplorerWindow.getContentManager().addContent(nosqlExplorer);
-        toolNoSqlExplorerWindow.setIcon(NOSQL_ICON);
-    }
-
-    public void unregisterMyself() {
-        ToolWindowManager.getInstance(project).unregisterToolWindow(NOSQL_RUNNER);
-        ToolWindowManager.getInstance(project).unregisterToolWindow(NOSQL_EXPLORER);
     }
 
     public void apply() {

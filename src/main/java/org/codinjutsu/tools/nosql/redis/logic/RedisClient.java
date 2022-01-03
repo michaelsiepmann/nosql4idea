@@ -16,7 +16,6 @@
 
 package org.codinjutsu.tools.nosql.redis.logic;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
@@ -51,7 +50,7 @@ public class RedisClient implements DatabaseClient {
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
     public static RedisClient getInstance(Project project) {
-        return ServiceManager.getService(project, RedisClient.class);
+        return project.getService(RedisClient.class);
     }
 
     @Override

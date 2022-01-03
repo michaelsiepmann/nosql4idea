@@ -16,22 +16,12 @@
 
 package org.codinjutsu.tools.nosql
 
-import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.StartupActivity
 
-class NoSqlComponent(private val project: Project) : ProjectComponent {
+class NoSqlComponent : StartupActivity {
 
-    override fun getComponentName() = COMPONENT_NAME
-
-    override fun projectOpened() {
-        NoSqlWindowManager.getInstance(project)
-    }
-
-    override fun projectClosed() {
-        NoSqlWindowManager.getInstance(project).unregisterMyself()
-    }
-
-    companion object {
-        private val COMPONENT_NAME = "NoSql"
+    override fun runActivity(project: Project) {
+        project.getService(NoSqlWindowManager::class.java)
     }
 }

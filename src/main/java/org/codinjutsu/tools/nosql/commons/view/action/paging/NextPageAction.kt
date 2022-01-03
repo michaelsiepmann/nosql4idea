@@ -5,7 +5,7 @@ import org.codinjutsu.tools.nosql.commons.view.panel.Pageable
 import org.codinjutsu.tools.nosql.commons.view.panel.query.Page
 import org.codinjutsu.tools.nosql.i18n.getResourceString
 
-internal class NextPageAction(pageable: Pageable) : AbstractPageableAction(pageable, getResourceString("pagebuttons.nextpage.label"), icon = AllIcons.General.ArrowRight) {
+internal class NextPageAction(pageable: Pageable) : AbstractPageableAction(pageable, getResourceString("pagebuttons.nextpage.label"), icon = AllIcons.Actions.Play_forward) {
 
     override fun followingPage(page: Page) = page.copy(pageIndex = page.pageIndex + 1)
 

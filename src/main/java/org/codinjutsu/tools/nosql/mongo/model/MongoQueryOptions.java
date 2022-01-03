@@ -38,7 +38,7 @@ public class MongoQueryOptions {
     private DBObject projection = null;
     private DBObject sort;
 
-    private int resultLimit;
+    private final int resultLimit;
 
     public MongoQueryOptions(QueryOptions queryOptions) {
         String operations = queryOptions.getOperations();

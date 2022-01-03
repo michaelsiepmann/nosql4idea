@@ -54,7 +54,7 @@ public class NoSqlConfiguration implements PersistentStateComponent<Element> {
     private static final String TAGNAME_HISTORIES = "histories"; //NON-NLS
     private List<ServerConfiguration> serverConfigurations = new LinkedList<>();
     private Map<DatabaseVendor, String> shellPathByDatabaseVendor = new HashMap<>();
-    private List<HistoryList> historyLists = new LinkedList<>();
+    private final List<HistoryList> historyLists = new LinkedList<>();
 
     public static NoSqlConfiguration getInstance(Project project) {
         return ServiceManager.getService(project, NoSqlConfiguration.class);

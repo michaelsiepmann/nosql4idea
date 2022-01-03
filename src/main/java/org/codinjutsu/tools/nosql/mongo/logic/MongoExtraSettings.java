@@ -49,7 +49,7 @@ public class MongoExtraSettings {
 
     public boolean isSsl() {
         String isSsl = extras.get(SSL);
-        return isSsl == null ? false : Boolean.valueOf(isSsl);
+        return isSsl != null && Boolean.valueOf(isSsl);
     }
 
     public void setAuthenticationDatabase(String authenticationDatabase) {

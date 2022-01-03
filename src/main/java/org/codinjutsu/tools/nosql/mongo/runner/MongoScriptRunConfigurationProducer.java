@@ -16,60 +16,47 @@
 
 package org.codinjutsu.tools.nosql.mongo.runner;
 
-import com.intellij.execution.Location;
-import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class MongoScriptRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
-
-    private PsiFile sourceFile;
+public class MongoScriptRunConfigurationProducer extends LazyRunConfigurationProducer<MongoRunConfiguration> implements Cloneable {
 
     public MongoScriptRunConfigurationProducer() {
-        super(MongoRunConfigurationType.getInstance());
     }
 
     @Override
-    public PsiElement getSourceElement() {
-        return sourceFile;
-    }
-
-    @Nullable
-    @Override
-    protected RunnerAndConfigurationSettings createConfigurationByElement(@NotNull Location location, ConfigurationContext configurationContext) {
-        sourceFile = location.getPsiElement().getContainingFile();
+    protected boolean setupConfigurationFromContext(@NotNull MongoRunConfiguration configuration, @NotNull ConfigurationContext context, @NotNull Ref<PsiElement> sourceElement) {
+        PsiElement element = sourceElement.get();
+        PsiFile sourceFile = element.getContainingFile();
         if (sourceFile == null || !sourceFile.getFileType().getName().toLowerCase().contains("javascript")) { //NON-NLS
-            return null;
+            return false;
         }
-        Project project = sourceFile.getProject();
-
         VirtualFile file = sourceFile.getVirtualFile();
-
-        RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, configurationContext);
-
-        MongoRunConfiguration runConfiguration = (MongoRunConfiguration) settings.getConfiguration();
-        runConfiguration.setName(file.getName());
-
-        runConfiguration.setScriptPath(file.getPath());
-
-        Module module = ModuleUtil.findModuleForPsiElement(location.getPsiElement());
+        configuration.setName(file.getName());
+        configuration.setScriptPath(file.getPath());
+        Module module = ModuleUtil.findModuleForPsiElement(element);
         if (module != null) {
-            runConfiguration.setModule(module);
+            configuration.setModule(module);
         }
-
-        return settings;
+        return true;
     }
 
     @Override
-    public int compareTo(@NotNull Object o) {
-        return 0;
+    public boolean isConfigurationFromContext(@NotNull MongoRunConfiguration configuration, @NotNull ConfigurationContext context) {
+        return configuration.getType() == MongoRunConfigurationType.getInstance();
+    }
+
+    @NotNull
+    @Override
+    public ConfigurationFactory getConfigurationFactory() {
+        return new MongoFactory(MongoRunConfigurationType.getInstance());
     }
 }

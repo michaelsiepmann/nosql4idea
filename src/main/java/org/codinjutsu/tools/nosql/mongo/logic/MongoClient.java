@@ -16,7 +16,7 @@
 
 package org.codinjutsu.tools.nosql.mongo.logic;
 
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
@@ -27,7 +27,6 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoIterable;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.exceptions.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
@@ -66,13 +65,13 @@ import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.toDa
 
 public class MongoClient implements DatabaseClient {
 
-    private static final Logger LOG = Logger.getLogger(MongoClient.class);
+    private static final Logger LOG = Logger.getInstance(MongoClient.class);
     public static final String ID_DESCRIPTOR_KEY = "_id"; //NON-NLS
     private final List<DatabaseServer> databaseServers = new LinkedList<>();
 
     @NotNull
     public static MongoClient getInstance(Project project) {
-        return ServiceManager.getService(project, MongoClient.class);
+        return project.getService(MongoClient.class);
     }
 
     public void connect(ServerConfiguration configuration) {
