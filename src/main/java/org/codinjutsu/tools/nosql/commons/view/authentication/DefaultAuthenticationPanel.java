@@ -16,7 +16,7 @@
 
 package org.codinjutsu.tools.nosql.commons.view.authentication;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.jetbrains.annotations.NotNull;
 

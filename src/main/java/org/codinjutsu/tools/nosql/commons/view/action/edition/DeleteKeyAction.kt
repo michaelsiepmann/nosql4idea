@@ -17,16 +17,18 @@
 package org.codinjutsu.tools.nosql.commons.view.action.edition
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
+import java.awt.event.KeyEvent.ALT_DOWN_MASK
+import java.awt.event.KeyEvent.VK_DELETE
 
-import java.awt.event.KeyEvent
-
-class DeleteKeyAction(private val editionPanel: EditionPanel) : AnAction("Delete this", "Delete the selected node", AllIcons.Actions.Cancel) {
+class DeleteKeyAction(private val editionPanel: EditionPanel) :
+    AnAction("Delete this", "Delete the selected node", AllIcons.Actions.Cancel) {
 
     init {
-        registerCustomShortcutSet(KeyEvent.VK_DELETE, KeyEvent.ALT_MASK, editionPanel)
+        registerCustomShortcutSet(VK_DELETE, ALT_DOWN_MASK, editionPanel)
     }
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
@@ -36,4 +38,6 @@ class DeleteKeyAction(private val editionPanel: EditionPanel) : AnAction("Delete
     override fun update(event: AnActionEvent) {
         event.presentation.isVisible = editionPanel.selectedNode != null
     }
+
+    override fun getActionUpdateThread() = ActionUpdateThread.BGT
 }

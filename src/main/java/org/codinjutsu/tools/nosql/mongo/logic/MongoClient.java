@@ -26,7 +26,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoIterable;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.exceptions.ConfigurationException;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
@@ -58,7 +58,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.revert;
 import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.toDatabaseElement;
 import static org.codinjutsu.tools.nosql.mongo.model.internal.MongoHelperKt.toDatabaseObject;

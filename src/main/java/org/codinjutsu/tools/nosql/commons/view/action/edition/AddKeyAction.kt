@@ -17,6 +17,7 @@
 package org.codinjutsu.tools.nosql.commons.view.action.edition
 
 import com.intellij.icons.AllIcons.General.Add
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
@@ -24,11 +25,13 @@ import org.codinjutsu.tools.nosql.commons.model.DataType
 import org.codinjutsu.tools.nosql.commons.view.EditionPanel
 import org.codinjutsu.tools.nosql.commons.view.add.AddKeyDialog
 import java.awt.event.KeyEvent
+import java.awt.event.KeyEvent.ALT_DOWN_MASK
+import java.awt.event.KeyEvent.VK_INSERT
 
 class AddKeyAction(private val editionPanel: EditionPanel, private val project: Project, private val dataTypes : Array<DataType>) : AnAction("Add a key", "Add a key", Add) {
 
     init {
-        registerCustomShortcutSet(KeyEvent.VK_INSERT, KeyEvent.ALT_MASK, editionPanel)
+        registerCustomShortcutSet(VK_INSERT, ALT_DOWN_MASK, editionPanel)
     }
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
@@ -43,4 +46,6 @@ class AddKeyAction(private val editionPanel: EditionPanel, private val project: 
     override fun update(event: AnActionEvent) {
         event.presentation.isVisible = editionPanel.canAddKey()
     }
+
+    override fun getActionUpdateThread() = ActionUpdateThread.BGT
 }

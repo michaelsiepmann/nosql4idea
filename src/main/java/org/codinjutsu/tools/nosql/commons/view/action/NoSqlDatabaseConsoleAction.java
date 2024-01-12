@@ -30,7 +30,7 @@ import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.console.AbstractNoSQLConsoleRunner;
 import org.codinjutsu.tools.nosql.commons.view.explorer.DatabaseListPanel;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
 import static org.codinjutsu.tools.nosql.DatabaseVendor.REDIS;
 

@@ -20,7 +20,7 @@ internal abstract class DatabaseVendorInformation(val hasConsoleWindow: Boolean 
     abstract fun getDatabaseUIClass(): Class<out DatabaseUI>
 
     fun getClient(project: Project): DatabaseClient? {
-        return project.getService(getDatabaseClientClass() as Class<DatabaseClient>)
+        return project.getService(getDatabaseClientClass())
     }
 
     protected abstract fun getDatabaseClientClass(): Class<out DatabaseClient>

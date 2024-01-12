@@ -20,14 +20,14 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import org.codinjutsu.tools.nosql.commons.view.DatabasePanel
+import java.awt.event.InputEvent.CTRL_DOWN_MASK
+import java.awt.event.KeyEvent.VK_ENTER
 
-import java.awt.event.InputEvent
-import java.awt.event.KeyEvent
-
-class ExecuteQuery(private val databasePanel: DatabasePanel) : AnAction("Execute query", "Execute query with options", AllIcons.Actions.Execute) {
+class ExecuteQuery(private val databasePanel: DatabasePanel) :
+    AnAction("Execute query", "Execute query with options", AllIcons.Actions.Execute) {
 
     init {
-        registerCustomShortcutSet(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK, databasePanel)
+        registerCustomShortcutSet(VK_ENTER, CTRL_DOWN_MASK, databasePanel)
     }
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {

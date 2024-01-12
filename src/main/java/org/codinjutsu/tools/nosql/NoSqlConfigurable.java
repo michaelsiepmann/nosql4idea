@@ -37,7 +37,7 @@ import com.intellij.ui.PanelWithButtons;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codinjutsu.tools.nosql.commons.configuration.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.configuration.WriteableServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.logic.DatabaseClient;
@@ -63,7 +63,7 @@ import java.util.concurrent.TimeoutException;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.codinjutsu.tools.nosql.DatabaseVendor.MONGO;
 import static org.codinjutsu.tools.nosql.DatabaseVendor.REDIS;
 import static org.codinjutsu.tools.nosql.DatabaseVendor.SOLR;

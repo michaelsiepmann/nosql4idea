@@ -50,7 +50,7 @@ internal class ScriptExecutor(
     internal class MyTextPanel : TextPanel() {
 
         fun append(text: String) {
-            setText(getText() + text)
+            this.text += text
         }
     }
 }

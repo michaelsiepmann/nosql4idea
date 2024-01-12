@@ -44,8 +44,8 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 
 import static com.intellij.ui.IdeBorderFactory.createTitledBorder;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.codinjutsu.tools.nosql.i18n.ResourcesLoaderKt.getResourceString;
 
 public class ServerConfigurationPanel extends JPanel {

@@ -17,7 +17,7 @@
 package org.codinjutsu.tools.nosql.mongo.logic;
 
 import com.mongodb.AuthenticationMechanism;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -74,7 +74,7 @@ class MongoClientURIBuilder {
         if (sslEnabled) {
             options.put("ssl", Boolean.TRUE.toString()); //NON-NLS
         }
-        if (options.size() == 0) {
+        if (options.isEmpty()) {
             return strBuilder.toString();
         }
         return strBuilder.append(buildOptions(options)).toString();

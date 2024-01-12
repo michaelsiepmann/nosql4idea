@@ -26,7 +26,7 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import org.jetbrains.annotations.NotNull;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.codinjutsu.tools.nosql.mongo.MongoUtils.buildMongoUrl;
 
 class MongoCommandLineState extends CommandLineState {

@@ -39,7 +39,7 @@ import javax.swing.JTextField;
 import java.util.Collection;
 import java.util.Vector;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfiguration> {
 

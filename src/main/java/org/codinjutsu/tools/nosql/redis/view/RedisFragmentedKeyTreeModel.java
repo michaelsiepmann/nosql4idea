@@ -28,7 +28,7 @@ import javax.swing.tree.MutableTreeNode;
 import java.util.Arrays;
 import java.util.Enumeration;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.codinjutsu.tools.nosql.commons.utils.StringUtilsKt.explode;
 
 class RedisFragmentedKeyTreeModel extends DefaultTreeModel {

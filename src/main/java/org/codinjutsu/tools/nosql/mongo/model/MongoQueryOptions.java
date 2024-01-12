@@ -20,14 +20,14 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codinjutsu.tools.nosql.NoSqlException;
 import org.codinjutsu.tools.nosql.commons.view.panel.query.QueryOptions;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class MongoQueryOptions {
 

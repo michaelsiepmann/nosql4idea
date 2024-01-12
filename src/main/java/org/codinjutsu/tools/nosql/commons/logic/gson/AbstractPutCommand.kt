@@ -1,7 +1,7 @@
 package org.codinjutsu.tools.nosql.commons.logic.gson
 
-import org.apache.commons.httpclient.methods.PutMethod
+import org.apache.http.client.methods.HttpPut
 
 abstract internal class AbstractPutCommand : AbstractHttpClientCommand() {
-    override fun createMethod(url: String) = PutMethod(url)
+    override fun createMethod(url: String) = HttpPut(url)
 }

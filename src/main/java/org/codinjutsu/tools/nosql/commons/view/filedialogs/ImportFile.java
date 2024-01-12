@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.JPanel;
 import java.io.File;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class ImportFile {
     private TextFieldWithBrowseButton filename;

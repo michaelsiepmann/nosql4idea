@@ -17,7 +17,7 @@
 package org.codinjutsu.tools.nosql.mongo.view.authentication;
 
 import com.mongodb.AuthenticationMechanism;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.AuthenticationSettings;
 import org.codinjutsu.tools.nosql.commons.view.authentication.AuthenticationView;
 import org.codinjutsu.tools.nosql.mongo.logic.MongoExtraSettings;

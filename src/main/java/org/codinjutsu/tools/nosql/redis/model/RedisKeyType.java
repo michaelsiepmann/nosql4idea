@@ -16,7 +16,7 @@
 
 package org.codinjutsu.tools.nosql.redis.model;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codinjutsu.tools.nosql.commons.model.internal.layer.DatabaseElement;
 import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseHash;
 import org.codinjutsu.tools.nosql.redis.model.internal.RedisDatabaseList;

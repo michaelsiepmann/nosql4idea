@@ -24,7 +24,7 @@ import java.util.Set;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toCollection;
-import static org.apache.commons.lang.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.join;
 
 public class RedisUtils {
 
