@@ -27,7 +27,7 @@ artifacts {
 apply plugin: 'kotlin'
 
 group 'org.codinjutsu.tools.nosql'
-version '0.3.11-SNAPSHOT'
+version '0.3.19'
 
 repositories {
     mavenCentral()
