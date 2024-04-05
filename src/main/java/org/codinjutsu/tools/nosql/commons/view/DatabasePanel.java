@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.toolbarLayout.ToolbarLayoutStrategy;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -187,7 +188,7 @@ public abstract class DatabasePanel extends JPanel implements Disposable {
         addActions(actionResultGroup, expandAllAction, collapseAllAction);
 
         ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("NoSQLResultGroupActions", actionResultGroup, true);
-        actionToolBar.setLayoutPolicy(ActionToolbar.AUTO_LAYOUT_POLICY);
+        actionToolBar.setLayoutStrategy(ToolbarLayoutStrategy.AUTOLAYOUT_STRATEGY);
         JComponent actionToolBarComponent = actionToolBar.getComponent();
         actionToolBarComponent.setBorder(null);
         actionToolBarComponent.setOpaque(false);

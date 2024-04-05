@@ -27,7 +27,7 @@ artifacts {
 apply plugin: 'kotlin'
 
 group 'org.codinjutsu.tools.nosql'
-version '0.3.19'
+version '0.3.20'
 
 repositories {
     mavenCentral()
@@ -58,7 +58,7 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 intellij {
-    version = '2023.3.2'
+    version = '2024.1'
 //    type 'IC'
 //    updateSinceUntilBuild false
 //    pluginName 'nosql4idea'
