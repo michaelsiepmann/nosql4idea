@@ -37,7 +37,7 @@ private fun BasicDBList.convertToInternalArray(): DatabaseElement {
 private fun BasicDBObject.convertToInternalObject(): DatabaseObject {
     val result = DatabaseObjectImpl()
     keys.forEach {
-        result.add(it, convertUnknown(get(it)))
+        result.add(it, convertUnknown(get(it)!!))
     }
     return result
 }

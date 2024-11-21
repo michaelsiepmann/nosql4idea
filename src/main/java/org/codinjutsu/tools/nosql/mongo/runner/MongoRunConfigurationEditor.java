@@ -51,9 +51,10 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
     private JPanel mongoShellOptionsPanel;
     private RawCommandLineEditor shellParametersField;
     private TextFieldWithBrowseButton shellWorkingDirField;
-
+    private final Project project;
 
     public MongoRunConfigurationEditor(Project project) {
+        this.project = project;
         mongoShellOptionsPanel.setBorder(IdeBorderFactory.createTitledBorder("Mongo shell options", true));
 
         Collection<DatabaseServer> mongoServers = MongoClient.getInstance(project).filterAvailableServers();
@@ -157,8 +158,10 @@ public class MongoRunConfigurationEditor extends SettingsEditor<MongoRunConfigur
 
     private void createUIComponents() {
         shellWorkingDirField = new TextFieldWithBrowseButton();
-        shellWorkingDirField.addBrowseFolderListener("Mongo shell working directory", "", null,
-                new FileChooserDescriptor(false, true, false, false, false, false));
+        FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false)
+                .withTitle("Mongo shell working directory")
+                .withDescription("");
+        shellWorkingDirField.addBrowseFolderListener(project, descriptor);
         shellWorkingDirField.setName("shellWorkingDirField"); //NON-NLS
     }
 }

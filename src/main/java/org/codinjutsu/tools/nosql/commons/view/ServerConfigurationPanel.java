@@ -226,14 +226,10 @@ public class ServerConfigurationPanel extends JPanel {
 
     private void createUIComponents() {
         shellWorkingDirField = new TextFieldWithBrowseButton();
-        FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-        shellWorkingDirField.addActionListener(new ComponentWithBrowseButton.BrowseFolderActionListener<>(
-                getResourceString("configuration.shell.working.directory.title"),
-                null,
-                shellWorkingDirField,
-                null,
-                fileChooserDescriptor,
-                TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT)
+        FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(false, true, false, false, false, false)
+                .withTitle(getResourceString("configuration.shell.working.directory.title"));
+        shellWorkingDirField.addActionListener(
+                new ComponentWithBrowseButton.BrowseFolderActionListener<>(shellWorkingDirField, null, fileChooserDescriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT)
         );
         shellWorkingDirField.setName("shellWorkingDirField"); //NON-NLS
     }

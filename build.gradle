@@ -1,7 +1,8 @@
 buildscript {
     ext {
         kotlin_version = '1.9.21'
-        junit5_version = '5.10.3'
+        intellij_tools = '242.+'
+        junit5_version = '5.11.3'
     }
     repositories {
         mavenCentral()
@@ -13,7 +14,7 @@ buildscript {
 
 plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
-    id 'org.jetbrains.intellij' version '1.16.1'
+    id 'org.jetbrains.intellij.platform' version '2.0.1'
     id 'java'
     id 'maven-publish'
 }
@@ -22,20 +23,27 @@ artifacts {
     archives buildPlugin
 }
 
-//apply plugin: 'org.jetbrains.intellij'
-//apply plugin: 'java'
-apply plugin: 'kotlin'
-
 group 'org.codinjutsu.tools.nosql'
-version '0.3.21'
+version '0.3.22'
 
 repositories {
     mavenCentral()
+      intellijPlatform {
+        defaultRepositories()
+      }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    intellijPlatform {
+        intellijIdeaUltimate("2024.3")
+        bundledPlugin("com.intellij.java")
+        bundledPlugin("com.intellij.jsp")
+        bundledPlugin("com.intellij.gradle")
+        bundledPlugin("Git4Idea")
+
+        instrumentationTools()
+    }
+
     implementation "com.couchbase.client:java-client:2.7.20" // todo 3.2.0
     implementation "org.mongodb:mongo-java-driver:3.12.10"
     implementation "redis.clients:jedis:3.6.3"
@@ -49,30 +57,37 @@ dependencies {
     testImplementation "org.mockito:mockito-all:1.10.19"
     testImplementation "org.easytesting:fest-swing:1.2.1"
     testImplementation "org.easytesting:fest-util:1.1.3"
-    testImplementation "commons-io:commons-io:2.11.0"
+    testImplementation 'commons-io:commons-io:2.16.1'
     testImplementation "org.hamcrest:hamcrest-library:2.2"
 }
 
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-intellij {
-    version = '2024.2'
-//    type 'IC'
-//    updateSinceUntilBuild false
-//    pluginName 'nosql4idea'
- //   buildSearchableOptions.enabled = false
-}
-
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellijPlatform {
+    buildSearchableOptions = false
+    pluginConfiguration {
+        id = "org.codinjutsu.tools.nosql"
+        name = "NOSQL"
+        changeNotes = """
+          Add change notes here.<br>;
+          <em>most HTML tags may be used</em>"""
+        ideaVersion {
+            sinceBuild = "241"
+            untilBuild = "243.*"
+        }
     }
 }
 
-tasks.buildSearchableOptions {
-    enabled = false
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "21"
+    }
 }
 
+test {
+    dependsOn("buildPlugin")
+    systemProperty("path.to.build.plugin", tasks.buildPlugin.archiveFile.get().asFile.absolutePath)
+    useJUnitPlatform()
+}

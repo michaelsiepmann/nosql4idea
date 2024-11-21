@@ -347,9 +347,9 @@ public class NoSqlConfigurable extends BaseConfigurable {
             TextFieldWithBrowseButton component = new TextFieldWithBrowseButton();
             component.getChildComponent().setName("shellPathField"); //NON-NLS
             shellPathField.setComponent(component);
-            shellPathField.getComponent().addBrowseFolderListener(getResourceString("settings.cliconfigbrowserdialog.title", databaseVendor.getName()), "", null,
-                    new FileChooserDescriptor(true, false, false, false, false, false));
-
+            FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, false, false)
+                    .withTitle(getResourceString("settings.cliconfigbrowserdialog.title", databaseVendor.getName()));
+            shellPathField.getComponent().addBrowseFolderListener(null, descriptor);
             shellPathField.getComponent().setText(configuration.getShellPath(databaseVendor));
 
             return shellPathField;
